@@ -277,6 +277,23 @@ if (studioCalendar) {
     if (hours === 10) return { value: 4000, note: 'pakiet całodniowy' };
     return { value: hours * 450, note: `${hours} × 450 zł/h` };
   };
+  const getDemoBookings = (date) => {
+    const bookings = [];
+    if (date.getDate() % 3 === 1) bookings.push({ start: 13 * 60, end: 16 * 60 });
+    if (date.getDate() % 4 === 0) bookings.push({ start: 10 * 60, end: 11 * 60 + 30 });
+    return bookings;
+  };
+  const isSlotAvailable = (date, startMinutes, duration) => {
+    const endMinutes = startMinutes + duration * 60;
+    return !getDemoBookings(date).some((booking) => startMinutes < booking.end && endMinutes > booking.start);
+  };
+  const getLastStartMinutes = (duration) => (duration === 10 ? 9 : 18 - duration) * 60;
+  const hasAvailableSlot = (date, duration) => {
+    for (let minutes = 9 * 60; minutes <= getLastStartMinutes(duration); minutes += 30) {
+      if (isSlotAvailable(date, minutes, duration)) return true;
+    }
+    return false;
+  };
 
   const renderDuration = () => {
     const price = calculatePrice(selectedDuration);
@@ -316,18 +333,18 @@ if (studioCalendar) {
       return;
     }
 
-    const lastStartHour = selectedDuration === 10 ? 9 : 18 - selectedDuration;
-    for (let minutes = 9 * 60; minutes <= lastStartHour * 60; minutes += 30) {
+    const lastStartMinutes = getLastStartMinutes(selectedDuration);
+    for (let minutes = 9 * 60; minutes <= lastStartMinutes; minutes += 30) {
       const hour = Math.floor(minutes / 60);
       const minute = minutes % 60;
       const time = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
       const button = document.createElement('button');
-      const isDemoBusy = (selectedDate.getDate() + (minutes / 30)) % 9 === 0;
+      const overlapsBooking = !isSlotAvailable(selectedDate, minutes, selectedDuration);
       button.type = 'button';
       button.className = 'studio-calendar__slot';
       button.textContent = time;
-      button.disabled = isDemoBusy;
-      button.setAttribute('aria-label', isDemoBusy ? `${time}, termin niedostępny` : `${time}, wybierz godzinę rozpoczęcia`);
+      button.disabled = overlapsBooking;
+      button.setAttribute('aria-label', overlapsBooking ? `${time}, rezerwacja nakłada się na zajęty termin` : `${time}, wybierz godzinę rozpoczęcia`);
       button.setAttribute('aria-pressed', String(selectedStart === time));
       button.classList.toggle('is-selected', selectedStart === time);
       button.addEventListener('click', () => {
@@ -363,7 +380,7 @@ if (studioCalendar) {
     for (let day = 1; day <= daysInMonth; day += 1) {
       const date = new Date(displayedMonth.getFullYear(), displayedMonth.getMonth(), day);
       const button = document.createElement('button');
-      const available = isWorkingDay(date);
+      const available = isWorkingDay(date) && hasAvailableSlot(date, selectedDuration);
       button.type = 'button';
       button.className = 'studio-calendar__day';
       button.textContent = String(day);
@@ -392,7 +409,9 @@ if (studioCalendar) {
   durationButtons.forEach((button) => button.addEventListener('click', () => {
     selectedDuration = Number(button.dataset.calendarDuration);
     selectedStart = '';
+    if (selectedDate && !hasAvailableSlot(selectedDate, selectedDuration)) selectedDate = null;
     renderDuration();
+    renderDays();
     renderSlots();
   }));
   confirmButton.addEventListener('click', () => {
