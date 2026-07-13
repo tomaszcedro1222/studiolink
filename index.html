@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="assets/styles/main.css?v=6" />
+    <link rel="stylesheet" href="assets/styles/main.css?v=7" />
   </head>
   <body>
     <header class="hero" id="start">
@@ -98,10 +98,57 @@
 
       <section class="newsletter" id="oferta">
         <div class="container newsletter__inner">
-          <h2>Chcesz dowiedzieć się więcej?</h2>
-          <p>Zostaw nam swój email, a wyślemy Ci szczegółową ofertę.</p>
-          <form class="newsletter__form"><label class="sr-only" for="email">Adres email</label><input id="email" name="email" type="email" placeholder="jan.kowalski@email.com" required /><button class="button button--primary" type="submit">Wyślij</button></form>
-          <p class="form-message" role="status" aria-live="polite"></p>
+          <div class="newsletter__heading">
+            <h2>Porozmawiajmy o Twoim nagraniu</h2>
+            <p>Opisz krótko, czego potrzebujesz. Odpowiemy z propozycją realizacji i wyceną.</p>
+          </div>
+          <form class="contact-form" novalidate>
+            <div class="contact-form__grid">
+              <label class="form-field">
+                <span>Imię i nazwisko <b aria-hidden="true">*</b></span>
+                <input name="name" type="text" autocomplete="name" placeholder="Jan Kowalski" minlength="2" required />
+              </label>
+              <label class="form-field">
+                <span>Adres e-mail <b aria-hidden="true">*</b></span>
+                <input name="email" type="email" autocomplete="email" placeholder="jan.kowalski@firma.pl" required />
+              </label>
+              <label class="form-field">
+                <span>Numer telefonu</span>
+                <input name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+48 500 000 000" />
+              </label>
+              <label class="form-field">
+                <span>Rodzaj realizacji <b aria-hidden="true">*</b></span>
+                <select name="service" required>
+                  <option value="">Wybierz usługę</option>
+                  <option>Podcast</option>
+                  <option>Videocast</option>
+                  <option>Rolki / krótkie formy</option>
+                  <option>Streaming na żywo</option>
+                  <option>Film szkoleniowy</option>
+                  <option>Webinar</option>
+                  <option>Inna realizacja</option>
+                </select>
+              </label>
+              <label class="form-field form-field--date">
+                <span>Preferowany termin</span>
+                <input name="preferredDate" type="date" />
+              </label>
+              <label class="form-field form-field--wide">
+                <span>Opowiedz nam o projekcie <b aria-hidden="true">*</b></span>
+                <textarea name="message" rows="5" minlength="10" maxlength="2000" placeholder="Napisz, co chcesz nagrać, dla ilu osób i jaki efekt chcesz uzyskać." required></textarea>
+              </label>
+            </div>
+            <label class="form-consent">
+              <input name="consent" type="checkbox" required />
+              <span>Zgadzam się na wykorzystanie podanych danych w celu odpowiedzi na moje zapytanie. <b aria-hidden="true">*</b></span>
+            </label>
+            <label class="form-honeypot" aria-hidden="true">Nie wypełniaj tego pola<input name="website" type="text" tabindex="-1" autocomplete="off" /></label>
+            <div class="contact-form__footer">
+              <button class="button button--primary" type="submit">Wyślij zapytanie</button>
+              <p><b>*</b> Pola wymagane</p>
+            </div>
+            <p class="form-message" role="status" aria-live="polite"></p>
+          </form>
         </div>
       </section>
 
@@ -168,6 +215,6 @@
     </div>
 
     <footer class="footer"><a href="#" aria-label="Facebook">f</a><a href="#" aria-label="Instagram">◎</a><a href="#" aria-label="YouTube">▶</a><a href="#" aria-label="TikTok">♪</a><a href="#" aria-label="LinkedIn">in</a></footer>
-    <script src="assets/scripts/main.js?v=6"></script>
+    <script src="assets/scripts/main.js?v=7"></script>
   </body>
 </html>

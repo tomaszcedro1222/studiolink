@@ -227,9 +227,60 @@ if (lightbox && galleryItems.length) {
   });
 }
 
-document.querySelector('.newsletter__form')?.addEventListener('submit', (event) => {
+const contactForm = document.querySelector('.contact-form');
+
+contactForm?.addEventListener('submit', async (event) => {
   event.preventDefault();
-  const message = event.currentTarget.nextElementSibling;
-  message.textContent = 'Dziękujemy! Skontaktujemy się z Tobą.';
-  event.currentTarget.reset();
+  const form = event.currentTarget;
+  const message = form.querySelector('.form-message');
+  const submitButton = form.querySelector('button[type="submit"]');
+  const setMessage = (text, type) => {
+    message.textContent = text;
+    message.className = `form-message ${type ? `is-${type}` : ''}`.trim();
+  };
+
+  form.classList.add('was-validated');
+  if (!form.checkValidity()) {
+    setMessage('Uzupełnij wymagane pola i sprawdź poprawność danych.', 'error');
+    form.reportValidity();
+    return;
+  }
+
+  const formData = new FormData(form);
+  if (formData.get('website')) {
+    setMessage('Dziękujemy! Wiadomość została przyjęta.', 'success');
+    form.reset();
+    return;
+  }
+
+  const endpoint = form.dataset.endpoint;
+  if (!endpoint) {
+    setMessage('Formularz jest gotowy. Wysyłka zostanie uruchomiona po podłączeniu docelowego serwera.', 'info');
+    return;
+  }
+
+  const payload = Object.fromEntries(formData.entries());
+  delete payload.website;
+  payload.consent = formData.get('consent') === 'on';
+
+  submitButton.disabled = true;
+  form.setAttribute('aria-busy', 'true');
+  setMessage('Wysyłamy wiadomość…', 'info');
+
+  try {
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) throw new Error('Contact form request failed');
+    setMessage('Dziękujemy! Odpowiemy najszybciej, jak to możliwe.', 'success');
+    form.reset();
+    form.classList.remove('was-validated');
+  } catch {
+    setMessage('Nie udało się wysłać wiadomości. Spróbuj ponownie lub skontaktuj się z nami telefonicznie.', 'error');
+  } finally {
+    submitButton.disabled = false;
+    form.removeAttribute('aria-busy');
+  }
 });
