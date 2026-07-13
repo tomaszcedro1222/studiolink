@@ -1,5 +1,22 @@
 const menuButton = document.querySelector('.menu-button');
 const menu = document.querySelector('.menu');
+const heroVideo = document.querySelector('.hero__video');
+
+const playHeroVideo = () => {
+  if (!heroVideo) return;
+  heroVideo.muted = true;
+  heroVideo.defaultMuted = true;
+  const playback = heroVideo.play();
+  if (playback) playback.catch(() => {});
+};
+
+if (heroVideo) {
+  playHeroVideo();
+  heroVideo.addEventListener('loadeddata', playHeroVideo, { once: true });
+  heroVideo.addEventListener('canplay', playHeroVideo, { once: true });
+  document.addEventListener('click', playHeroVideo, { once: true });
+  document.addEventListener('touchstart', playHeroVideo, { once: true, passive: true });
+}
 
 menuButton?.addEventListener('click', () => {
   const open = menu.classList.toggle('is-open');
