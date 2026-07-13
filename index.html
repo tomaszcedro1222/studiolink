@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Studio Link — profesjonalne studio podcastowe i videocastowe w centrum Warszawy." />
+    <title>Studio Link — studio podcastowe Warszawa</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/styles/main.css" />
+  </head>
+  <body>
+    <header class="hero" id="start">
+      <video class="hero__video" autoplay muted loop playsinline preload="metadata" poster="assets/images/hero-studio.jpg" aria-hidden="true">
+        <source src="assets/media/studio-link-hero.mp4" type="video/mp4" />
+      </video>
+      <button class="menu-button" type="button" aria-label="Otwórz menu" aria-expanded="false"><span></span><span></span><span></span></button>
+      <nav class="menu" aria-label="Główne menu">
+        <a href="#nagrywamy">Oferta</a><a href="#cennik">Cennik</a><a href="#realizacje">Realizacje</a><a href="#kontakt">Kontakt</a>
+      </nav>
+      <div class="hero__content">
+        <img class="hero__logo" src="assets/images/logo.svg" alt="Studio Link" />
+        <a class="button button--primary" href="tel:+48533633991">Zarezerwuj nagranie</a>
+        <a class="button button--outline" href="#nagrywamy">Sprawdź ofertę</a>
+      </div>
+      <div class="hero__tagline">Nagrywaj wideo i podcasty<br />w samym centrum Warszawy</div>
+      <a class="phone-fab phone-fab--hero" href="tel:+48533633991" aria-label="Zadzwoń: 533 633 991">☎</a>
+    </header>
+
+    <main>
+      <section class="section services" id="nagrywamy">
+        <div class="container">
+          <h2 class="section-title">Nagrywamy</h2>
+          <div class="chips"><span>Podcasty</span><span>Videocasty</span><span>Rolki</span><span>Castingi online</span><span>Streamingi na żywo</span><span>Filmy szkoleniowe</span><span>Webinary</span></div>
+        </div>
+      </section>
+
+      <section class="section scenery">
+        <div class="container">
+          <h2 class="section-title">Scenografia</h2>
+          <div class="carousel" data-carousel>
+            <button class="carousel__nav carousel__nav--prev" type="button" aria-label="Poprzednie zdjęcie">‹</button>
+            <div class="carousel__track">
+              <img src="assets/images/scenery-1.png" alt="Scenografia studia z fotelami" />
+              <img src="assets/images/scenery-4.png" alt="Scenografia programu Ślady Zbrodni" />
+              <img src="assets/images/scenery-2.png" alt="Druga aranżacja studia" />
+              <img src="assets/images/scenery-3.png" alt="Trzecia aranżacja studia" />
+            </div>
+            <button class="carousel__nav carousel__nav--next" type="button" aria-label="Następne zdjęcie">›</button>
+            <div class="carousel__dots" aria-label="Wybór slajdu"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section process">
+        <div class="container">
+          <h2 class="section-title">Proces nagrania</h2>
+          <ol class="process__list">
+            <li><span>1</span><p>Przygotujemy studio według<br />Twoich wytycznych.</p></li>
+            <li><span>2</span><p>Rejestrujemy i realizujemy materiał<br />w czasie rzeczywistym.</p></li>
+            <li><span>3</span><p>Eksportujemy materiały<br />do wymaganych formatów.</p></li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="section facilities">
+        <div class="container">
+          <h2 class="section-title">Do Twojej dyspozycji są:</h2>
+          <div class="photo-grid photo-grid--studio">
+            <figure><img src="assets/images/studio-1.png" alt="Studio podcastowe" /><figcaption>Studio</figcaption></figure>
+            <figure><img src="assets/images/studio-2.png" alt="Cztery mikrofony" /><figcaption>4 mikrofony</figcaption></figure>
+            <figure><img src="assets/images/studio-3.png" alt="Kamera w studiu" /><figcaption>3 kamery</figcaption></figure>
+            <figure><img src="assets/images/studio-4.png" alt="Konsoleta realizatorska" /><figcaption>realizacja</figcaption></figure>
+          </div>
+
+          <h2 class="section-title section-title--spaced">Zaplecze</h2>
+          <div class="photo-grid photo-grid--backstage">
+            <figure><img src="assets/images/backstage-1.png" alt="Pokój kliencki" /><figcaption>pokój kliencki</figcaption></figure>
+            <figure><img src="assets/images/backstage-2.png" alt="Kuchnia" /><figcaption>kuchnia –<br />kawa i herbata</figcaption></figure>
+            <figure><img src="assets/images/backstage-3.png" alt="Stanowisko do makijażu" /><figcaption>stanowisko<br />do makijażu</figcaption></figure>
+            <figure><img src="assets/images/backstage-4.png" alt="Prywatny parking" /><figcaption>prywatny<br />parking</figcaption></figure>
+          </div>
+        </div>
+      </section>
+
+      <section class="section pricing" id="cennik">
+        <div class="container">
+          <h2 class="section-title">Cennik</h2>
+          <div class="pricing__list">
+            <div><p>Rozliczanie godzinowe <small>(minimum 3 godz.)</small></p><strong>450 zł/h</strong></div>
+            <div><p>Pół dnia <small>(5 godz.)</small></p><strong>2000 zł</strong></div>
+            <div><p>Cały dzień <small>(10 godz.)</small></p><strong>4000 zł</strong></div>
+          </div>
+          <div class="pricing__reserve"><span>Zarezerwuj</span><a href="tel:+48533633991">☎ <b>533 633 991</b></a></div>
+        </div>
+      </section>
+
+      <section class="newsletter" id="oferta">
+        <div class="container newsletter__inner">
+          <h2>Chcesz dowiedzieć się więcej?</h2>
+          <p>Zostaw nam swój email, a wyślemy Ci szczegółową ofertę.</p>
+          <form class="newsletter__form"><label class="sr-only" for="email">Adres email</label><input id="email" name="email" type="email" placeholder="jan.kowalski@email.com" required /><button class="button button--primary" type="submit">Wyślij</button></form>
+          <p class="form-message" role="status" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <div class="control-room" role="img" aria-label="Stanowisko realizatorskie studia"></div>
+
+      <section class="section full-service">
+        <div class="container">
+          <div class="full-service__copy">
+            <h2>Działamy w pełnym zakresie</h2>
+            <p>Od pomysłu, przez scenariusz i scenografię po dobór prowadzących produkcję w wybranych przez Ciebie formach.</p>
+            <p>Pomożemy Ci koncepcyjnie i strategicznie, stworzymy dla Ciebie formaty, które&nbsp; wypromują i wyróżnią Twoją markę.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section portfolio" id="realizacje">
+        <div class="container">
+          <h2 class="section-title">Realizacje</h2>
+          <div class="portfolio__grid">
+            <img src="assets/images/project-1.png" alt="Realizacja podcastu — projekt 1" /><img src="assets/images/project-2.png" alt="Realizacja podcastu — projekt 2" />
+            <img src="assets/images/project-3.png" alt="Realizacja podcastu — projekt 3" /><img src="assets/images/project-4.png" alt="Realizacja podcastu — projekt 4" />
+            <img src="assets/images/project-5.png" alt="Realizacja podcastu — projekt 5" /><img src="assets/images/project-6.png" alt="Realizacja podcastu — projekt 6" />
+          </div>
+        </div>
+      </section>
+
+      <section class="section clients">
+        <div class="container">
+          <h2 class="section-title">Nagrywają z nami</h2>
+          <div class="clients__grid">
+            <div><img src="assets/images/client-1.svg" alt="ALAB laboratoria" /></div><div><img src="assets/images/client-2.svg" alt="Klinika Bocian" /></div>
+            <div><img src="assets/images/client-3.svg" alt="Hippojobs" /></div><div><img src="assets/images/client-4.svg" alt="English Puzzle" /></div>
+            <div><img src="assets/images/client-5.svg" alt="Fresenius Kabi" /></div><div><img src="assets/images/client-6.svg" alt="Dom Medica" /></div>
+            <div><img src="assets/images/client-7.svg" alt="FAAC Technologies" /></div><div><img src="assets/images/client-8.svg" alt="ALAB sport" /></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="contact" id="kontakt">
+        <div class="container contact__inner">
+          <h2>Zapraszam<br />do współpracy!</h2>
+          <article class="contact-card">
+            <img src="assets/images/contact-stanislaw.png" alt="Stanisław Komar" />
+            <h3>Stanisław Komar</h3>
+            <a class="contact-card__email" href="mailto:stanislaw.komar@linkvisuals.pl">stanislaw.komar@linkvisuals.pl</a>
+            <a class="contact-card__phone" href="tel:+48533633991">533 633 991</a>
+            <p>Link Visuals<br />Langiewicza 16, 02–071 Warszawa</p>
+          </article>
+          <img class="contact__logo" src="assets/images/logo.svg" alt="Studio Link" />
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer"><a href="#" aria-label="Facebook">f</a><a href="#" aria-label="Instagram">◎</a><a href="#" aria-label="YouTube">▶</a><a href="#" aria-label="TikTok">♪</a><a href="#" aria-label="LinkedIn">in</a></footer>
+    <script src="assets/scripts/main.js"></script>
+  </body>
+</html>
