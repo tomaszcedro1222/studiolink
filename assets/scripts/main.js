@@ -237,6 +237,10 @@ if (studioCalendar) {
   const summary = studioCalendar.querySelector('[data-calendar-summary]');
   const summaryDate = studioCalendar.querySelector('[data-calendar-summary-date]');
   const summaryTime = studioCalendar.querySelector('[data-calendar-summary-time]');
+  const summaryPrice = studioCalendar.querySelector('[data-calendar-summary-price]');
+  const priceLabel = studioCalendar.querySelector('[data-calendar-price]');
+  const priceNote = studioCalendar.querySelector('[data-calendar-price-note]');
+  const durationButtons = [...studioCalendar.querySelectorAll('[data-calendar-duration]')];
   const previousButton = studioCalendar.querySelector('[data-calendar-prev]');
   const nextButton = studioCalendar.querySelector('[data-calendar-next]');
   const confirmButton = studioCalendar.querySelector('[data-calendar-confirm]');
@@ -247,10 +251,12 @@ if (studioCalendar) {
   let displayedMonth = new Date(firstAllowedMonth);
   let selectedDate = null;
   let selectedStart = '';
+  let selectedDuration = 3;
 
   const monthFormatter = new Intl.DateTimeFormat('pl-PL', { month: 'long', year: 'numeric' });
   const fullDateFormatter = new Intl.DateTimeFormat('pl-PL', { weekday: 'long', day: 'numeric', month: 'long' });
   const summaryDateFormatter = new Intl.DateTimeFormat('pl-PL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const priceFormatter = new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN', maximumFractionDigits: 0 });
   const capitalize = (value) => value.charAt(0).toUpperCase() + value.slice(1);
   const sameDay = (first, second) => first && second
     && first.getFullYear() === second.getFullYear()
@@ -266,6 +272,22 @@ if (studioCalendar) {
     const [hour, minute] = time.split(':').map(Number);
     return `${String(hour + hours).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
   };
+  const calculatePrice = (hours) => {
+    if (hours === 5) return { value: 2000, note: 'pakiet pół dnia' };
+    if (hours === 10) return { value: 4000, note: 'pakiet całodniowy' };
+    return { value: hours * 450, note: `${hours} × 450 zł/h` };
+  };
+
+  const renderDuration = () => {
+    const price = calculatePrice(selectedDuration);
+    durationButtons.forEach((button) => {
+      const selected = Number(button.dataset.calendarDuration) === selectedDuration;
+      button.classList.toggle('is-selected', selected);
+      button.setAttribute('aria-pressed', String(selected));
+    });
+    priceLabel.textContent = priceFormatter.format(price.value);
+    priceNote.textContent = price.note;
+  };
 
   const renderSummary = () => {
     if (!selectedDate || !selectedStart) {
@@ -273,7 +295,9 @@ if (studioCalendar) {
       return;
     }
     summaryDate.textContent = capitalize(summaryDateFormatter.format(selectedDate));
-    summaryTime.textContent = `${selectedStart}–${addHours(selectedStart, 3)} (3 godz.)`;
+    const price = calculatePrice(selectedDuration);
+    summaryTime.textContent = `${selectedStart}–${addHours(selectedStart, selectedDuration)} (${selectedDuration} godz.)`;
+    summaryPrice.textContent = `Cena: ${priceFormatter.format(price.value)}`;
     summary.hidden = false;
   };
 
@@ -292,7 +316,8 @@ if (studioCalendar) {
       return;
     }
 
-    for (let minutes = 9 * 60; minutes <= 15 * 60; minutes += 30) {
+    const lastStartHour = selectedDuration === 10 ? 9 : 18 - selectedDuration;
+    for (let minutes = 9 * 60; minutes <= lastStartHour * 60; minutes += 30) {
       const hour = Math.floor(minutes / 60);
       const minute = minutes % 60;
       const time = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
@@ -364,17 +389,26 @@ if (studioCalendar) {
     displayedMonth = new Date(displayedMonth.getFullYear(), displayedMonth.getMonth() + 1, 1);
     renderDays();
   });
+  durationButtons.forEach((button) => button.addEventListener('click', () => {
+    selectedDuration = Number(button.dataset.calendarDuration);
+    selectedStart = '';
+    renderDuration();
+    renderSlots();
+  }));
   confirmButton.addEventListener('click', () => {
     if (!selectedDate || !selectedStart) return;
     const form = document.querySelector('.contact-form');
     if (!form) return;
     form.elements.preferredDate.value = toIsoDate(selectedDate);
     form.elements.preferredTime.value = selectedStart;
+    form.elements.rentalDuration.value = String(selectedDuration);
+    form.elements.estimatedPrice.value = String(calculatePrice(selectedDuration).value);
     form.scrollIntoView({ behavior: 'smooth', block: 'center' });
     window.setTimeout(() => form.elements.preferredDate.focus({ preventScroll: true }), 500);
   });
 
   renderDays();
+  renderDuration();
   renderSlots();
 }
 
