@@ -105,6 +105,48 @@ a { color:inherit; text-decoration:none; }
 .contact-form .form-message.is-success { color:#79d99a; }
 .contact-form .form-message.is-info { color:#c9c9cc; }
 .contact-form button[disabled] { cursor:wait; opacity:.65; }
+.booking { padding:96px 0 110px; background:var(--bg); }
+.booking__heading { display:flex; align-items:flex-end; justify-content:space-between; gap:28px; margin-bottom:38px; }
+.booking__heading > div { max-width:760px; }
+.booking h2 { margin:0 0 14px; font-size:46px; font-weight:400; line-height:1.2; }
+.booking__heading p { margin:0; color:#c9c9cc; font-size:17px; line-height:1.55; }
+.booking__demo-badge { flex:0 0 auto; padding:8px 14px; border:1px solid rgba(238,97,85,.55); border-radius:20px; color:#ff9289; background:rgba(238,97,85,.09); font-size:12px; font-weight:600; }
+.studio-calendar { display:grid; grid-template-columns:minmax(0,1.18fr) minmax(340px,.82fr); overflow:hidden; border:1px solid #414146; border-radius:28px; background:#2b2b2f; box-shadow:0 28px 70px rgba(0,0,0,.24); }
+.studio-calendar__date-panel { padding:34px; }
+.studio-calendar__toolbar { display:grid; grid-template-columns:42px 1fr 42px; align-items:center; gap:12px; margin-bottom:28px; }
+.studio-calendar__toolbar h3 { margin:0; text-align:center; font-size:22px; font-weight:500; text-transform:capitalize; }
+.studio-calendar__month-nav { width:42px; height:42px; border:1px solid #505056; border-radius:50%; color:#fff; background:#36363b; font-size:28px; cursor:pointer; transition:.2s; }
+.studio-calendar__month-nav:hover:not(:disabled) { border-color:var(--red); background:var(--red); }
+.studio-calendar__month-nav:disabled { cursor:not-allowed; opacity:.3; }
+.studio-calendar__weekdays,.studio-calendar__days { display:grid; grid-template-columns:repeat(7,1fr); gap:8px; }
+.studio-calendar__weekdays { margin-bottom:9px; color:#a8a8ad; font-size:11px; font-weight:600; text-align:center; text-transform:uppercase; }
+.studio-calendar__day { display:grid; place-items:center; width:100%; aspect-ratio:1; border:1px solid transparent; border-radius:14px; color:#fff; background:#36363b; font:500 14px 'Poppins',sans-serif; cursor:pointer; transition:border-color .2s,background .2s,transform .2s; }
+.studio-calendar__day:hover:not(:disabled) { border-color:var(--red); transform:translateY(-1px); }
+.studio-calendar__day.is-today { border-color:#77777d; }
+.studio-calendar__day.is-selected { border-color:var(--red); color:#171719; background:var(--red); box-shadow:0 10px 22px rgba(238,97,85,.24); }
+.studio-calendar__day:disabled { color:#6f6f74; background:#2d2d31; cursor:not-allowed; }
+.studio-calendar__day-placeholder { aspect-ratio:1; }
+.studio-calendar__legend { display:flex; flex-wrap:wrap; gap:18px; margin-top:24px; color:#aaaab0; font-size:11px; }
+.studio-calendar__legend span { display:flex; align-items:center; gap:7px; }
+.studio-calendar__legend i { width:10px; height:10px; border-radius:50%; background:#36363b; }
+.studio-calendar__legend .is-selected { background:var(--red); }
+.studio-calendar__legend .is-unavailable { background:#29292d; border:1px solid #55555a; }
+.studio-calendar__time-panel { display:flex; flex-direction:column; min-width:0; padding:34px; background:#171719; }
+.studio-calendar__time-heading p { margin:0 0 4px; color:#99999e; font-size:12px; text-transform:uppercase; letter-spacing:.06em; }
+.studio-calendar__time-heading h3 { margin:0 0 5px; font-size:22px; font-weight:500; }
+.studio-calendar__time-heading span { color:#aaaab0; font-size:12px; }
+.studio-calendar__slots { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:26px 0; }
+.studio-calendar__slot { min-height:44px; border:1px solid #4a4a50; border-radius:12px; color:#fff; background:#29292d; font:500 14px 'Poppins',sans-serif; cursor:pointer; transition:.2s; }
+.studio-calendar__slot:hover:not(:disabled) { border-color:var(--red); }
+.studio-calendar__slot.is-selected { border-color:var(--red); color:#171719; background:var(--red); }
+.studio-calendar__slot:disabled { color:#66666b; text-decoration:line-through; cursor:not-allowed; opacity:.65; }
+.studio-calendar__empty { grid-column:1/-1; margin:0; color:#aaaab0; font-size:14px; }
+.studio-calendar__summary { display:grid; gap:18px; padding:20px; margin-top:auto; border:1px solid #3e3e43; border-radius:18px; background:#222226; }
+.studio-calendar__summary div { display:grid; gap:3px; }
+.studio-calendar__summary span { color:#99999e; font-size:11px; text-transform:uppercase; }
+.studio-calendar__summary strong { font-size:17px; font-weight:500; }
+.studio-calendar__summary small { color:#ff8d84; font-size:14px; }
+.studio-calendar__notice { margin:18px 0 0; color:#77777c; font-size:11px; line-height:1.5; }
 .control-room { display:block; width:100%; height:720px; border:0; background:url('../images/control-room.jpg') center/cover no-repeat; object-fit:cover; object-position:center; filter:saturate(.72) brightness(.74); }
 .full-service { padding:104px 0 64px; }
 .full-service__copy { max-width:760px; }
@@ -191,6 +233,19 @@ a { color:inherit; text-decoration:none; }
   .form-field input,.form-field select { height:50px; }
   .contact-form__footer { align-items:flex-start; flex-direction:column; gap:10px; }
   .contact-form .button { width:100%; }
+  .booking { padding:68px 0 78px; }
+  .booking__heading { align-items:flex-start; flex-direction:column; gap:16px; margin-bottom:28px; }
+  .booking h2 { font-size:30px; }
+  .booking__heading p { font-size:14px; }
+  .studio-calendar { grid-template-columns:1fr; border-radius:20px; }
+  .studio-calendar__date-panel,.studio-calendar__time-panel { padding:22px 18px; }
+  .studio-calendar__toolbar { margin-bottom:22px; }
+  .studio-calendar__toolbar h3 { font-size:19px; }
+  .studio-calendar__weekdays,.studio-calendar__days { gap:5px; }
+  .studio-calendar__day { border-radius:10px; font-size:12px; }
+  .studio-calendar__legend { gap:12px; margin-top:18px; }
+  .studio-calendar__slots { grid-template-columns:repeat(2,1fr); }
+  .studio-calendar__summary .button { width:100%; }
   .control-room { height:515px; background-position:64% center; }
   .full-service { padding:66px 0 50px; }
   .full-service__copy { padding-inline:30px; }

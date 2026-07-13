@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="assets/styles/main.css?v=7" />
+    <link rel="stylesheet" href="assets/styles/main.css?v=9" />
   </head>
   <body>
     <header class="hero" id="start">
@@ -21,7 +21,7 @@
       </nav>
       <div class="hero__content">
         <img class="hero__logo" src="assets/images/logo.svg" alt="Studio Link" />
-        <a class="button button--primary" href="tel:+48533633991">Zarezerwuj nagranie</a>
+        <a class="button button--primary" href="#rezerwacja">Zarezerwuj nagranie</a>
         <a class="button button--outline" href="#nagrywamy">Sprawdź ofertę</a>
       </div>
       <div class="hero__tagline">Nagrywaj wideo i podcasty<br />w samym centrum Warszawy</div>
@@ -133,6 +133,10 @@
                 <span>Preferowany termin</span>
                 <input name="preferredDate" type="date" />
               </label>
+              <label class="form-field form-field--time">
+                <span>Preferowana godzina rozpoczęcia</span>
+                <input name="preferredTime" type="time" step="1800" />
+              </label>
               <label class="form-field form-field--wide">
                 <span>Opowiedz nam o projekcie <b aria-hidden="true">*</b></span>
                 <textarea name="message" rows="5" minlength="10" maxlength="2000" placeholder="Napisz, co chcesz nagrać, dla ilu osób i jaki efekt chcesz uzyskać." required></textarea>
@@ -149,6 +153,43 @@
             </div>
             <p class="form-message" role="status" aria-live="polite"></p>
           </form>
+        </div>
+      </section>
+
+      <section class="booking" id="rezerwacja">
+        <div class="container booking__inner">
+          <div class="booking__heading">
+            <div>
+              <h2>Zarezerwuj termin nagrania</h2>
+              <p>Wybierz dzień i godzinę rozpoczęcia. Minimalny czas wynajmu studia to 3 godziny.</p>
+            </div>
+            <span class="booking__demo-badge">Wersja testowa</span>
+          </div>
+          <div class="studio-calendar" data-studio-calendar>
+            <div class="studio-calendar__date-panel">
+              <div class="studio-calendar__toolbar">
+                <button class="studio-calendar__month-nav" type="button" data-calendar-prev aria-label="Poprzedni miesiąc">‹</button>
+                <h3 data-calendar-month></h3>
+                <button class="studio-calendar__month-nav" type="button" data-calendar-next aria-label="Następny miesiąc">›</button>
+              </div>
+              <div class="studio-calendar__weekdays" aria-hidden="true"><span>Pon</span><span>Wt</span><span>Śr</span><span>Czw</span><span>Pt</span><span>Sob</span><span>Nd</span></div>
+              <div class="studio-calendar__days" data-calendar-days role="grid" aria-label="Wybierz dzień nagrania"></div>
+              <div class="studio-calendar__legend"><span><i class="is-available"></i>Dostępny</span><span><i class="is-selected"></i>Wybrany</span><span><i class="is-unavailable"></i>Niedostępny</span></div>
+            </div>
+            <div class="studio-calendar__time-panel">
+              <div class="studio-calendar__time-heading">
+                <p>Wybrany dzień</p>
+                <h3 data-calendar-selected-date>Wybierz datę</h3>
+                <span>Godziny rozpoczęcia • wynajem 3 godz.</span>
+              </div>
+              <div class="studio-calendar__slots" data-calendar-slots aria-live="polite"></div>
+              <div class="studio-calendar__summary" data-calendar-summary hidden>
+                <div><span>Twój termin</span><strong data-calendar-summary-date></strong><small data-calendar-summary-time></small></div>
+                <button class="button button--primary" type="button" data-calendar-confirm>Wybieram ten termin</button>
+              </div>
+              <p class="studio-calendar__notice">Widoczne terminy są demonstracyjne. Synchronizację z Google Calendar podłączymy po uruchomieniu backendu.</p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -215,6 +256,6 @@
     </div>
 
     <footer class="footer"><a href="#" aria-label="Facebook">f</a><a href="#" aria-label="Instagram">◎</a><a href="#" aria-label="YouTube">▶</a><a href="#" aria-label="TikTok">♪</a><a href="#" aria-label="LinkedIn">in</a></footer>
-    <script src="assets/scripts/main.js?v=7"></script>
+    <script src="assets/scripts/main.js?v=8"></script>
   </body>
 </html>

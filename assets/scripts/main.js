@@ -227,6 +227,157 @@ if (lightbox && galleryItems.length) {
   });
 }
 
+const studioCalendar = document.querySelector('[data-studio-calendar]');
+
+if (studioCalendar) {
+  const daysContainer = studioCalendar.querySelector('[data-calendar-days]');
+  const slotsContainer = studioCalendar.querySelector('[data-calendar-slots]');
+  const monthLabel = studioCalendar.querySelector('[data-calendar-month]');
+  const selectedDateLabel = studioCalendar.querySelector('[data-calendar-selected-date]');
+  const summary = studioCalendar.querySelector('[data-calendar-summary]');
+  const summaryDate = studioCalendar.querySelector('[data-calendar-summary-date]');
+  const summaryTime = studioCalendar.querySelector('[data-calendar-summary-time]');
+  const previousButton = studioCalendar.querySelector('[data-calendar-prev]');
+  const nextButton = studioCalendar.querySelector('[data-calendar-next]');
+  const confirmButton = studioCalendar.querySelector('[data-calendar-confirm]');
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const firstAllowedMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const lastAllowedMonth = new Date(today.getFullYear(), today.getMonth() + 2, 1);
+  let displayedMonth = new Date(firstAllowedMonth);
+  let selectedDate = null;
+  let selectedStart = '';
+
+  const monthFormatter = new Intl.DateTimeFormat('pl-PL', { month: 'long', year: 'numeric' });
+  const fullDateFormatter = new Intl.DateTimeFormat('pl-PL', { weekday: 'long', day: 'numeric', month: 'long' });
+  const summaryDateFormatter = new Intl.DateTimeFormat('pl-PL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const capitalize = (value) => value.charAt(0).toUpperCase() + value.slice(1);
+  const sameDay = (first, second) => first && second
+    && first.getFullYear() === second.getFullYear()
+    && first.getMonth() === second.getMonth()
+    && first.getDate() === second.getDate();
+  const toIsoDate = (date) => [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, '0'),
+    String(date.getDate()).padStart(2, '0'),
+  ].join('-');
+  const isWorkingDay = (date) => date >= today && date.getDay() !== 0 && date.getDay() !== 6;
+  const addHours = (time, hours) => {
+    const [hour, minute] = time.split(':').map(Number);
+    return `${String(hour + hours).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+  };
+
+  const renderSummary = () => {
+    if (!selectedDate || !selectedStart) {
+      summary.hidden = true;
+      return;
+    }
+    summaryDate.textContent = capitalize(summaryDateFormatter.format(selectedDate));
+    summaryTime.textContent = `${selectedStart}–${addHours(selectedStart, 3)} (3 godz.)`;
+    summary.hidden = false;
+  };
+
+  const renderSlots = () => {
+    slotsContainer.replaceChildren();
+    selectedDateLabel.textContent = selectedDate
+      ? capitalize(fullDateFormatter.format(selectedDate))
+      : 'Wybierz datę';
+
+    if (!selectedDate) {
+      const prompt = document.createElement('p');
+      prompt.className = 'studio-calendar__empty';
+      prompt.textContent = 'Najpierw wybierz dostępny dzień w kalendarzu.';
+      slotsContainer.append(prompt);
+      renderSummary();
+      return;
+    }
+
+    for (let minutes = 9 * 60; minutes <= 15 * 60; minutes += 30) {
+      const hour = Math.floor(minutes / 60);
+      const minute = minutes % 60;
+      const time = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+      const button = document.createElement('button');
+      const isDemoBusy = (selectedDate.getDate() + (minutes / 30)) % 9 === 0;
+      button.type = 'button';
+      button.className = 'studio-calendar__slot';
+      button.textContent = time;
+      button.disabled = isDemoBusy;
+      button.setAttribute('aria-label', isDemoBusy ? `${time}, termin niedostępny` : `${time}, wybierz godzinę rozpoczęcia`);
+      button.setAttribute('aria-pressed', String(selectedStart === time));
+      button.classList.toggle('is-selected', selectedStart === time);
+      button.addEventListener('click', () => {
+        selectedStart = time;
+        renderSlots();
+      });
+      slotsContainer.append(button);
+    }
+    renderSummary();
+  };
+
+  const selectDate = (date) => {
+    selectedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    selectedStart = '';
+    renderDays();
+    renderSlots();
+  };
+
+  const renderDays = () => {
+    daysContainer.replaceChildren();
+    monthLabel.textContent = capitalize(monthFormatter.format(displayedMonth));
+    const firstDay = new Date(displayedMonth.getFullYear(), displayedMonth.getMonth(), 1);
+    const daysInMonth = new Date(displayedMonth.getFullYear(), displayedMonth.getMonth() + 1, 0).getDate();
+    const mondayOffset = (firstDay.getDay() + 6) % 7;
+
+    for (let index = 0; index < mondayOffset; index += 1) {
+      const spacer = document.createElement('span');
+      spacer.className = 'studio-calendar__day-spacer';
+      spacer.setAttribute('aria-hidden', 'true');
+      daysContainer.append(spacer);
+    }
+
+    for (let day = 1; day <= daysInMonth; day += 1) {
+      const date = new Date(displayedMonth.getFullYear(), displayedMonth.getMonth(), day);
+      const button = document.createElement('button');
+      const available = isWorkingDay(date);
+      button.type = 'button';
+      button.className = 'studio-calendar__day';
+      button.textContent = String(day);
+      button.disabled = !available;
+      button.setAttribute('role', 'gridcell');
+      button.setAttribute('aria-label', `${capitalize(fullDateFormatter.format(date))}${available ? '' : ', niedostępny'}`);
+      button.setAttribute('aria-selected', String(sameDay(date, selectedDate)));
+      button.classList.toggle('is-today', sameDay(date, today));
+      button.classList.toggle('is-selected', sameDay(date, selectedDate));
+      if (available) button.addEventListener('click', () => selectDate(date));
+      daysContainer.append(button);
+    }
+
+    previousButton.disabled = displayedMonth <= firstAllowedMonth;
+    nextButton.disabled = displayedMonth >= lastAllowedMonth;
+  };
+
+  previousButton.addEventListener('click', () => {
+    displayedMonth = new Date(displayedMonth.getFullYear(), displayedMonth.getMonth() - 1, 1);
+    renderDays();
+  });
+  nextButton.addEventListener('click', () => {
+    displayedMonth = new Date(displayedMonth.getFullYear(), displayedMonth.getMonth() + 1, 1);
+    renderDays();
+  });
+  confirmButton.addEventListener('click', () => {
+    if (!selectedDate || !selectedStart) return;
+    const form = document.querySelector('.contact-form');
+    if (!form) return;
+    form.elements.preferredDate.value = toIsoDate(selectedDate);
+    form.elements.preferredTime.value = selectedStart;
+    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    window.setTimeout(() => form.elements.preferredDate.focus({ preventScroll: true }), 500);
+  });
+
+  renderDays();
+  renderSlots();
+}
+
 const contactForm = document.querySelector('.contact-form');
 
 contactForm?.addEventListener('submit', async (event) => {
