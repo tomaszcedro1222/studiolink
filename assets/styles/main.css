@@ -16,9 +16,9 @@ a { color:inherit; text-decoration:none; }
 .hero { position:relative; min-height:800px; overflow:hidden; background:linear-gradient(90deg,rgba(0,0,0,.52),rgba(0,0,0,.12)),url('../images/hero-studio.jpg') center/cover no-repeat; }
 .hero::after { content:""; position:absolute; z-index:1; inset:0; background:linear-gradient(90deg,rgba(0,0,0,.48),rgba(0,0,0,.08)),linear-gradient(0deg,rgba(0,0,0,.5),transparent 52%); pointer-events:none; }
 .hero__video { position:absolute; z-index:0; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; }
-.hero__content { position:absolute; z-index:2; top:245px; left:50%; display:flex; flex-direction:column; align-items:flex-start; gap:18px; width:300px; transform:translateX(-48%); }
+.hero__content { position:absolute; z-index:2; top:245px; left:50%; display:flex; flex-direction:column; align-items:center; gap:18px; width:300px; transform:translateX(-50%); }
 .hero__logo { width:197px; height:auto; margin-bottom:6px; }
-.hero__tagline { position:absolute; z-index:2; left:calc(50% - 135px); bottom:50px; font-size:19px; font-weight:500; line-height:1.35; }
+.hero__tagline { position:absolute; z-index:2; left:50%; bottom:50px; width:max-content; transform:translateX(-50%); font-size:19px; font-weight:500; line-height:1.35; text-align:center; }
 .menu-button,.menu { display:none; }
 .phone-fab { display:flex; align-items:center; justify-content:center; width:52px; height:52px; border-radius:50%; color:#111; background:var(--red); box-shadow:0 18px 25px rgba(238,97,85,.25); font-size:27px; transform:rotate(-18deg); }
 .phone-fab--hero { display:none; }
@@ -102,9 +102,9 @@ a { color:inherit; text-decoration:none; }
   .section-title--spaced { margin-top:70px; }
   .hero { min-height:925px; background-position:56% center; }
   .hero__video { object-position:56% center; }
-  .hero__content { top:320px; left:75px; width:270px; transform:none; }
+  .hero__content { top:320px; left:75px; align-items:flex-start; width:270px; transform:none; }
   .hero__logo { width:190px; }
-  .hero__tagline { left:40px; bottom:75px; font-size:17px; }
+  .hero__tagline { left:40px; bottom:75px; width:auto; transform:none; font-size:17px; text-align:left; }
   .phone-fab--hero { display:flex; position:absolute; z-index:2; right:44px; bottom:72px; }
   .menu-button { position:absolute; z-index:4; top:38px; right:28px; display:flex; flex-direction:column; gap:6px; padding:8px; border:0; background:transparent; }
   .menu-button span { width:24px; height:2px; background:#fff; transition:.2s; }
