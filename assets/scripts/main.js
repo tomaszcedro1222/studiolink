@@ -193,10 +193,10 @@ if (lightbox && galleryItems.length) {
   };
 
   galleryItems.forEach((item, index) => {
-    const caption = item.querySelector('figcaption')?.textContent.trim() || `zdjęcie ${index + 1}`;
+    const caption = item.querySelector('figcaption')?.textContent.trim() || `zdj\u0119cie ${index + 1}`;
     item.tabIndex = 0;
     item.setAttribute('role', 'button');
-    item.setAttribute('aria-label', `Powiększ: ${caption}`);
+    item.setAttribute('aria-label', `Powi\u0119ksz: ${caption}`);
     item.addEventListener('click', () => openLightbox(index));
     item.addEventListener('keydown', (event) => {
       if (event.key !== 'Enter' && event.key !== ' ') return;
@@ -277,10 +277,10 @@ if (studioCalendar) {
       const extraHours = hours - 5;
       return {
         value: 2000 + extraHours * 400,
-        note: extraHours === 0 ? 'pakiet pół dnia' : `2000 zł za 5 godz. + ${extraHours} × 400 zł`,
+        note: extraHours === 0 ? 'pakiet p\u00f3\u0142 dnia' : `2000 z\u0142 za 5 godz. + ${extraHours} \u00d7 400 z\u0142`,
       };
     }
-    return { value: hours * 450, note: `${hours} × 450 zł/h` };
+    return { value: hours * 450, note: `${hours} \u00d7 450 z\u0142/h` };
   };
   const getDemoBookings = (date) => {
     const bookings = [];
@@ -318,7 +318,7 @@ if (studioCalendar) {
     }
     summaryDate.textContent = capitalize(summaryDateFormatter.format(selectedDate));
     const price = calculatePrice(selectedDuration);
-    summaryTime.textContent = `${selectedStart}–${addHours(selectedStart, selectedDuration)} (${selectedDuration} godz.)`;
+    summaryTime.textContent = `${selectedStart}\u2013${addHours(selectedStart, selectedDuration)} (${selectedDuration} godz.)`;
     summaryPrice.textContent = `Cena: ${priceFormatter.format(price.value)}`;
     summary.hidden = false;
   };
@@ -327,12 +327,12 @@ if (studioCalendar) {
     slotsContainer.replaceChildren();
     selectedDateLabel.textContent = selectedDate
       ? capitalize(fullDateFormatter.format(selectedDate))
-      : 'Wybierz datę';
+      : 'Wybierz dat\u0119';
 
     if (!selectedDate) {
       const prompt = document.createElement('p');
       prompt.className = 'studio-calendar__empty';
-      prompt.textContent = 'Najpierw wybierz dostępny dzień w kalendarzu.';
+      prompt.textContent = 'Najpierw wybierz dost\u0119pny dzie\u0144 w kalendarzu.';
       slotsContainer.append(prompt);
       renderSummary();
       return;
@@ -349,7 +349,7 @@ if (studioCalendar) {
       button.className = 'studio-calendar__slot';
       button.textContent = time;
       button.disabled = overlapsBooking;
-      button.setAttribute('aria-label', overlapsBooking ? `${time}, rezerwacja nakłada się na zajęty termin` : `${time}, wybierz godzinę rozpoczęcia`);
+      button.setAttribute('aria-label', overlapsBooking ? `${time}, rezerwacja nak\u0142ada si\u0119 na zaj\u0119ty termin` : `${time}, wybierz godzin\u0119 rozpocz\u0119cia`);
       button.setAttribute('aria-pressed', String(selectedStart === time));
       button.classList.toggle('is-selected', selectedStart === time);
       button.addEventListener('click', () => {
@@ -391,7 +391,7 @@ if (studioCalendar) {
       button.textContent = String(day);
       button.disabled = !available;
       button.setAttribute('role', 'gridcell');
-      button.setAttribute('aria-label', `${capitalize(fullDateFormatter.format(date))}${available ? '' : ', niedostępny'}`);
+      button.setAttribute('aria-label', `${capitalize(fullDateFormatter.format(date))}${available ? '' : ', niedost\u0119pny'}`);
       button.setAttribute('aria-selected', String(sameDay(date, selectedDate)));
       button.classList.toggle('is-today', sameDay(date, today));
       button.classList.toggle('is-selected', sameDay(date, selectedDate));
@@ -450,21 +450,21 @@ contactForm?.addEventListener('submit', async (event) => {
 
   form.classList.add('was-validated');
   if (!form.checkValidity()) {
-    setMessage('Uzupełnij wymagane pola i sprawdź poprawność danych.', 'error');
+    setMessage('Uzupe\u0142nij wymagane pola i sprawd\u017a poprawno\u015b\u0107 danych.', 'error');
     form.reportValidity();
     return;
   }
 
   const formData = new FormData(form);
   if (formData.get('website')) {
-    setMessage('Dziękujemy! Wiadomość została przyjęta.', 'success');
+    setMessage('Dzi\u0119kujemy! Wiadomo\u015b\u0107 zosta\u0142a przyj\u0119ta.', 'success');
     form.reset();
     return;
   }
 
   const endpoint = form.dataset.endpoint;
   if (!endpoint) {
-    setMessage('Formularz jest gotowy. Wysyłka zostanie uruchomiona po podłączeniu docelowego serwera.', 'info');
+    setMessage('Formularz jest gotowy. Wysy\u0142ka zostanie uruchomiona po pod\u0142\u0105czeniu docelowego serwera.', 'info');
     return;
   }
 
@@ -474,7 +474,7 @@ contactForm?.addEventListener('submit', async (event) => {
 
   submitButton.disabled = true;
   form.setAttribute('aria-busy', 'true');
-  setMessage('Wysyłamy wiadomość…', 'info');
+  setMessage('Wysy\u0142amy wiadomo\u015b\u0107\u2026', 'info');
 
   try {
     const response = await fetch(endpoint, {
@@ -483,11 +483,11 @@ contactForm?.addEventListener('submit', async (event) => {
       body: JSON.stringify(payload),
     });
     if (!response.ok) throw new Error('Contact form request failed');
-    setMessage('Dziękujemy! Odpowiemy najszybciej, jak to możliwe.', 'success');
+    setMessage('Dzi\u0119kujemy! Odpowiemy najszybciej, jak to mo\u017cliwe.', 'success');
     form.reset();
     form.classList.remove('was-validated');
   } catch {
-    setMessage('Nie udało się wysłać wiadomości. Spróbuj ponownie lub skontaktuj się z nami telefonicznie.', 'error');
+    setMessage('Nie uda\u0142o si\u0119 wys\u0142a\u0107 wiadomo\u015bci. Spr\u00f3buj ponownie lub skontaktuj si\u0119 z nami telefonicznie.', 'error');
   } finally {
     submitButton.disabled = false;
     form.removeAttribute('aria-busy');
