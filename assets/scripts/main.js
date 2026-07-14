@@ -277,7 +277,7 @@ if (studioCalendar) {
       const extraHours = hours - 5;
       return {
         value: 2000 + extraHours * 400,
-        note: extraHours === 0 ? 'pakiet p\u00f3\u0142 dnia \u2022 400 z\u0142/h' : `2000 z\u0142 za 5 godz. + ${extraHours} \u00d7 400 z\u0142`,
+        note: extraHours === 0 ? 'pakiet p\u00f3\u0142 dnia \u2022 400 z\u0142/h' : '400 z\u0142/h',
       };
     }
     return { value: hours * 450, note: `${hours} \u00d7 450 z\u0142/h` };
