@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="assets/styles/main.css?v=28" />
+    <link rel="stylesheet" href="assets/styles/main.css?v=29" />
   </head>
   <body>
     <header class="hero" id="start">
@@ -89,11 +89,29 @@
         <div class="container">
           <h2 class="section-title">Cennik</h2>
           <div class="pricing__list">
-            <div><p>Rozliczanie godzinowe <small>(minimum 3 godz.)</small></p><strong>450 zł/h</strong></div>
-            <div><p>Pół dnia <small>(5 godz.)</small></p><strong>2000 zł</strong></div>
-            <div><p>Cały dzień <small>(10 godz.)</small></p><strong>4000 zł</strong></div>
+            <article class="pricing-card">
+              <div class="pricing-card__top"><span>01</span><small>minimum 3 godz.</small></div>
+              <h3>Rozliczanie godzinowe</h3>
+              <div class="pricing-card__price"><strong>450 zł</strong><span>/ godz.</span></div>
+            </article>
+            <article class="pricing-card">
+              <div class="pricing-card__top"><span>02</span><small>5 godzin</small></div>
+              <h3>Pół dnia</h3>
+              <div class="pricing-card__price"><strong>2000 zł</strong></div>
+            </article>
+            <article class="pricing-card">
+              <div class="pricing-card__top"><span>03</span><small>10 godzin</small></div>
+              <h3>Cały dzień</h3>
+              <div class="pricing-card__price"><strong>4000 zł</strong></div>
+            </article>
           </div>
-          <div class="pricing__reserve"><span>Zarezerwuj</span><a href="tel:+48533633991">☎ <b>533 633 991</b></a></div>
+          <div class="pricing__reserve">
+            <div><strong>Wybierz dogodny termin</strong><span>Sprawdź aktualną dostępność studia.</span></div>
+            <div class="pricing__actions">
+              <a class="button button--primary" href="#rezerwacja">Sprawdź wolne terminy</a>
+              <a class="pricing__phone" href="tel:+48533633991">☎ <b>533 633 991</b></a>
+            </div>
+          </div>
         </div>
       </section>
 
