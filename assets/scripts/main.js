@@ -273,7 +273,6 @@ if (studioCalendar) {
   const previousButton = studioCalendar.querySelector('[data-calendar-prev]');
   const nextButton = studioCalendar.querySelector('[data-calendar-next]');
   const confirmButton = studioCalendar.querySelector('[data-calendar-confirm]');
-  const notice = studioCalendar.querySelector('.studio-calendar__notice');
   const availabilityEndpoint = studioCalendar.dataset.availabilityEndpoint;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -457,7 +456,6 @@ if (studioCalendar) {
 
   const loadAvailability = async () => {
     availabilityState = 'loading';
-    notice.textContent = 'Pobieramy aktualn\u0105 dost\u0119pno\u015b\u0107 z Google Calendar\u2026';
     renderDays();
     renderSlots();
 
@@ -485,7 +483,6 @@ if (studioCalendar) {
       });
       busyBookings = nextBusyBookings;
       availabilityState = 'ready';
-      notice.textContent = 'Terminy s\u0105 synchronizowane na bie\u017c\u0105co z Google Calendar.';
       if (selectedDate && !hasAvailableSlot(selectedDate, selectedDuration)) {
         selectedDate = null;
         selectedStart = '';
@@ -498,7 +495,6 @@ if (studioCalendar) {
       availabilityState = 'error';
       selectedDate = null;
       selectedStart = '';
-      notice.textContent = 'Nie uda\u0142o si\u0119 po\u0142\u0105czy\u0107 z kalendarzem. Spr\u00f3buj ponownie p\u00f3\u017aniej lub zadzwo\u0144 do nas.';
     }
 
     renderDays();

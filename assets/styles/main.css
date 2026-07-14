@@ -192,7 +192,6 @@ a { color:inherit; text-decoration:none; }
 .studio-calendar__summary strong { font-size:17px; font-weight:500; }
 .studio-calendar__summary small { color:#ff8d84; font-size:14px; }
 .studio-calendar__summary b { margin-top:5px; color:#fff; font-size:16px; font-weight:600; }
-.studio-calendar__notice { margin:18px 0 0; color:#77777c; font-size:11px; line-height:1.5; }
 .control-room { display:block; width:100%; height:720px; border:0; background:url('../images/control-room.jpg') center/cover no-repeat; object-fit:cover; object-position:center; filter:saturate(.72) brightness(.74); }
 .portfolio { padding-top:70px; }
 .portfolio__grid { display:grid; grid-template-columns:1fr 1fr; gap:40px; }
