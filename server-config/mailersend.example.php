@@ -7,6 +7,8 @@ return [
     'api_token' => 'WKLEJ_TUTAJ_TOKEN_MAILERSEND',
     'from_email' => 'formularz@TWOJA_DOKLADNA_DOMENA_TESTOWA.mlsender.net',
     'from_name' => 'Formularz Studio Link',
-    'to_email' => 'stanislaw.komar@linkvisuals.pl',
-    'to_name' => 'Studio Link',
+    'to_emails' => [
+        'stanislaw.komar@linkvisuals.pl',
+        'DRUGI_ADRES_EMAIL',
+    ],
 ];

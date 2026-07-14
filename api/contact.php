@@ -78,7 +78,16 @@ if (!is_file($configPath)) {
 }
 
 $config = require $configPath;
-if (!is_array($config) || empty($config['api_token']) || empty($config['from_email']) || empty($config['to_email'])) {
+if (!is_array($config)) {
+    error_log('MailerSend config is invalid');
+    respond(503, ['ok' => false, 'message' => 'Mail service is not configured']);
+}
+$recipientEmails = $config['to_emails'] ?? [($config['to_email'] ?? '')];
+$recipientEmails = array_values(array_filter(
+    is_array($recipientEmails) ? $recipientEmails : [],
+    static fn ($address): bool => is_string($address) && filter_var($address, FILTER_VALIDATE_EMAIL) !== false
+));
+if (empty($config['api_token']) || empty($config['from_email']) || count($recipientEmails) < 1 || count($recipientEmails) > 2) {
     error_log('MailerSend config is invalid');
     respond(503, ['ok' => false, 'message' => 'Mail service is not configured']);
 }
@@ -114,10 +123,10 @@ $mail = [
         'email' => (string) $config['from_email'],
         'name' => (string) ($config['from_name'] ?? 'Formularz Studio Link'),
     ],
-    'to' => [[
-        'email' => (string) $config['to_email'],
-        'name' => (string) ($config['to_name'] ?? 'Studio Link'),
-    ]],
+    'to' => array_map(
+        static fn (string $address): array => ['email' => $address, 'name' => 'Studio Link'],
+        $recipientEmails
+    ),
     'reply_to' => ['email' => $email, 'name' => $name],
     'subject' => 'Nowe zapytanie ze strony — ' . $name,
     'text' => implode("\n", $textLines),
