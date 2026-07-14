@@ -1,6 +1,7 @@
 :root { --red:#ee6155; --bg:#222226; --black:#000; --tile:#3c3c40; --text:#fff; --muted:#bababc; --max:1200px; }
 * { box-sizing:border-box; }
 html { scroll-behavior:smooth; background:var(--bg); }
+@media (min-width:701px) { html { scroll-behavior:auto; } }
 body { margin:0; color:var(--text); background:var(--bg); font-family:'Poppins',Arial,sans-serif; font-weight:400; }
 main { display:flex; flex-direction:column; }
 main > .services { order:10; }

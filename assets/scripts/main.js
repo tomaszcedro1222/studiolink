@@ -5,6 +5,36 @@ const bookingSection = document.querySelector('#rezerwacja');
 const newsletterSection = document.querySelector('.newsletter');
 const clientsSection = document.querySelector('.clients');
 const segmentedVideos = [...document.querySelectorAll('video[data-loop-start]')];
+let desktopScrollFrame;
+
+const cancelDesktopScroll = () => {
+  if (!desktopScrollFrame) return;
+  cancelAnimationFrame(desktopScrollFrame);
+  desktopScrollFrame = null;
+};
+
+const animateDesktopScroll = (target) => {
+  cancelDesktopScroll();
+  const scrollingElement = document.scrollingElement || document.documentElement;
+  const startPosition = scrollingElement.scrollTop;
+  const targetPosition = Math.max(0, target.getBoundingClientRect().top + startPosition);
+  const distance = targetPosition - startPosition;
+  if (Math.abs(distance) < 2) return;
+
+  const duration = Math.min(850, Math.max(520, Math.abs(distance) * 0.16));
+  const startTime = performance.now();
+  const step = (currentTime) => {
+    const progress = Math.min((currentTime - startTime) / duration, 1);
+    const easedProgress = 1 - Math.pow(1 - progress, 3);
+    scrollingElement.scrollTop = startPosition + distance * easedProgress;
+    if (progress < 1) desktopScrollFrame = requestAnimationFrame(step);
+    else desktopScrollFrame = null;
+  };
+
+  desktopScrollFrame = requestAnimationFrame(step);
+};
+
+window.addEventListener('wheel', cancelDesktopScroll, { passive: true });
 
 document.addEventListener('click', (event) => {
   if (window.innerWidth <= 700 || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -23,9 +53,8 @@ document.addEventListener('click', (event) => {
   if (!target) return;
 
   event.preventDefault();
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   history.pushState(null, '', hash);
-  target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+  animateDesktopScroll(target);
 });
 
 if (clientsSection && 'IntersectionObserver' in window) {
