@@ -9,10 +9,10 @@ main > .facilities { order:30; }
 main > .process { order:40; }
 main > .control-room { order:50; }
 main > .clients { order:60; }
-main > .pricing { order:70; }
-main > .booking { order:80; }
-main > .newsletter { order:90; }
-main > .portfolio { order:100; }
+main > .portfolio { order:70; }
+main > .pricing { order:80; }
+main > .booking { order:90; }
+main > .newsletter { order:100; }
 main > .contact { order:120; }
 img { display:block; max-width:100%; }
 a { color:inherit; text-decoration:none; }
