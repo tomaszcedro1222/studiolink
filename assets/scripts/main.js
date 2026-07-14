@@ -254,6 +254,7 @@ if (lightbox && galleryItems.length) {
   });
 }
 
+let reloadStudioAvailability = null;
 const studioCalendar = document.querySelector('[data-studio-calendar]');
 
 if (studioCalendar) {
@@ -271,6 +272,8 @@ if (studioCalendar) {
   const previousButton = studioCalendar.querySelector('[data-calendar-prev]');
   const nextButton = studioCalendar.querySelector('[data-calendar-next]');
   const confirmButton = studioCalendar.querySelector('[data-calendar-confirm]');
+  const notice = studioCalendar.querySelector('.studio-calendar__notice');
+  const availabilityEndpoint = studioCalendar.dataset.availabilityEndpoint;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const firstAllowedMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -279,6 +282,8 @@ if (studioCalendar) {
   let selectedDate = null;
   let selectedStart = '';
   let selectedDuration = 3;
+  let availabilityState = 'loading';
+  let busyBookings = new Map();
 
   const monthFormatter = new Intl.DateTimeFormat('pl-PL', { month: 'long', year: 'numeric' });
   const fullDateFormatter = new Intl.DateTimeFormat('pl-PL', { weekday: 'long', day: 'numeric', month: 'long' });
@@ -309,15 +314,11 @@ if (studioCalendar) {
     }
     return { value: hours * 450, note: `${hours} \u00d7 450 z\u0142/h` };
   };
-  const getDemoBookings = (date) => {
-    const bookings = [];
-    if (date.getDate() % 3 === 1) bookings.push({ start: 13 * 60, end: 16 * 60 });
-    if (date.getDate() % 4 === 0) bookings.push({ start: 10 * 60, end: 11 * 60 + 30 });
-    return bookings;
-  };
+  const getBookings = (date) => busyBookings.get(toIsoDate(date)) || [];
   const isSlotAvailable = (date, startMinutes, duration) => {
     const endMinutes = startMinutes + duration * 60;
-    return !getDemoBookings(date).some((booking) => startMinutes < booking.end && endMinutes > booking.start);
+    return availabilityState === 'ready'
+      && !getBookings(date).some((booking) => startMinutes < booking.end && endMinutes > booking.start);
   };
   const getLastStartMinutes = (duration) => (duration === 10 ? 9 : 18 - duration) * 60;
   const hasAvailableSlot = (date, duration) => {
@@ -359,7 +360,11 @@ if (studioCalendar) {
     if (!selectedDate) {
       const prompt = document.createElement('p');
       prompt.className = 'studio-calendar__empty';
-      prompt.textContent = 'Najpierw wybierz dost\u0119pny dzie\u0144 w kalendarzu.';
+      prompt.textContent = availabilityState === 'loading'
+        ? 'Pobieramy wolne terminy z kalendarza\u2026'
+        : availabilityState === 'error'
+          ? 'Nie uda\u0142o si\u0119 pobra\u0107 termin\u00f3w. Spr\u00f3buj ponownie p\u00f3\u017aniej.'
+          : 'Najpierw wybierz dost\u0119pny dzie\u0144 w kalendarzu.';
       slotsContainer.append(prompt);
       renderSummary();
       return;
@@ -412,7 +417,9 @@ if (studioCalendar) {
     for (let day = 1; day <= daysInMonth; day += 1) {
       const date = new Date(displayedMonth.getFullYear(), displayedMonth.getMonth(), day);
       const button = document.createElement('button');
-      const available = isWorkingDay(date) && hasAvailableSlot(date, selectedDuration);
+      const available = availabilityState === 'ready'
+        && isWorkingDay(date)
+        && hasAvailableSlot(date, selectedDuration);
       button.type = 'button';
       button.className = 'studio-calendar__day';
       button.textContent = String(day);
@@ -446,6 +453,57 @@ if (studioCalendar) {
     renderDays();
     renderSlots();
   }));
+
+  const loadAvailability = async () => {
+    availabilityState = 'loading';
+    notice.textContent = 'Pobieramy aktualn\u0105 dost\u0119pno\u015b\u0107 z Google Calendar\u2026';
+    renderDays();
+    renderSlots();
+
+    try {
+      if (!availabilityEndpoint) throw new Error('Missing availability endpoint');
+      const lastAllowedDay = new Date(lastAllowedMonth.getFullYear(), lastAllowedMonth.getMonth() + 1, 0);
+      const endpointUrl = new URL(availabilityEndpoint, window.location.href);
+      endpointUrl.searchParams.set('from', toIsoDate(today));
+      endpointUrl.searchParams.set('to', toIsoDate(lastAllowedDay));
+      const response = await fetch(endpointUrl, { headers: { Accept: 'application/json' } });
+      const data = await response.json().catch(() => null);
+      if (!response.ok || !data?.ok || !Array.isArray(data.busy)) {
+        throw new Error('Availability request failed');
+      }
+
+      const nextBusyBookings = new Map();
+      data.busy.forEach((booking) => {
+        if (
+          !/^\d{4}-\d{2}-\d{2}$/.test(booking.date)
+          || !Number.isFinite(booking.start)
+          || !Number.isFinite(booking.end)
+        ) return;
+        if (!nextBusyBookings.has(booking.date)) nextBusyBookings.set(booking.date, []);
+        nextBusyBookings.get(booking.date).push({ start: booking.start, end: booking.end });
+      });
+      busyBookings = nextBusyBookings;
+      availabilityState = 'ready';
+      notice.textContent = 'Terminy s\u0105 synchronizowane na bie\u017c\u0105co z Google Calendar.';
+      if (selectedDate && !hasAvailableSlot(selectedDate, selectedDuration)) {
+        selectedDate = null;
+        selectedStart = '';
+      } else if (selectedDate && selectedStart) {
+        const [hour, minute] = selectedStart.split(':').map(Number);
+        if (!isSlotAvailable(selectedDate, hour * 60 + minute, selectedDuration)) selectedStart = '';
+      }
+    } catch {
+      busyBookings = new Map();
+      availabilityState = 'error';
+      selectedDate = null;
+      selectedStart = '';
+      notice.textContent = 'Nie uda\u0142o si\u0119 po\u0142\u0105czy\u0107 z kalendarzem. Spr\u00f3buj ponownie p\u00f3\u017aniej lub zadzwo\u0144 do nas.';
+    }
+
+    renderDays();
+    renderSlots();
+  };
+  reloadStudioAvailability = loadAvailability;
   confirmButton.addEventListener('click', () => {
     if (!selectedDate || !selectedStart) return;
     const form = document.querySelector('.contact-form');
@@ -461,6 +519,7 @@ if (studioCalendar) {
   renderDays();
   renderDuration();
   renderSlots();
+  loadAvailability();
 }
 
 const contactForm = document.querySelector('.contact-form');
@@ -509,12 +568,29 @@ contactForm?.addEventListener('submit', async (event) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
-    if (!response.ok) throw new Error('Contact form request failed');
-    setMessage('Dzi\u0119kujemy! Odpowiemy najszybciej, jak to mo\u017cliwe.', 'success');
+    const responseData = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      const requestError = new Error('Contact form request failed');
+      requestError.code = responseData.code || '';
+      throw requestError;
+    }
+    setMessage(responseData.booked
+      ? 'Termin zosta\u0142 zapisany w kalendarzu. Skontaktujemy si\u0119 z Tob\u0105, aby potwierdzi\u0107 szczeg\u00f3\u0142y.'
+      : 'Dzi\u0119kujemy! Odpowiemy najszybciej, jak to mo\u017cliwe.', 'success');
     form.reset();
     form.classList.remove('was-validated');
-  } catch {
-    setMessage('Nie uda\u0142o si\u0119 wys\u0142a\u0107 wiadomo\u015bci. Spr\u00f3buj ponownie lub skontaktuj si\u0119 z nami telefonicznie.', 'error');
+    if (responseData.booked) reloadStudioAvailability?.();
+  } catch (error) {
+    if (error.code === 'slot_unavailable') {
+      setMessage('Ten termin zosta\u0142 w\u0142a\u015bnie zaj\u0119ty. Wr\u00f3\u0107 do kalendarza i wybierz inny.', 'error');
+      reloadStudioAvailability?.();
+    } else if (error.code === 'booking_rate_limited') {
+      setMessage('Wys\u0142ano ju\u017c rezerwacj\u0119 z tego urz\u0105dzenia. Odczekaj kilka minut albo zadzwo\u0144 do nas.', 'error');
+    } else if (error.code === 'calendar_unavailable') {
+      setMessage('Kalendarz jest chwilowo niedost\u0119pny. Spr\u00f3buj ponownie p\u00f3\u017aniej lub skontaktuj si\u0119 z nami telefonicznie.', 'error');
+    } else {
+      setMessage('Nie uda\u0142o si\u0119 wys\u0142a\u0107 wiadomo\u015bci. Spr\u00f3buj ponownie lub skontaktuj si\u0119 z nami telefonicznie.', 'error');
+    }
   } finally {
     submitButton.disabled = false;
     form.removeAttribute('aria-busy');

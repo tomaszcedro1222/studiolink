@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/google-calendar.php';
+
 const ALLOWED_ORIGINS = [
     'https://studio.linkvisuals.pl',
     'https://tomaszcedro1222.github.io',
@@ -59,6 +61,10 @@ $email = trim((string) ($payload['email'] ?? ''));
 $phone = trim((string) ($payload['phone'] ?? ''));
 $message = trim((string) ($payload['message'] ?? ''));
 $consent = ($payload['consent'] ?? false) === true;
+$preferredDate = trim((string) ($payload['preferredDate'] ?? ''));
+$preferredTime = trim((string) ($payload['preferredTime'] ?? ''));
+$rentalDuration = trim((string) ($payload['rentalDuration'] ?? ''));
+$hasBookingSelection = $preferredDate !== '' || $preferredTime !== '' || $rentalDuration !== '';
 
 if (
     mb_strlen($name) < 2 || mb_strlen($name) > 120
@@ -69,6 +75,27 @@ if (
     || !$consent
 ) {
     respond(422, ['ok' => false, 'message' => 'Invalid form data']);
+}
+
+$booking = null;
+if ($hasBookingSelection) {
+    $duration = (int) $rentalDuration;
+    if (
+        !preg_match('/^\d{4}-\d{2}-\d{2}$/', $preferredDate)
+        || !preg_match('/^(?:0\d|1\d|2[0-3]):(?:00|30)$/', $preferredTime)
+        || !in_array($duration, range(3, 10), true)
+        || $rentalDuration !== (string) $duration
+    ) {
+        respond(422, ['ok' => false, 'message' => 'Invalid booking data']);
+    }
+
+    $price = $duration >= 5 ? 2000 + ($duration - 5) * 400 : $duration * 450;
+    $booking = [
+        'date' => $preferredDate,
+        'time' => $preferredTime,
+        'duration' => $duration,
+        'price' => $price,
+    ];
 }
 
 $configPath = dirname(__DIR__, 2) . '/private/mailersend.php';
@@ -97,12 +124,126 @@ $details = [
     'Imię i nazwisko' => $name,
     'E-mail' => $email,
     'Telefon' => $phone,
-    'Preferowana data' => $optional('preferredDate'),
-    'Preferowana godzina' => $optional('preferredTime'),
-    'Czas wynajmu' => $optional('rentalDuration') !== '' ? $optional('rentalDuration') . ' h' : '',
-    'Szacowana cena' => $optional('estimatedPrice') !== '' ? $optional('estimatedPrice') . ' zł' : '',
+    'Preferowana data' => $booking['date'] ?? '',
+    'Preferowana godzina' => $booking['time'] ?? '',
+    'Czas wynajmu' => $booking !== null ? $booking['duration'] . ' h' : '',
+    'Szacowana cena' => $booking !== null ? $booking['price'] . ' zł' : '',
     'Wiadomość' => $message,
 ];
+
+$bookingCreated = false;
+if ($booking !== null) {
+    try {
+        $calendarConfig = google_calendar_load_config();
+        $timezone = new DateTimeZone($calendarConfig['timezone']);
+        $bookingStart = DateTimeImmutable::createFromFormat(
+            '!Y-m-d H:i',
+            $booking['date'] . ' ' . $booking['time'],
+            $timezone
+        );
+        $dateErrors = DateTimeImmutable::getLastErrors();
+        if (
+            !$bookingStart
+            || ($dateErrors !== false && ($dateErrors['warning_count'] > 0 || $dateErrors['error_count'] > 0))
+            || $bookingStart->format('Y-m-d H:i') !== $booking['date'] . ' ' . $booking['time']
+        ) {
+            respond(422, ['ok' => false, 'message' => 'Invalid booking data']);
+        }
+
+        $today = new DateTimeImmutable('today', $timezone);
+        $lastAllowedDay = $today->modify('first day of this month')->modify('+3 months')->modify('-1 day');
+        $startMinutes = (int) $bookingStart->format('H') * 60 + (int) $bookingStart->format('i');
+        $lastStartMinutes = ($booking['duration'] === 10 ? 9 : 18 - $booking['duration']) * 60;
+        if (
+            $bookingStart <= $today
+            || $bookingStart > $lastAllowedDay->setTime(23, 59, 59)
+            || (int) $bookingStart->format('N') > 5
+            || $startMinutes < 9 * 60
+            || $startMinutes > $lastStartMinutes
+        ) {
+            respond(422, ['ok' => false, 'message' => 'Invalid booking data']);
+        }
+
+        $bookingEnd = $bookingStart->modify('+' . $booking['duration'] . ' hours');
+        $privateDirectory = dirname(google_calendar_config_path());
+        $lock = fopen($privateDirectory . '/google-calendar-booking.lock', 'c');
+        if ($lock === false || !flock($lock, LOCK_EX)) {
+            throw new RuntimeException('Could not acquire booking lock');
+        }
+
+        try {
+            $ratePath = $privateDirectory . '/google-calendar-booking-rate.json';
+            $rateData = is_file($ratePath) ? json_decode((string) file_get_contents($ratePath), true) : [];
+            $rateData = is_array($rateData) ? $rateData : [];
+            $now = time();
+            $clientKey = hash('sha256', (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
+            $recent = array_values(array_filter(
+                is_array($rateData[$clientKey] ?? null) ? $rateData[$clientKey] : [],
+                static fn ($timestamp): bool => is_int($timestamp) && $timestamp > $now - 86400
+            ));
+            if (count($recent) >= 3 || (!empty($recent) && end($recent) > $now - 300)) {
+                flock($lock, LOCK_UN);
+                fclose($lock);
+                respond(429, [
+                    'ok' => false,
+                    'code' => 'booking_rate_limited',
+                    'message' => 'Too many booking attempts',
+                ]);
+            }
+
+            $busy = google_calendar_busy_periods($calendarConfig, $bookingStart, $bookingEnd);
+            if (google_calendar_has_overlap($busy, $bookingStart, $bookingEnd)) {
+                flock($lock, LOCK_UN);
+                fclose($lock);
+                respond(409, [
+                    'ok' => false,
+                    'code' => 'slot_unavailable',
+                    'message' => 'Selected slot is no longer available',
+                ]);
+            }
+
+            google_calendar_insert_booking($calendarConfig, $bookingStart, $bookingEnd, [
+                'name' => $name,
+                'email' => $email,
+                'phone' => $phone,
+                'duration' => $booking['duration'],
+                'price' => $booking['price'],
+                'message' => $message,
+            ]);
+            $recent[] = $now;
+            $rateData[$clientKey] = $recent;
+            foreach ($rateData as $key => $timestamps) {
+                $valid = array_values(array_filter(
+                    is_array($timestamps) ? $timestamps : [],
+                    static fn ($timestamp): bool => is_int($timestamp) && $timestamp > $now - 86400
+                ));
+                if ($valid === []) {
+                    unset($rateData[$key]);
+                } else {
+                    $rateData[$key] = $valid;
+                }
+            }
+            @file_put_contents(
+                $ratePath,
+                json_encode($rateData, JSON_UNESCAPED_SLASHES),
+                LOCK_EX
+            );
+            $bookingCreated = true;
+        } finally {
+            if (is_resource($lock)) {
+                flock($lock, LOCK_UN);
+                fclose($lock);
+            }
+        }
+    } catch (Throwable $error) {
+        error_log('Google Calendar booking error: ' . $error->getMessage());
+        respond(503, [
+            'ok' => false,
+            'code' => 'calendar_unavailable',
+            'message' => 'Calendar is temporarily unavailable',
+        ]);
+    }
+}
 
 $textLines = [];
 $htmlRows = [];
@@ -168,7 +309,10 @@ foreach ($recipientEmails as $recipientEmail) {
 }
 
 if ($failed) {
+    if ($bookingCreated) {
+        respond(202, ['ok' => true, 'booked' => true, 'emailWarning' => true]);
+    }
     respond(502, ['ok' => false, 'message' => 'Email could not be sent']);
 }
 
-respond(202, ['ok' => true]);
+respond(202, ['ok' => true, 'booked' => $bookingCreated]);
