@@ -308,7 +308,8 @@ a { color:inherit; text-decoration:none; }
   .contact-form .button { width:100%; }
   .facilities__booking-cta { margin-top:30px; }
   .facilities__booking-cta .button { width:100%; }
-  .mobile-booking-cta { position:fixed; z-index:20; right:20px; bottom:max(16px,env(safe-area-inset-bottom)); left:20px; display:flex; align-items:center; justify-content:center; min-height:52px; padding:12px 20px; border-radius:28px; color:#151515; background:var(--red); box-shadow:0 16px 30px rgba(0,0,0,.42),0 10px 24px rgba(238,97,85,.25); font-size:15px; font-weight:600; transition:opacity .2s,transform .2s; }
+  .mobile-booking-cta { position:fixed; z-index:20; right:20px; bottom:max(16px,env(safe-area-inset-bottom)); left:20px; display:flex; align-items:center; justify-content:center; min-height:50px; padding:12px 20px; border:1px solid rgba(255,255,255,.16); border-radius:26px; color:#fff; background:#19191c; box-shadow:0 14px 28px rgba(0,0,0,.45); font-size:14px; font-weight:600; transition:opacity .2s,transform .2s,background .2s; }
+  .mobile-booking-cta:active { background:#2b2b2f; }
   .mobile-booking-cta.is-hidden { opacity:0; pointer-events:none; transform:translateY(14px); }
   .booking { padding:54px 0 64px; }
   .booking__heading { align-items:flex-start; flex-direction:column; gap:16px; margin-bottom:28px; }
