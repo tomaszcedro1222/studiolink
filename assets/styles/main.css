@@ -216,14 +216,15 @@ a { color:inherit; text-decoration:none; }
 .contact { min-height:720px; background:linear-gradient(90deg,rgba(0,0,0,.2),rgba(0,0,0,.35)),url('../images/contact-background.png') center/cover no-repeat; }
 .contact__inner { position:relative; min-height:720px; padding-top:82px; }
 .contact h2 { margin:0; font-size:50px; font-weight:400; line-height:1.25; }
-.contact-card { position:absolute; z-index:1; top:235px; left:0; width:430px; min-height:400px; padding:40px; border-radius:28px; background:var(--bg); }
-.contact-card > img { width:170px; height:170px; margin-bottom:32px; border-radius:18px; object-fit:cover; }
-.contact-card h3 { margin:0 0 26px; font-size:20px; font-weight:500; }
+.contact-card { position:absolute; z-index:1; top:245px; left:0; display:grid; grid-template-columns:170px minmax(0,1fr); align-items:start; gap:34px; width:620px; padding:34px; border-radius:28px; background:var(--bg); box-shadow:0 24px 60px rgba(0,0,0,.18); }
+.contact-card > img { width:170px; height:170px; border-radius:18px; object-fit:cover; }
+.contact-card__details { min-width:0; padding-top:4px; }
+.contact-card h3 { margin:0 0 24px; font-size:20px; font-weight:500; }
 .contact-card h3::after { content:""; display:block; width:32px; height:7px; border-radius:8px; background:var(--red); filter:blur(2px); }
-.contact-card__email { display:inline-block; padding:10px 16px; border-radius:24px; background:var(--tile); }
-.contact-card__phone { display:block; margin:20px 0 30px; color:var(--red); font-size:20px; }
+.contact-card__email { display:inline-block; max-width:100%; padding:10px 16px; border-radius:24px; background:var(--tile); font-size:14px; overflow-wrap:anywhere; }
+.contact-card__phone { display:block; margin:18px 0 22px; color:var(--red); font-size:20px; }
 .contact-card p { margin:0; line-height:1.6; }
-.contact__logo { position:absolute; top:310px; right:38px; width:420px; }
+.contact__logo { position:absolute; top:300px; right:38px; width:400px; }
 .footer { display:flex; justify-content:center; gap:28px; padding:24px; color:#a6a6aa; background:var(--bg); font-weight:600; }
 .footer a { display:grid; place-items:center; min-width:40px; min-height:40px; font-size:26px; line-height:1; transition:color .2s,transform .2s; }
 .footer a:hover { color:#fff; transform:translateY(-2px); }
@@ -317,15 +318,16 @@ a { color:inherit; text-decoration:none; }
   .clients__grid { grid-template-columns:1fr 1fr; gap:12px; }
   .clients__grid div { aspect-ratio:2; padding:14px; border-radius:16px; }
   .clients__grid img { max-width:82%; max-height:42px; }
-  .contact { min-height:1040px; background-position:center; }
-  .contact__inner { min-height:1040px; padding-top:70px; }
+  .contact { min-height:0; background-position:center; }
+  .contact__inner { min-height:0; padding-top:70px; padding-bottom:64px; }
   .contact h2 { font-size:31px; }
-  .contact-card { top:235px; left:0; width:100%; min-height:530px; padding:40px; border-radius:25px; }
-  .contact-card > img { width:170px; height:170px; }
-  .contact-card h3 { font-size:26px; }
+  .contact-card { position:relative; top:auto; left:auto; display:block; width:100%; margin-top:64px; padding:30px; border-radius:25px; }
+  .contact-card > img { width:150px; height:150px; margin-bottom:28px; }
+  .contact-card__details { padding-top:0; }
+  .contact-card h3 { font-size:22px; }
   .contact-card__email { font-size:13px; }
-  .contact-card__phone { font-size:27px; }
-  .contact__logo { top:auto; right:auto; bottom:45px; left:50%; width:240px; transform:translateX(-50%); }
+  .contact-card__phone { font-size:24px; }
+  .contact__logo { position:static; width:220px; margin:56px auto 0; transform:none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
