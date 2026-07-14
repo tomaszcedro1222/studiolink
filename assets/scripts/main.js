@@ -1,6 +1,33 @@
 const menuButton = document.querySelector('.menu-button');
 const menu = document.querySelector('.menu');
+const mobileBookingCta = document.querySelector('.mobile-booking-cta');
+const bookingSection = document.querySelector('#rezerwacja');
+const newsletterSection = document.querySelector('.newsletter');
+const clientsSection = document.querySelector('.clients');
 const segmentedVideos = [...document.querySelectorAll('video[data-loop-start]')];
+
+if (clientsSection && 'IntersectionObserver' in window) {
+  clientsSection.classList.add('clients--animate');
+  const clientsVisibilityObserver = new IntersectionObserver(([entry], observer) => {
+    if (!entry.isIntersecting) return;
+    clientsSection.classList.add('is-visible');
+    observer.disconnect();
+  }, { threshold: 0.18 });
+  clientsVisibilityObserver.observe(clientsSection);
+}
+
+if (mobileBookingCta && bookingSection && 'IntersectionObserver' in window) {
+  const visibleBookingSections = new Set();
+  const bookingVisibilityObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) visibleBookingSections.add(entry.target);
+      else visibleBookingSections.delete(entry.target);
+    });
+    mobileBookingCta.classList.toggle('is-hidden', visibleBookingSections.size > 0);
+  }, { threshold: 0.08 });
+  bookingVisibilityObserver.observe(bookingSection);
+  if (newsletterSection) bookingVisibilityObserver.observe(newsletterSection);
+}
 
 const playVideo = (video) => {
   video.muted = true;
@@ -267,7 +294,7 @@ if (studioCalendar) {
     String(date.getMonth() + 1).padStart(2, '0'),
     String(date.getDate()).padStart(2, '0'),
   ].join('-');
-  const isWorkingDay = (date) => date >= today && date.getDay() !== 0 && date.getDay() !== 6;
+  const isWorkingDay = (date) => date > today && date.getDay() !== 0 && date.getDay() !== 6;
   const addHours = (time, hours) => {
     const [hour, minute] = time.split(':').map(Number);
     return `${String(hour + hours).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
@@ -428,7 +455,7 @@ if (studioCalendar) {
     form.elements.rentalDuration.value = String(selectedDuration);
     form.elements.estimatedPrice.value = String(calculatePrice(selectedDuration).value);
     form.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    window.setTimeout(() => form.elements.preferredDate.focus({ preventScroll: true }), 500);
+    window.setTimeout(() => form.elements.name.focus({ preventScroll: true }), 500);
   });
 
   renderDays();
