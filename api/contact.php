@@ -123,37 +123,51 @@ $mail = [
         'email' => (string) $config['from_email'],
         'name' => (string) ($config['from_name'] ?? 'Formularz Studio Link'),
     ],
-    'to' => array_map(
-        static fn (string $address): array => ['email' => $address, 'name' => 'Studio Link'],
-        $recipientEmails
-    ),
     'reply_to' => ['email' => $email, 'name' => $name],
     'subject' => 'Nowe zapytanie ze strony — ' . $name,
     'text' => implode("\n", $textLines),
     'html' => '<h2>Nowe zapytanie ze strony Studio Link</h2><table>' . implode('', $htmlRows) . '</table>',
 ];
 
-$curl = curl_init('https://api.mailersend.com/v1/email');
-curl_setopt_array($curl, [
-    CURLOPT_POST => true,
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_CONNECTTIMEOUT => 10,
-    CURLOPT_TIMEOUT => 20,
-    CURLOPT_HTTPHEADER => [
-        'Authorization: Bearer ' . $config['api_token'],
-        'Content-Type: application/json',
-        'Accept: application/json',
-    ],
-    CURLOPT_POSTFIELDS => json_encode($mail, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
-]);
+$failed = false;
+foreach ($recipientEmails as $recipientEmail) {
+    $mail['to'] = [['email' => $recipientEmail, 'name' => 'Studio Link']];
 
-$responseBody = curl_exec($curl);
-$curlError = curl_error($curl);
-$status = (int) curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
-curl_close($curl);
+    $curl = curl_init('https://api.mailersend.com/v1/email');
+    curl_setopt_array($curl, [
+        CURLOPT_POST => true,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_CONNECTTIMEOUT => 10,
+        CURLOPT_TIMEOUT => 20,
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . $config['api_token'],
+            'Content-Type: application/json',
+            'Accept: application/json',
+        ],
+        CURLOPT_POSTFIELDS => json_encode($mail, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+    ]);
 
-if ($responseBody === false || $status < 200 || $status >= 300) {
-    error_log('MailerSend request failed. HTTP ' . $status . '; cURL: ' . $curlError . '; response: ' . (string) $responseBody);
+    $responseBody = curl_exec($curl);
+    $curlError = curl_error($curl);
+    $status = (int) curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
+    curl_close($curl);
+
+    if ($responseBody === false || $status < 200 || $status >= 300) {
+        $failed = true;
+        $diagnostic = sprintf(
+            "[%s] Recipient %s; MailerSend HTTP %d; cURL: %s; response: %s\n",
+            gmdate('c'),
+            $recipientEmail,
+            $status,
+            $curlError,
+            (string) $responseBody
+        );
+        error_log(trim($diagnostic));
+        @file_put_contents(dirname($configPath) . '/mailersend-error.log', $diagnostic, FILE_APPEND | LOCK_EX);
+    }
+}
+
+if ($failed) {
     respond(502, ['ok' => false, 'message' => 'Email could not be sent']);
 }
 
