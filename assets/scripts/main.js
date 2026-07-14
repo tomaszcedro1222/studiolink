@@ -6,6 +6,28 @@ const newsletterSection = document.querySelector('.newsletter');
 const clientsSection = document.querySelector('.clients');
 const segmentedVideos = [...document.querySelectorAll('video[data-loop-start]')];
 
+document.addEventListener('click', (event) => {
+  if (window.innerWidth <= 700 || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  const link = event.target.closest('a[href^="#"]');
+  if (!link) return;
+
+  const hash = link.getAttribute('href');
+  if (!hash || hash === '#') return;
+
+  let target;
+  try {
+    target = document.querySelector(hash);
+  } catch {
+    return;
+  }
+  if (!target) return;
+
+  event.preventDefault();
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+  history.pushState(null, '', hash);
+});
+
 if (clientsSection && 'IntersectionObserver' in window) {
   clientsSection.classList.add('clients--animate');
   const clientsVisibilityObserver = new IntersectionObserver(([entry], observer) => {
