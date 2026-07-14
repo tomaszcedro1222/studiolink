@@ -273,8 +273,13 @@ if (studioCalendar) {
     return `${String(hour + hours).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
   };
   const calculatePrice = (hours) => {
-    if (hours === 5) return { value: 2000, note: 'pakiet pół dnia' };
-    if (hours === 10) return { value: 4000, note: 'pakiet całodniowy' };
+    if (hours >= 5) {
+      const extraHours = hours - 5;
+      return {
+        value: 2000 + extraHours * 400,
+        note: extraHours === 0 ? 'pakiet pół dnia' : `2000 zł za 5 godz. + ${extraHours} × 400 zł`,
+      };
+    }
     return { value: hours * 450, note: `${hours} × 450 zł/h` };
   };
   const getDemoBookings = (date) => {
