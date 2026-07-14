@@ -24,8 +24,8 @@ document.addEventListener('click', (event) => {
 
   event.preventDefault();
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
   history.pushState(null, '', hash);
+  target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
 });
 
 if (clientsSection && 'IntersectionObserver' in window) {
