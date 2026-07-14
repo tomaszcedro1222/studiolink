@@ -255,6 +255,7 @@ if (lightbox && galleryItems.length) {
 }
 
 let reloadStudioAvailability = null;
+let clearStudioBookingSelection = null;
 const studioCalendar = document.querySelector('[data-studio-calendar]');
 
 if (studioCalendar) {
@@ -504,6 +505,10 @@ if (studioCalendar) {
     renderSlots();
   };
   reloadStudioAvailability = loadAvailability;
+  clearStudioBookingSelection = () => {
+    selectedStart = '';
+    renderSlots();
+  };
   confirmButton.addEventListener('click', () => {
     if (!selectedDate || !selectedStart) return;
     const form = document.querySelector('.contact-form');
@@ -511,7 +516,13 @@ if (studioCalendar) {
     form.elements.preferredDate.value = toIsoDate(selectedDate);
     form.elements.preferredTime.value = selectedStart;
     form.elements.rentalDuration.value = String(selectedDuration);
-    form.elements.estimatedPrice.value = String(calculatePrice(selectedDuration).value);
+    const price = calculatePrice(selectedDuration);
+    form.elements.estimatedPrice.value = String(price.value);
+    const bookingPreview = form.querySelector('[data-contact-booking]');
+    bookingPreview.querySelector('[data-contact-booking-date]').textContent = capitalize(summaryDateFormatter.format(selectedDate));
+    bookingPreview.querySelector('[data-contact-booking-time]').textContent = `${selectedStart}\u2013${addHours(selectedStart, selectedDuration)} (${selectedDuration} godz.)`;
+    bookingPreview.querySelector('[data-contact-booking-price]').textContent = `Koszt wynajmu: ${priceFormatter.format(price.value)}`;
+    bookingPreview.hidden = false;
     form.scrollIntoView({ behavior: 'smooth', block: 'center' });
     window.setTimeout(() => form.elements.name.focus({ preventScroll: true }), 500);
   });
@@ -523,6 +534,20 @@ if (studioCalendar) {
 }
 
 const contactForm = document.querySelector('.contact-form');
+const contactBookingPreview = contactForm?.querySelector('[data-contact-booking]');
+const clearContactBookingSelection = () => {
+  if (!contactForm || !contactBookingPreview) return;
+  ['preferredDate', 'preferredTime', 'rentalDuration', 'estimatedPrice'].forEach((name) => {
+    contactForm.elements[name].value = '';
+  });
+  contactBookingPreview.hidden = true;
+  clearStudioBookingSelection?.();
+};
+
+contactBookingPreview?.querySelector('[data-contact-booking-remove]')?.addEventListener('click', () => {
+  clearContactBookingSelection();
+  contactForm.querySelector('.form-message').textContent = '';
+});
 
 contactForm?.addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -545,6 +570,7 @@ contactForm?.addEventListener('submit', async (event) => {
   if (formData.get('website')) {
     setMessage('Dzi\u0119kujemy! Wiadomo\u015b\u0107 zosta\u0142a przyj\u0119ta.', 'success');
     form.reset();
+    clearContactBookingSelection();
     return;
   }
 
@@ -578,11 +604,13 @@ contactForm?.addEventListener('submit', async (event) => {
       ? 'Termin zosta\u0142 zapisany w kalendarzu. Skontaktujemy si\u0119 z Tob\u0105, aby potwierdzi\u0107 szczeg\u00f3\u0142y.'
       : 'Dzi\u0119kujemy! Odpowiemy najszybciej, jak to mo\u017cliwe.', 'success');
     form.reset();
+    clearContactBookingSelection();
     form.classList.remove('was-validated');
     if (responseData.booked) reloadStudioAvailability?.();
   } catch (error) {
     if (error.code === 'slot_unavailable') {
       setMessage('Ten termin zosta\u0142 w\u0142a\u015bnie zaj\u0119ty. Wr\u00f3\u0107 do kalendarza i wybierz inny.', 'error');
+      clearContactBookingSelection();
       reloadStudioAvailability?.();
     } else if (error.code === 'booking_rate_limited') {
       setMessage('Wys\u0142ano ju\u017c rezerwacj\u0119 z tego urz\u0105dzenia. Odczekaj kilka minut albo zadzwo\u0144 do nas.', 'error');

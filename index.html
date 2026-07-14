@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="assets/styles/main.css?v=24" />
+    <link rel="stylesheet" href="assets/styles/main.css?v=25" />
   </head>
   <body>
     <header class="hero" id="start">
@@ -104,6 +104,15 @@
             <p>Napisz do nas, odpowiadamy bardzo szybko.</p>
           </div>
           <form class="contact-form" data-endpoint="https://studio.linkvisuals.pl/api/contact.php" novalidate>
+            <div class="contact-form__booking" data-contact-booking hidden>
+              <div>
+                <span>Rezerwujesz termin</span>
+                <strong data-contact-booking-date></strong>
+                <small data-contact-booking-time></small>
+                <b data-contact-booking-price></b>
+              </div>
+              <button type="button" data-contact-booking-remove>Usuń termin</button>
+            </div>
             <div class="contact-form__grid contact-form__grid--compact">
               <label class="form-field">
                 <span>Imię i nazwisko <b aria-hidden="true">*</b></span>
@@ -246,6 +255,6 @@
     </div>
 
     <footer class="footer"><a href="#" aria-label="Facebook">f</a><a href="#" aria-label="Instagram">◎</a><a href="#" aria-label="YouTube">▶</a><a href="#" aria-label="TikTok">♪</a><a href="#" aria-label="LinkedIn">in</a></footer>
-    <script charset="UTF-8" src="assets/scripts/main.js?v=20"></script>
+    <script charset="UTF-8" src="assets/scripts/main.js?v=21"></script>
   </body>
 </html>
