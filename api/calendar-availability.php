@@ -65,6 +65,16 @@ try {
         'busy' => google_calendar_local_intervals($periods, $timezone),
     ]);
 } catch (Throwable $error) {
-    error_log('Google Calendar availability error: ' . $error->getMessage());
+    $diagnostic = sprintf(
+        "[%s] Google Calendar availability error: %s\n",
+        gmdate('c'),
+        $error->getMessage()
+    );
+    error_log(trim($diagnostic));
+    @file_put_contents(
+        dirname(google_calendar_config_path()) . '/google-calendar-error.log',
+        $diagnostic,
+        FILE_APPEND | LOCK_EX
+    );
     availability_respond(503, ['ok' => false, 'message' => 'Calendar is temporarily unavailable']);
 }

@@ -33,7 +33,7 @@ nie zawiera danych dostępowych. Aby uruchomić synchronizację na serwerze:
 3. Włącz delegowanie dostępu w całej domenie dla konta serwisowego i zatwierdź w
    Google Workspace dwa zakresy: `calendar.events` oraz `calendar.events.freebusy`.
 4. Skopiuj `server-config/google-calendar.example.php` poza katalog publiczny jako
-   `~/studio.linkvisuals.pl/private/google-calendar.php` i wpisz ID kalendarza.
+   `~/studio.linkvisuals.pl/private/google-calendar-config.php` i wpisz ID kalendarza.
 5. Zapisz klucz jako
    `~/studio.linkvisuals.pl/private/google-service-account.json`.
 

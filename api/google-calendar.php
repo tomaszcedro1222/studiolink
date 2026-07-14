@@ -9,7 +9,7 @@ const GOOGLE_CALENDAR_SCOPES = [
 
 function google_calendar_config_path(): string
 {
-    return dirname(__DIR__, 2) . '/private/google-calendar.php';
+    return dirname(__DIR__, 2) . '/private/google-calendar-config.php';
 }
 
 function google_calendar_load_config(): array
