@@ -149,19 +149,21 @@ if (servicesMarquee) {
   let lastPointerTime = 0;
   let lastFrame = performance.now();
   let currentSpeed = automaticSpeed;
+  let marqueePosition = 0;
 
   const wrapMarquee = () => {
     const loopWidth = firstGroup?.offsetWidth || 0;
     if (!loopWidth) return;
-    if (servicesMarquee.scrollLeft >= loopWidth * 2) servicesMarquee.scrollLeft -= loopWidth;
-    else if (servicesMarquee.scrollLeft <= 0) servicesMarquee.scrollLeft += loopWidth;
+    if (marqueePosition >= loopWidth * 2) marqueePosition -= loopWidth;
+    else if (marqueePosition <= 0) marqueePosition += loopWidth;
+    servicesMarquee.scrollLeft = marqueePosition;
   };
   const moveMarquee = (time) => {
     const elapsed = Math.min(time - lastFrame, 40);
     if (!reducedMotion && !dragging) {
       const easing = 1 - Math.exp(-elapsed / 650);
       currentSpeed += (automaticSpeed - currentSpeed) * easing;
-      servicesMarquee.scrollLeft += elapsed * currentSpeed;
+      marqueePosition += elapsed * currentSpeed;
       wrapMarquee();
     }
     lastFrame = time;
@@ -179,6 +181,7 @@ if (servicesMarquee) {
   servicesMarquee.addEventListener('pointerdown', (event) => {
     if (event.pointerType === 'mouse' && event.button !== 0) return;
     dragging = true;
+    marqueePosition = servicesMarquee.scrollLeft;
     lastPointerX = event.clientX;
     lastPointerTime = performance.now();
     servicesMarquee.classList.add('is-dragging');
@@ -189,7 +192,7 @@ if (servicesMarquee) {
     const now = performance.now();
     const elapsed = Math.max(now - lastPointerTime, 1);
     const distance = lastPointerX - event.clientX;
-    servicesMarquee.scrollLeft += distance;
+    marqueePosition += distance;
     currentSpeed = Math.max(-1.8, Math.min(1.8, distance / elapsed));
     lastPointerX = event.clientX;
     lastPointerTime = now;
@@ -197,7 +200,10 @@ if (servicesMarquee) {
   });
   servicesMarquee.addEventListener('pointerup', finishDrag);
   servicesMarquee.addEventListener('pointercancel', finishDrag);
-  requestAnimationFrame(() => { servicesMarquee.scrollLeft = firstGroup?.offsetWidth || 0; });
+  requestAnimationFrame(() => {
+    marqueePosition = firstGroup?.offsetWidth || 0;
+    servicesMarquee.scrollLeft = marqueePosition;
+  });
   requestAnimationFrame(moveMarquee);
 }
 
