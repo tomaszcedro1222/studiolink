@@ -1,11 +1,13 @@
 const menuButton = document.querySelector('.menu-button');
 const menu = document.querySelector('.menu');
 const mobileBookingCta = document.querySelector('.mobile-booking-cta');
+const desktopQuickActions = document.querySelector('.desktop-quick-actions');
 const heroSection = document.querySelector('.hero');
 const bookingSection = document.querySelector('#rezerwacja');
 const newsletterSection = document.querySelector('.newsletter');
 const clientsSection = document.querySelector('.clients');
 const segmentedVideos = [...document.querySelectorAll('video[data-loop-start]')];
+const servicesMarquee = document.querySelector('.services-marquee');
 
 const COOKIE_CONSENT_KEY = 'studioLinkCookieConsent';
 const readCookieConsent = () => {
@@ -122,6 +124,71 @@ if (mobileBookingCta && bookingSection && 'IntersectionObserver' in window) {
   if (heroSection) bookingVisibilityObserver.observe(heroSection);
   bookingVisibilityObserver.observe(bookingSection);
   if (newsletterSection) bookingVisibilityObserver.observe(newsletterSection);
+}
+
+if (desktopQuickActions && heroSection && bookingSection && 'IntersectionObserver' in window) {
+  const hiddenBySections = new Set([heroSection]);
+  const quickActionsVisibilityObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) hiddenBySections.add(entry.target);
+      else hiddenBySections.delete(entry.target);
+    });
+    desktopQuickActions.classList.toggle('is-hidden', hiddenBySections.size > 0);
+  }, { threshold:0.08 });
+  quickActionsVisibilityObserver.observe(heroSection);
+  quickActionsVisibilityObserver.observe(bookingSection);
+  if (newsletterSection) quickActionsVisibilityObserver.observe(newsletterSection);
+}
+
+if (servicesMarquee) {
+  const firstGroup = servicesMarquee.querySelector('.services-marquee__group');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let dragging = false;
+  let dragStartX = 0;
+  let dragStartScroll = 0;
+  let lastFrame = performance.now();
+  let resumeAt = 0;
+
+  const wrapMarquee = () => {
+    const loopWidth = firstGroup?.offsetWidth || 0;
+    if (!loopWidth) return;
+    if (servicesMarquee.scrollLeft >= loopWidth * 2) servicesMarquee.scrollLeft -= loopWidth;
+    else if (servicesMarquee.scrollLeft <= 0) servicesMarquee.scrollLeft += loopWidth;
+  };
+  const moveMarquee = (time) => {
+    if (!reducedMotion && !dragging && time >= resumeAt) {
+      servicesMarquee.scrollLeft += Math.min(time - lastFrame, 40) * 0.025;
+      wrapMarquee();
+    }
+    lastFrame = time;
+    requestAnimationFrame(moveMarquee);
+  };
+  const finishDrag = (event) => {
+    if (!dragging) return;
+    dragging = false;
+    servicesMarquee.classList.remove('is-dragging');
+    resumeAt = performance.now() + 1400;
+    if (servicesMarquee.hasPointerCapture?.(event.pointerId)) servicesMarquee.releasePointerCapture(event.pointerId);
+    wrapMarquee();
+  };
+
+  servicesMarquee.addEventListener('pointerdown', (event) => {
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
+    dragging = true;
+    dragStartX = event.clientX;
+    dragStartScroll = servicesMarquee.scrollLeft;
+    servicesMarquee.classList.add('is-dragging');
+    servicesMarquee.setPointerCapture?.(event.pointerId);
+  });
+  servicesMarquee.addEventListener('pointermove', (event) => {
+    if (!dragging) return;
+    servicesMarquee.scrollLeft = dragStartScroll - (event.clientX - dragStartX);
+    wrapMarquee();
+  });
+  servicesMarquee.addEventListener('pointerup', finishDrag);
+  servicesMarquee.addEventListener('pointercancel', finishDrag);
+  requestAnimationFrame(() => { servicesMarquee.scrollLeft = firstGroup?.offsetWidth || 0; });
+  requestAnimationFrame(moveMarquee);
 }
 
 const playVideo = (video) => {
