@@ -151,14 +151,15 @@ if ($booking !== null) {
         }
 
         $today = new DateTimeImmutable('today', $timezone);
+        $minimumBookingStart = (new DateTimeImmutable('now', $timezone))->modify('+47 hours');
         $lastAllowedDay = $today->modify('first day of this month')->modify('+3 months')->modify('-1 day');
         $startMinutes = (int) $bookingStart->format('H') * 60 + (int) $bookingStart->format('i');
-        $lastStartMinutes = ($booking['duration'] === 10 ? 9 : 18 - $booking['duration']) * 60;
+        $lastStartMinutes = (18 - $booking['duration']) * 60;
         if (
-            $bookingStart <= $today
+            $bookingStart < $minimumBookingStart
             || $bookingStart > $lastAllowedDay->setTime(23, 59, 59)
             || (int) $bookingStart->format('N') > 5
-            || $startMinutes < 9 * 60
+            || $startMinutes < 8 * 60
             || $startMinutes > $lastStartMinutes
         ) {
             respond(422, ['ok' => false, 'message' => 'Invalid booking data']);

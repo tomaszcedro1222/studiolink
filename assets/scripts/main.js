@@ -487,7 +487,10 @@ if (studioCalendar) {
   const getBookings = (date) => busyBookings.get(toIsoDate(date)) || [];
   const isSlotAvailable = (date, startMinutes, duration) => {
     const endMinutes = startMinutes + duration * 60;
+    const slotStart = new Date(date.getFullYear(), date.getMonth(), date.getDate(), Math.floor(startMinutes / 60), startMinutes % 60);
+    const meetsAdvanceNotice = slotStart.getTime() >= Date.now() + 47 * 60 * 60 * 1000;
     return availabilityState === 'ready'
+      && meetsAdvanceNotice
       && !getBookings(date).some((booking) => startMinutes < booking.end && endMinutes > booking.start);
   };
   const getLastStartMinutes = (duration) => (18 - duration) * 60;
