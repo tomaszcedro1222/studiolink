@@ -63,6 +63,7 @@ a { color:inherit; text-decoration:none; }
 .carousel__track { display:grid; grid-auto-flow:column; grid-auto-columns:86%; gap:28px; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; padding:4px calc(7% - 4px) 24px; }
 .carousel__track::-webkit-scrollbar { display:none; }
 .carousel__track img { width:100%; aspect-ratio:1.75; object-fit:cover; border-radius:26px; scroll-snap-align:center; }
+.carousel__track.is-dragging { cursor:grabbing; user-select:none; }
 .carousel__nav { position:absolute; z-index:2; top:42%; width:44px; height:44px; border:0; border-radius:50%; color:#fff; background:rgba(0,0,0,.5); font-size:32px; cursor:pointer; }
 .carousel__nav--prev { left:0; } .carousel__nav--next { right:0; }
 .carousel__dots { display:flex; justify-content:center; gap:5px; margin-top:4px; }
@@ -272,6 +273,7 @@ a { color:inherit; text-decoration:none; }
 .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
 
 @media (hover:hover) and (pointer:fine) {
+  .carousel__track { cursor:grab; }
   .button:not([disabled]):hover,.button:not([disabled]):focus-visible { transform:translateY(-3px); }
   .button--primary:not([disabled]):hover,.button--primary:not([disabled]):focus-visible { background:#ff786d; box-shadow:0 12px 28px rgba(238,97,85,.42),0 0 0 5px rgba(238,97,85,.09); }
   .button--outline:not([disabled]):hover,.button--outline:not([disabled]):focus-visible { border-color:#ff8d84; color:#fff; background:rgba(238,97,85,.14); box-shadow:0 10px 26px rgba(0,0,0,.25),0 0 0 4px rgba(238,97,85,.08); }

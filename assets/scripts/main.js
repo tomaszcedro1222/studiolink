@@ -257,6 +257,9 @@ document.querySelectorAll('[data-carousel]').forEach((carousel) => {
   let scrollEndTimer;
   let animationFrame;
   let isAnimating = false;
+  let isDragging = false;
+  let dragStartX = 0;
+  let dragStartScroll = 0;
 
   if (slides.length < 2) return;
 
@@ -339,9 +342,36 @@ document.querySelectorAll('[data-carousel]').forEach((carousel) => {
 
   carousel.querySelector('.carousel__nav--prev').addEventListener('click', () => animateToPhysicalSlide(currentPhysicalIndex() - 1));
   carousel.querySelector('.carousel__nav--next').addEventListener('click', () => animateToPhysicalSlide(currentPhysicalIndex() + 1));
+  track.addEventListener('dragstart', (event) => event.preventDefault());
+  track.addEventListener('pointerdown', (event) => {
+    if (event.pointerType !== 'mouse' || event.button !== 0) return;
+    window.cancelAnimationFrame(animationFrame);
+    window.clearTimeout(scrollEndTimer);
+    isAnimating = false;
+    isDragging = true;
+    dragStartX = event.clientX;
+    dragStartScroll = track.scrollLeft;
+    track.style.scrollSnapType = 'none';
+    track.classList.add('is-dragging');
+    track.setPointerCapture?.(event.pointerId);
+  });
+  track.addEventListener('pointermove', (event) => {
+    if (!isDragging) return;
+    track.scrollLeft = dragStartScroll - (event.clientX - dragStartX);
+    updateDots();
+  });
+  const finishCarouselDrag = (event) => {
+    if (!isDragging) return;
+    isDragging = false;
+    track.classList.remove('is-dragging');
+    if (track.hasPointerCapture?.(event.pointerId)) track.releasePointerCapture(event.pointerId);
+    animateToPhysicalSlide(currentPhysicalIndex());
+  };
+  track.addEventListener('pointerup', finishCarouselDrag);
+  track.addEventListener('pointercancel', finishCarouselDrag);
   track.addEventListener('scroll', () => {
     updateDots();
-    if (isAnimating) return;
+    if (isAnimating || isDragging) return;
     window.clearTimeout(scrollEndTimer);
     scrollEndTimer = window.setTimeout(normalizeLoopPosition, 220);
   }, { passive: true });
