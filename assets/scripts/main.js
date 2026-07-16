@@ -57,6 +57,7 @@ let pendingYoutubeProject;
 const loadYouTubeProject = (project) => {
   if (project.dataset.youtubeLoaded) return;
   project.dataset.youtubeLoaded = 'true';
+  project.classList.add('is-loading');
   const videoId = project.dataset.youtubeId;
   const iframe = document.createElement('iframe');
   iframe.title = project.dataset.youtubeTitle || 'Przykładowa realizacja Studio Link';
@@ -64,7 +65,10 @@ const loadYouTubeProject = (project) => {
   iframe.allow = 'autoplay; encrypted-media; picture-in-picture';
   iframe.allowFullscreen = true;
   iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=1&start=30&loop=1&playlist=${videoId}&playsinline=1&rel=0`;
-  iframe.addEventListener('load', () => project.classList.add('is-loaded'), { once:true });
+  iframe.addEventListener('load', () => {
+    project.classList.remove('is-loading');
+    project.classList.add('is-loaded');
+  }, { once:true });
   project.append(iframe);
 };
 const activateYouTubeProject = (project) => {
@@ -79,7 +83,7 @@ const activateYouTubeProject = (project) => {
 const disableYouTubeProjects = () => {
   youtubeProjects.forEach((project) => {
     project.querySelector('iframe')?.remove();
-    project.classList.remove('is-loaded');
+    project.classList.remove('is-loading','is-loaded');
     delete project.dataset.youtubeLoaded;
   });
 };
