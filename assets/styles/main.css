@@ -299,7 +299,7 @@ a { color:inherit; text-decoration:none; }
   .studio-calendar__day:not(.is-selected):hover:not(:disabled),.studio-calendar__day:not(.is-selected):focus-visible:not(:disabled) { border-color:var(--red); background:#3a3a3f; box-shadow:0 8px 18px rgba(238,97,85,.12); transform:translateY(-2px); }
   .contact-form__booking button:hover,.contact-form__booking button:focus-visible { border-color:var(--red); color:#ff9289; background:rgba(238,97,85,.08); box-shadow:0 8px 20px rgba(238,97,85,.1); transform:translateY(-2px); }
   .footer__legal a:hover,.footer__legal a:focus-visible,.footer__legal button:hover,.footer__legal button:focus-visible { color:#fff; text-shadow:0 0 14px rgba(255,255,255,.3); }
-  .clients.clients--animate.is-visible .clients__grid div:hover,.clients.clients--animate.is-visible .clients__grid div:focus-within,.clients__grid div:hover { border-color:rgba(238,97,85,.6); background:#36363b; box-shadow:0 18px 42px rgba(0,0,0,.28),0 0 28px rgba(238,97,85,.14),inset 0 0 22px rgba(255,255,255,.035); transform:translateY(-5px) scale(1.015); transition-delay:0s; }
+  .clients.clients--animate.is-visible .clients__grid div:hover,.clients.clients--animate.is-visible .clients__grid div:focus-within,.clients__grid div:hover { border-color:rgba(255,255,255,.72); background:#36363b; box-shadow:0 18px 42px rgba(0,0,0,.28),0 0 28px rgba(238,97,85,.14),inset 0 0 22px rgba(255,255,255,.035); transform:translateY(-5px) scale(1.015); transition-delay:0s; }
   .clients__grid div:hover img,.clients__grid div:focus-within img { filter:brightness(1.22) drop-shadow(0 0 10px rgba(255,255,255,.5)) drop-shadow(0 0 20px rgba(238,97,85,.22)); transform:scale(1.045); }
 }
 
