@@ -1,6 +1,7 @@
 const menuButton = document.querySelector('.menu-button');
 const menu = document.querySelector('.menu');
 const mobileBookingCta = document.querySelector('.mobile-booking-cta');
+const heroSection = document.querySelector('.hero');
 const bookingSection = document.querySelector('#rezerwacja');
 const newsletterSection = document.querySelector('.newsletter');
 const clientsSection = document.querySelector('.clients');
@@ -68,7 +69,7 @@ if (clientsSection && 'IntersectionObserver' in window) {
 }
 
 if (mobileBookingCta && bookingSection && 'IntersectionObserver' in window) {
-  const visibleBookingSections = new Set();
+  const visibleBookingSections = new Set(heroSection ? [heroSection] : []);
   const bookingVisibilityObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) visibleBookingSections.add(entry.target);
@@ -76,6 +77,7 @@ if (mobileBookingCta && bookingSection && 'IntersectionObserver' in window) {
     });
     mobileBookingCta.classList.toggle('is-hidden', visibleBookingSections.size > 0);
   }, { threshold: 0.08 });
+  if (heroSection) bookingVisibilityObserver.observe(heroSection);
   bookingVisibilityObserver.observe(bookingSection);
   if (newsletterSection) bookingVisibilityObserver.observe(newsletterSection);
 }
