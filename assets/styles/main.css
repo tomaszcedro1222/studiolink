@@ -27,14 +27,16 @@ a { color:inherit; text-decoration:none; }
 .button--outline { border:1.5px solid #fff; background:transparent; }
 .facilities__booking-cta { display:flex; justify-content:center; margin-top:42px; }
 .mobile-booking-cta { display:none; }
-.desktop-quick-actions { position:fixed; z-index:18; top:50%; right:22px; display:flex; flex-direction:column; align-items:center; gap:10px; transform:translateY(-50%); transition:opacity .25s,transform .25s; }
+.desktop-quick-actions { position:fixed; z-index:18; top:50%; right:22px; display:flex; flex-direction:column; align-items:flex-end; gap:10px; transform:translateY(-50%); transition:opacity .25s,transform .25s; }
 .desktop-quick-actions.is-hidden { opacity:0; pointer-events:none; transform:translate(18px,-50%); }
-.desktop-quick-actions a { display:flex; align-items:center; justify-content:center; color:#111; background:var(--red); box-shadow:0 14px 28px rgba(0,0,0,.35),0 10px 26px rgba(238,97,85,.2); transition:background .2s,transform .2s; }
-.desktop-quick-actions__booking { min-height:46px; padding:12px 20px; border-radius:25px; font-size:14px; font-weight:600; writing-mode:vertical-rl; transform:rotate(180deg); }
-.desktop-quick-actions__phone { width:46px; height:46px; border-radius:50%; }
-.desktop-quick-actions__phone svg { width:20px; height:20px; fill:currentColor; }
-.desktop-quick-actions a:hover,.desktop-quick-actions a:focus-visible { background:#ff776c; transform:scale(1.04); }
-.desktop-quick-actions__booking:hover,.desktop-quick-actions__booking:focus-visible { transform:rotate(180deg) scale(1.04); }
+.desktop-quick-actions a { display:flex; align-items:center; justify-content:flex-end; gap:0; width:48px; height:48px; overflow:hidden; padding:0 13px; border-radius:25px; color:#111; background:var(--red); box-shadow:0 14px 28px rgba(0,0,0,.35),0 10px 26px rgba(238,97,85,.2); white-space:nowrap; transition:width .38s cubic-bezier(.22,1,.36,1),gap .3s,background .2s,box-shadow .3s,transform .2s; }
+.desktop-quick-actions a > span { max-width:0; overflow:hidden; opacity:0; font-size:13px; font-weight:600; transition:max-width .38s cubic-bezier(.22,1,.36,1),opacity .2s .04s; }
+.desktop-quick-actions a > svg { flex:0 0 21px; width:21px; height:21px; }
+.desktop-quick-actions__booking svg { fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.desktop-quick-actions__phone svg { fill:currentColor; }
+.desktop-quick-actions__phone > span { user-select:text; }
+.desktop-quick-actions a:hover,.desktop-quick-actions a:focus-visible { width:190px; gap:10px; background:#ff776c; box-shadow:0 16px 34px rgba(0,0,0,.36),0 10px 30px rgba(238,97,85,.3); transform:translateX(-2px); }
+.desktop-quick-actions a:hover > span,.desktop-quick-actions a:focus-visible > span { max-width:145px; opacity:1; }
 .cookie-consent-open .desktop-quick-actions { opacity:0; pointer-events:none; }
 
 .hero { position:relative; min-height:800px; overflow:hidden; background:linear-gradient(90deg,rgba(0,0,0,.52),rgba(0,0,0,.12)),url('../images/hero-studio.jpg') center/cover no-repeat; }

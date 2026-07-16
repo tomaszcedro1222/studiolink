@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="assets/styles/main.css?v=44" />
+    <link rel="stylesheet" href="assets/styles/main.css?v=45" />
   </head>
   <body>
     <header class="hero" id="start">
@@ -282,8 +282,12 @@
     </main>
 
     <aside class="desktop-quick-actions is-hidden" aria-label="Szybki kontakt i rezerwacja">
-      <a class="desktop-quick-actions__booking" href="#rezerwacja">Zarezerwuj</a>
-      <a class="desktop-quick-actions__phone" href="tel:+48533633991" aria-label="Zadzwoń: +48 533 633 991">
+      <a class="desktop-quick-actions__booking" href="#rezerwacja" aria-label="Zarezerwuj termin">
+        <span>Zarezerwuj termin</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3" /><path d="M7 3v4M17 3v4M3 10h18" /><path d="M8 14h2M14 14h2M8 17h2M14 17h2" /></svg>
+      </a>
+      <a class="desktop-quick-actions__phone" href="#kontakt" aria-label="Przejdź do danych kontaktowych, telefon: +48 533 633 991">
+        <span>+48 533 633 991</span>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.7 2.8 9.2 7c.3.5.2 1.1-.2 1.5l-1.4 1.4a15.3 15.3 0 0 0 6.5 6.5l1.4-1.4c.4-.4 1-.5 1.5-.2l4.2 2.5c.5.3.8.9.6 1.5l-.7 2.2c-.2.6-.7 1-1.3 1C9.9 22 2 14.1 2 4.2c0-.6.4-1.1 1-1.3l2.2-.7c.6-.2 1.2.1 1.5.6Z" /></svg>
       </a>
     </aside>
