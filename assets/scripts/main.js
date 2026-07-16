@@ -64,7 +64,7 @@ const loadYouTubeProject = (project) => {
   iframe.loading = 'lazy';
   iframe.allow = 'autoplay; encrypted-media; picture-in-picture';
   iframe.allowFullscreen = true;
-  iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=1&start=30&loop=1&playlist=${videoId}&playsinline=1&rel=0`;
+  iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&playsinline=1&rel=0`;
   iframe.addEventListener('load', () => {
     project.classList.remove('is-loading');
     project.classList.add('is-loaded');
