@@ -251,8 +251,12 @@ a { color:inherit; text-decoration:none; }
 .contact-card__details { min-width:0; padding-top:4px; }
 .contact-card h3 { margin:0 0 24px; font-size:20px; font-weight:500; }
 .contact-card h3::after { content:""; display:block; width:32px; height:7px; border-radius:8px; background:var(--red); filter:blur(2px); }
-.contact-card__email { display:inline-block; max-width:100%; padding:10px 16px; border-radius:24px; background:var(--tile); font-size:14px; overflow-wrap:anywhere; }
-.contact-card__phone { display:block; margin:18px 0 22px; color:var(--red); font-size:20px; }
+.contact-card__email { display:inline-block; max-width:100%; font-size:14px; overflow-wrap:anywhere; transition:color .25s ease,text-shadow .25s ease; }
+.contact-card__email:hover,.contact-card__email:focus-visible { color:#fff; text-shadow:0 0 14px rgba(255,255,255,.55); }
+.contact-card__phone { display:block; width:max-content; max-width:100%; margin:18px 0 22px; color:var(--red); font-size:20px; transition:color .25s ease,text-shadow .25s ease; }
+.contact-card__phone:hover,.contact-card__phone:focus-visible { color:#ff8d84; text-shadow:0 0 16px rgba(238,97,85,.65); }
+.contact-card__phone--desktop { cursor:text; user-select:text; }
+.contact-card__phone--mobile { display:none; }
 .contact-card p { margin:0; line-height:1.6; }
 .contact-card__address { display:inline-block; color:#fff; line-height:1.6; text-decoration:underline; text-decoration-color:rgba(255,255,255,.35); text-underline-offset:4px; transition:color .2s,text-decoration-color .2s; }
 .contact-card__address:hover,.contact-card__address:focus-visible { color:#ff8d84; text-decoration-color:currentColor; }
@@ -413,6 +417,8 @@ a { color:inherit; text-decoration:none; }
   .contact-card h3 { font-size:22px; }
   .contact-card__email { font-size:13px; }
   .contact-card__phone { font-size:24px; }
+  .contact-card__phone--desktop { display:none; }
+  .contact-card__phone--mobile { display:block; }
   .contact__logo { position:static; width:220px; margin:56px auto 0; transform:none; }
 }
 
