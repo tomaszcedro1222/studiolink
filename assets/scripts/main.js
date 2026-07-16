@@ -54,8 +54,16 @@ document.querySelectorAll('[data-cookie-settings]').forEach((button) => button.a
 
 const youtubeProjects = [...document.querySelectorAll('[data-youtube-id]')];
 let pendingYoutubeProject;
+const resetYouTubeProject = (project) => {
+  project.querySelector('iframe')?.remove();
+  project.classList.remove('is-loading','is-loaded');
+  delete project.dataset.youtubeLoaded;
+};
 const loadYouTubeProject = (project) => {
   if (project.dataset.youtubeLoaded) return;
+  youtubeProjects.forEach((otherProject) => {
+    if (otherProject !== project) resetYouTubeProject(otherProject);
+  });
   project.dataset.youtubeLoaded = 'true';
   project.classList.add('is-loading');
   const videoId = project.dataset.youtubeId;
@@ -81,11 +89,7 @@ const activateYouTubeProject = (project) => {
   loadYouTubeProject(project);
 };
 const disableYouTubeProjects = () => {
-  youtubeProjects.forEach((project) => {
-    project.querySelector('iframe')?.remove();
-    project.classList.remove('is-loading','is-loaded');
-    delete project.dataset.youtubeLoaded;
-  });
+  youtubeProjects.forEach(resetYouTubeProject);
 };
 youtubeProjects.forEach((project) => {
   project.tabIndex = 0;

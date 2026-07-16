@@ -206,7 +206,7 @@ a { color:inherit; text-decoration:none; }
 .studio-calendar__summary strong { font-size:17px; font-weight:500; }
 .studio-calendar__summary small { color:#ff8d84; font-size:14px; }
 .studio-calendar__summary b { margin-top:5px; color:#fff; font-size:16px; font-weight:600; }
-.control-room { display:block; width:100%; height:auto; aspect-ratio:16/9; border:0; background:#000 url('../images/control-room.jpg') center/contain no-repeat; object-fit:contain; object-position:center; filter:none; }
+.control-room { display:block; width:100%; height:auto; aspect-ratio:16/9; border:0; opacity:1; background:#000 url('../images/control-room.jpg') center/contain no-repeat; object-fit:contain; object-position:center; filter:brightness(1.16) saturate(1.05); }
 .portfolio { padding-top:70px; }
 .portfolio__grid { display:grid; grid-template-columns:1fr 1fr; gap:40px; }
 .portfolio__item { position:relative; overflow:hidden; aspect-ratio:16/9; border-radius:22px; background:#171719; box-shadow:0 16px 34px rgba(0,0,0,.16); cursor:pointer; }
