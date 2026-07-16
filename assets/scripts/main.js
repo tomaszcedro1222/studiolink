@@ -33,7 +33,7 @@ const showCookieBanner = () => {
   banner.setAttribute('aria-labelledby', 'cookie-banner-title');
   banner.innerHTML = `
     <h2 id="cookie-banner-title">Twoja prywatność</h2>
-    <p>Używamy pamięci przeglądarki do zapisania Twojego wyboru. Obecnie nie korzystamy z cookies analitycznych ani reklamowych. <a href="privacy.html#cookies">Dowiedz się więcej</a>.</p>
+    <p>Używamy pamięci przeglądarki do zapisania Twojego wyboru. Po wyrażeniu zgody możemy również ładować odtwarzacze YouTube. <a href="privacy.html#cookies">Dowiedz się więcej</a>.</p>
     <div class="cookie-banner__actions">
       <button type="button" data-cookie-choice="essential">Tylko niezbędne</button>
       <button class="is-primary" type="button" data-cookie-choice="all">Akceptuję wszystkie</button>
@@ -51,6 +51,52 @@ const storedCookieConsent = readCookieConsent();
 if (storedCookieConsent) saveCookieConsent(storedCookieConsent);
 else showCookieBanner();
 document.querySelectorAll('[data-cookie-settings]').forEach((button) => button.addEventListener('click', showCookieBanner));
+
+const youtubeProjects = [...document.querySelectorAll('[data-youtube-id]')];
+let youtubeProjectObserver;
+const loadYouTubeProject = (project) => {
+  if (project.dataset.youtubeLoaded) return;
+  project.dataset.youtubeLoaded = 'true';
+  const videoId = project.dataset.youtubeId;
+  const iframe = document.createElement('iframe');
+  iframe.title = project.dataset.youtubeTitle || 'Przykładowa realizacja Studio Link';
+  iframe.loading = 'lazy';
+  iframe.allow = 'autoplay; encrypted-media; picture-in-picture';
+  iframe.allowFullscreen = true;
+  iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=1&start=30&loop=1&playlist=${videoId}&playsinline=1&rel=0`;
+  iframe.addEventListener('load', () => project.classList.add('is-loaded'), { once:true });
+  project.append(iframe);
+};
+const enableYouTubeProjects = () => {
+  if (!youtubeProjects.length || document.documentElement.dataset.cookieConsent !== 'all') return;
+  if (!('IntersectionObserver' in window)) {
+    youtubeProjects.forEach(loadYouTubeProject);
+    return;
+  }
+  if (youtubeProjectObserver) return;
+  youtubeProjectObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      loadYouTubeProject(entry.target);
+      observer.unobserve(entry.target);
+    });
+  }, { rootMargin:'300px 0px' });
+  youtubeProjects.forEach((project) => youtubeProjectObserver.observe(project));
+};
+const disableYouTubeProjects = () => {
+  youtubeProjectObserver?.disconnect();
+  youtubeProjectObserver = undefined;
+  youtubeProjects.forEach((project) => {
+    project.querySelector('iframe')?.remove();
+    project.classList.remove('is-loaded');
+    delete project.dataset.youtubeLoaded;
+  });
+};
+enableYouTubeProjects();
+window.addEventListener('studioLinkCookieConsent', (event) => {
+  if (event.detail?.value === 'all') enableYouTubeProjects();
+  else disableYouTubeProjects();
+});
 let desktopScrollFrame;
 
 const cancelDesktopScroll = () => {
