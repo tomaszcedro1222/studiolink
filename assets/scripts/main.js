@@ -143,11 +143,12 @@ if (desktopQuickActions && heroSection && bookingSection && 'IntersectionObserve
 if (servicesMarquee) {
   const firstGroup = servicesMarquee.querySelector('.services-marquee__group');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const automaticSpeed = 0.025;
   let dragging = false;
-  let dragStartX = 0;
-  let dragStartScroll = 0;
+  let lastPointerX = 0;
+  let lastPointerTime = 0;
   let lastFrame = performance.now();
-  let resumeAt = 0;
+  let currentSpeed = automaticSpeed;
 
   const wrapMarquee = () => {
     const loopWidth = firstGroup?.offsetWidth || 0;
@@ -156,8 +157,11 @@ if (servicesMarquee) {
     else if (servicesMarquee.scrollLeft <= 0) servicesMarquee.scrollLeft += loopWidth;
   };
   const moveMarquee = (time) => {
-    if (!reducedMotion && !dragging && time >= resumeAt) {
-      servicesMarquee.scrollLeft += Math.min(time - lastFrame, 40) * 0.025;
+    const elapsed = Math.min(time - lastFrame, 40);
+    if (!reducedMotion && !dragging) {
+      const easing = 1 - Math.exp(-elapsed / 650);
+      currentSpeed += (automaticSpeed - currentSpeed) * easing;
+      servicesMarquee.scrollLeft += elapsed * currentSpeed;
       wrapMarquee();
     }
     lastFrame = time;
@@ -166,8 +170,8 @@ if (servicesMarquee) {
   const finishDrag = (event) => {
     if (!dragging) return;
     dragging = false;
+    if (performance.now() - lastPointerTime > 80) currentSpeed = 0;
     servicesMarquee.classList.remove('is-dragging');
-    resumeAt = performance.now() + 1400;
     if (servicesMarquee.hasPointerCapture?.(event.pointerId)) servicesMarquee.releasePointerCapture(event.pointerId);
     wrapMarquee();
   };
@@ -175,14 +179,20 @@ if (servicesMarquee) {
   servicesMarquee.addEventListener('pointerdown', (event) => {
     if (event.pointerType === 'mouse' && event.button !== 0) return;
     dragging = true;
-    dragStartX = event.clientX;
-    dragStartScroll = servicesMarquee.scrollLeft;
+    lastPointerX = event.clientX;
+    lastPointerTime = performance.now();
     servicesMarquee.classList.add('is-dragging');
     servicesMarquee.setPointerCapture?.(event.pointerId);
   });
   servicesMarquee.addEventListener('pointermove', (event) => {
     if (!dragging) return;
-    servicesMarquee.scrollLeft = dragStartScroll - (event.clientX - dragStartX);
+    const now = performance.now();
+    const elapsed = Math.max(now - lastPointerTime, 1);
+    const distance = lastPointerX - event.clientX;
+    servicesMarquee.scrollLeft += distance;
+    currentSpeed = Math.max(-1.8, Math.min(1.8, distance / elapsed));
+    lastPointerX = event.clientX;
+    lastPointerTime = now;
     wrapMarquee();
   });
   servicesMarquee.addEventListener('pointerup', finishDrag);
