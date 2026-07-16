@@ -1,6 +1,7 @@
 const menuButton = document.querySelector('.menu-button');
 const menu = document.querySelector('.menu');
 const mobileBookingCta = document.querySelector('.mobile-booking-cta');
+const mobilePhoneCta = document.querySelector('.mobile-phone-cta');
 const desktopQuickActions = document.querySelector('.desktop-quick-actions');
 const heroSection = document.querySelector('.hero');
 const bookingSection = document.querySelector('#rezerwacja');
@@ -119,7 +120,9 @@ if (mobileBookingCta && bookingSection && 'IntersectionObserver' in window) {
       if (entry.isIntersecting) visibleBookingSections.add(entry.target);
       else visibleBookingSections.delete(entry.target);
     });
-    mobileBookingCta.classList.toggle('is-hidden', visibleBookingSections.size > 0);
+    const shouldHide = visibleBookingSections.size > 0;
+    mobileBookingCta.classList.toggle('is-hidden', shouldHide);
+    mobilePhoneCta?.classList.toggle('is-hidden', shouldHide);
   }, { threshold: 0.08 });
   if (heroSection) bookingVisibilityObserver.observe(heroSection);
   bookingVisibilityObserver.observe(bookingSection);

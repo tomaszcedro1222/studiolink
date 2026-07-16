@@ -27,6 +27,7 @@ a { color:inherit; text-decoration:none; }
 .button--outline { border:1.5px solid #fff; background:transparent; }
 .facilities__booking-cta { display:flex; justify-content:center; margin-top:42px; }
 .mobile-booking-cta { display:none; }
+.mobile-phone-cta { display:none; }
 .desktop-quick-actions { position:fixed; z-index:18; top:50%; right:22px; display:flex; flex-direction:column; align-items:flex-end; gap:10px; transform:translateY(-50%); transition:opacity .25s,transform .25s; }
 .desktop-quick-actions.is-hidden { opacity:0; pointer-events:none; transform:translate(18px,-50%); }
 .desktop-quick-actions a { display:flex; align-items:center; justify-content:flex-end; gap:0; width:48px; height:48px; overflow:hidden; padding:0 13px; border-radius:25px; color:#111; background:var(--red); box-shadow:0 14px 28px rgba(0,0,0,.35),0 10px 26px rgba(238,97,85,.2); white-space:nowrap; transition:width .38s cubic-bezier(.22,1,.36,1),gap .3s,background .2s,box-shadow .3s,transform .2s; }
@@ -343,11 +344,15 @@ a { color:inherit; text-decoration:none; }
   .contact-form .button { width:100%; }
   .facilities__booking-cta { margin-top:30px; }
   .facilities__booking-cta .button { width:100%; }
-  .mobile-booking-cta { position:fixed; z-index:20; right:20px; bottom:max(18px,env(safe-area-inset-bottom)); display:grid; place-items:center; width:54px; height:54px; border:1px solid rgba(255,255,255,.18); border-radius:50%; color:#151515; background:var(--red); box-shadow:0 14px 30px rgba(0,0,0,.42),0 8px 24px rgba(238,97,85,.24); transition:opacity .2s,transform .25s,background .2s; }
-  .mobile-booking-cta svg { width:25px; height:25px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
-  .mobile-booking-cta:active { background:#ff776c; transform:scale(.94); }
-  .mobile-booking-cta.is-hidden { opacity:0; pointer-events:none; transform:translate(12px,8px) scale(.9); }
-  .cookie-consent-open .mobile-booking-cta { opacity:0; pointer-events:none; }
+  .mobile-booking-cta,.mobile-phone-cta { position:fixed; z-index:20; right:20px; display:grid; place-items:center; width:54px; height:54px; border:1px solid rgba(255,255,255,.18); border-radius:50%; color:#151515; background:var(--red); box-shadow:0 14px 30px rgba(0,0,0,.42),0 8px 24px rgba(238,97,85,.24); transition:opacity .2s,transform .25s,background .2s; }
+  .mobile-booking-cta { bottom:calc(max(18px,env(safe-area-inset-bottom)) + 66px); }
+  .mobile-phone-cta { bottom:max(18px,env(safe-area-inset-bottom)); }
+  .mobile-booking-cta svg,.mobile-phone-cta svg { width:25px; height:25px; }
+  .mobile-booking-cta svg { fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+  .mobile-phone-cta svg { fill:currentColor; }
+  .mobile-booking-cta:active,.mobile-phone-cta:active { background:#ff776c; transform:scale(.94); }
+  .mobile-booking-cta.is-hidden,.mobile-phone-cta.is-hidden { opacity:0; pointer-events:none; transform:translate(12px,8px) scale(.9); }
+  .cookie-consent-open .mobile-booking-cta,.cookie-consent-open .mobile-phone-cta { opacity:0; pointer-events:none; }
   .footer { align-items:flex-start; flex-direction:column; gap:12px; padding:20px; }
   .footer__legal { flex-wrap:wrap; gap:8px 18px; }
   .cookie-banner { right:14px; bottom:14px; width:calc(100% - 28px); padding:20px; border-radius:19px; }
