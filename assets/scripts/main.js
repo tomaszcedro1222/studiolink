@@ -490,9 +490,9 @@ if (studioCalendar) {
     return availabilityState === 'ready'
       && !getBookings(date).some((booking) => startMinutes < booking.end && endMinutes > booking.start);
   };
-  const getLastStartMinutes = (duration) => (duration === 10 ? 9 : 18 - duration) * 60;
+  const getLastStartMinutes = (duration) => (18 - duration) * 60;
   const hasAvailableSlot = (date, duration) => {
-    for (let minutes = 9 * 60; minutes <= getLastStartMinutes(duration); minutes += 30) {
+    for (let minutes = 8 * 60; minutes <= getLastStartMinutes(duration); minutes += 30) {
       if (isSlotAvailable(date, minutes, duration)) return true;
     }
     return false;
@@ -541,7 +541,7 @@ if (studioCalendar) {
     }
 
     const lastStartMinutes = getLastStartMinutes(selectedDuration);
-    for (let minutes = 9 * 60; minutes <= lastStartMinutes; minutes += 30) {
+    for (let minutes = 8 * 60; minutes <= lastStartMinutes; minutes += 30) {
       const hour = Math.floor(minutes / 60);
       const minute = minutes % 60;
       const time = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
