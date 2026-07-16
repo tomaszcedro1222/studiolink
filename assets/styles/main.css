@@ -259,6 +259,7 @@ a { color:inherit; text-decoration:none; }
 .footer__socials a { display:grid; place-items:center; min-width:40px; min-height:40px; font-size:26px; line-height:1; transition:color .2s,transform .2s; }
 .footer__socials svg { width:24px; height:24px; overflow:visible; fill:none; stroke:currentColor; stroke-width:1.8; }
 .footer__socials .instagram-dot { fill:currentColor; stroke:none; }
+.footer__socials .linkedin-icon { fill:currentColor; stroke:none; }
 .footer__socials a:hover { color:#fff; transform:translateY(-2px); }
 .footer__legal a,.footer__legal button { padding:6px 0; border:0; color:#a6a6aa; background:none; font:500 12px 'Poppins',sans-serif; cursor:pointer; transition:color .2s; }
 .footer__legal a:hover,.footer__legal button:hover { color:#fff; }
