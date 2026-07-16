@@ -53,7 +53,7 @@ else showCookieBanner();
 document.querySelectorAll('[data-cookie-settings]').forEach((button) => button.addEventListener('click', showCookieBanner));
 
 const youtubeProjects = [...document.querySelectorAll('[data-youtube-id]')];
-let youtubeProjectObserver;
+let pendingYoutubeProject;
 const loadYouTubeProject = (project) => {
   if (project.dataset.youtubeLoaded) return;
   project.dataset.youtubeLoaded = 'true';
@@ -67,35 +67,41 @@ const loadYouTubeProject = (project) => {
   iframe.addEventListener('load', () => project.classList.add('is-loaded'), { once:true });
   project.append(iframe);
 };
-const enableYouTubeProjects = () => {
-  if (!youtubeProjects.length || document.documentElement.dataset.cookieConsent !== 'all') return;
-  if (!('IntersectionObserver' in window)) {
-    youtubeProjects.forEach(loadYouTubeProject);
+const activateYouTubeProject = (project) => {
+  if (project.dataset.youtubeLoaded) return;
+  if (document.documentElement.dataset.cookieConsent !== 'all') {
+    pendingYoutubeProject = project;
+    showCookieBanner();
     return;
   }
-  if (youtubeProjectObserver) return;
-  youtubeProjectObserver = new IntersectionObserver((entries, observer) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-      loadYouTubeProject(entry.target);
-      observer.unobserve(entry.target);
-    });
-  }, { rootMargin:'300px 0px' });
-  youtubeProjects.forEach((project) => youtubeProjectObserver.observe(project));
+  loadYouTubeProject(project);
 };
 const disableYouTubeProjects = () => {
-  youtubeProjectObserver?.disconnect();
-  youtubeProjectObserver = undefined;
   youtubeProjects.forEach((project) => {
     project.querySelector('iframe')?.remove();
     project.classList.remove('is-loaded');
     delete project.dataset.youtubeLoaded;
   });
 };
-enableYouTubeProjects();
+youtubeProjects.forEach((project) => {
+  project.tabIndex = 0;
+  project.setAttribute('role', 'button');
+  project.setAttribute('aria-label', `Obejrzyj: ${project.dataset.youtubeTitle || 'realizacja Studio Link'}`);
+  project.addEventListener('click', () => activateYouTubeProject(project));
+  project.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    activateYouTubeProject(project);
+  });
+});
 window.addEventListener('studioLinkCookieConsent', (event) => {
-  if (event.detail?.value === 'all') enableYouTubeProjects();
-  else disableYouTubeProjects();
+  if (event.detail?.value === 'all' && pendingYoutubeProject) {
+    loadYouTubeProject(pendingYoutubeProject);
+    pendingYoutubeProject = undefined;
+  } else if (event.detail?.value !== 'all') {
+    pendingYoutubeProject = undefined;
+    disableYouTubeProjects();
+  }
 });
 let desktopScrollFrame;
 
