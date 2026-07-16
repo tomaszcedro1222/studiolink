@@ -6,6 +6,48 @@ const bookingSection = document.querySelector('#rezerwacja');
 const newsletterSection = document.querySelector('.newsletter');
 const clientsSection = document.querySelector('.clients');
 const segmentedVideos = [...document.querySelectorAll('video[data-loop-start]')];
+
+const COOKIE_CONSENT_KEY = 'studioLinkCookieConsent';
+const readCookieConsent = () => {
+  try { return window.localStorage.getItem(COOKIE_CONSENT_KEY); } catch { return null; }
+};
+const saveCookieConsent = (value) => {
+  try { window.localStorage.setItem(COOKIE_CONSENT_KEY, value); } catch {}
+  document.documentElement.dataset.cookieConsent = value;
+  window.dispatchEvent(new CustomEvent('studioLinkCookieConsent', { detail: { value } }));
+};
+const closeCookieBanner = (banner) => {
+  banner.classList.remove('is-visible');
+  document.body.classList.remove('cookie-consent-open');
+  window.setTimeout(() => banner.remove(), 300);
+};
+const showCookieBanner = () => {
+  document.querySelector('.cookie-banner')?.remove();
+  const banner = document.createElement('section');
+  banner.className = 'cookie-banner';
+  banner.setAttribute('role', 'dialog');
+  banner.setAttribute('aria-modal', 'true');
+  banner.setAttribute('aria-labelledby', 'cookie-banner-title');
+  banner.innerHTML = `
+    <h2 id="cookie-banner-title">Twoja prywatność</h2>
+    <p>Używamy pamięci przeglądarki do zapisania Twojego wyboru. Obecnie nie korzystamy z cookies analitycznych ani reklamowych. <a href="privacy.html#cookies">Dowiedz się więcej</a>.</p>
+    <div class="cookie-banner__actions">
+      <button type="button" data-cookie-choice="essential">Tylko niezbędne</button>
+      <button class="is-primary" type="button" data-cookie-choice="all">Akceptuję wszystkie</button>
+    </div>`;
+  document.body.append(banner);
+  document.body.classList.add('cookie-consent-open');
+  window.requestAnimationFrame(() => banner.classList.add('is-visible'));
+  banner.querySelectorAll('[data-cookie-choice]').forEach((button) => button.addEventListener('click', () => {
+    saveCookieConsent(button.dataset.cookieChoice);
+    closeCookieBanner(banner);
+  }));
+};
+
+const storedCookieConsent = readCookieConsent();
+if (storedCookieConsent) saveCookieConsent(storedCookieConsent);
+else showCookieBanner();
+document.querySelectorAll('[data-cookie-settings]').forEach((button) => button.addEventListener('click', showCookieBanner));
 let desktopScrollFrame;
 
 const cancelDesktopScroll = () => {
