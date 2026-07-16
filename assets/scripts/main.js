@@ -7,7 +7,7 @@ const heroSection = document.querySelector('.hero');
 const bookingSection = document.querySelector('#rezerwacja');
 const newsletterSection = document.querySelector('.newsletter');
 const clientsSection = document.querySelector('.clients');
-const segmentedVideos = [...document.querySelectorAll('video[data-loop-start]')];
+const autoplayVideos = [...document.querySelectorAll('video[autoplay]')];
 const servicesMarquee = document.querySelector('.services-marquee');
 
 const COOKIE_CONSENT_KEY = 'studioLinkCookieConsent';
@@ -217,35 +217,11 @@ const playVideo = (video) => {
   if (playback) playback.catch(() => {});
 };
 
-segmentedVideos.forEach((video) => {
-  const loopStart = Number(video.dataset.loopStart) || 0;
-  const configuredEnd = Number(video.dataset.loopEnd);
-  const loopEnd = Number.isFinite(configuredEnd) && configuredEnd > loopStart ? configuredEnd : null;
-
-  const restartSegment = () => {
-    video.currentTime = loopStart;
-    playVideo(video);
-  };
-  const enforceSegmentEnd = () => {
-    if (loopEnd && video.currentTime >= loopEnd) restartSegment();
-  };
-
-  video.addEventListener('loadedmetadata', () => {
-    if (video.currentTime < loopStart || (loopEnd && video.currentTime >= loopEnd)) video.currentTime = loopStart;
-    playVideo(video);
-  }, { once: true });
-  video.addEventListener('timeupdate', enforceSegmentEnd);
-  video.addEventListener('ended', restartSegment);
-  video.addEventListener('canplay', () => playVideo(video), { once: true });
+autoplayVideos.forEach((video) => {
+  video.addEventListener('loadedmetadata', () => playVideo(video), { once:true });
+  video.addEventListener('canplay', () => playVideo(video), { once:true });
   document.addEventListener('click', () => playVideo(video), { once: true });
   document.addEventListener('touchstart', () => playVideo(video), { once: true, passive: true });
-  if (loopEnd && 'requestVideoFrameCallback' in video) {
-    const checkVideoFrame = () => {
-      enforceSegmentEnd();
-      video.requestVideoFrameCallback(checkVideoFrame);
-    };
-    video.requestVideoFrameCallback(checkVideoFrame);
-  }
   playVideo(video);
 });
 
