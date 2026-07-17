@@ -9,6 +9,8 @@ const newsletterSection = document.querySelector('.newsletter');
 const clientsSection = document.querySelector('.clients');
 const autoplayVideos = [...document.querySelectorAll('video[autoplay]')];
 const servicesMarquee = document.querySelector('.services-marquee');
+const uiLanguage = window.StudioLinkI18n?.language || document.documentElement.lang || 'pl';
+const ui = (polish, english) => uiLanguage === 'en' ? english : polish;
 
 const COOKIE_CONSENT_KEY = 'studioLinkCookieConsent';
 const readCookieConsent = () => {
@@ -32,11 +34,11 @@ const showCookieBanner = () => {
   banner.setAttribute('aria-modal', 'true');
   banner.setAttribute('aria-labelledby', 'cookie-banner-title');
   banner.innerHTML = `
-    <h2 id="cookie-banner-title">Twoja prywatność</h2>
-    <p>Używamy pamięci przeglądarki do zapisania Twojego wyboru. Po wyrażeniu zgody możemy również ładować odtwarzacze YouTube. <a href="privacy.html#cookies">Dowiedz się więcej</a>.</p>
+    <h2 id="cookie-banner-title">${ui('Twoja prywatność', 'Your privacy')}</h2>
+    <p>${ui('Używamy pamięci przeglądarki do zapisania Twojego wyboru. Po wyrażeniu zgody możemy również ładować odtwarzacze YouTube.', 'We use browser storage to remember your choice. With your consent, we may also load YouTube players.')} <a href="privacy.html#cookies">${ui('Dowiedz się więcej', 'Learn more')}</a>.</p>
     <div class="cookie-banner__actions">
-      <button type="button" data-cookie-choice="essential">Tylko niezbędne</button>
-      <button class="is-primary" type="button" data-cookie-choice="all">Akceptuję wszystkie</button>
+      <button type="button" data-cookie-choice="essential">${ui('Tylko niezbędne', 'Essential only')}</button>
+      <button class="is-primary" type="button" data-cookie-choice="all">${ui('Akceptuję wszystkie', 'Accept all')}</button>
     </div>`;
   document.body.append(banner);
   document.body.classList.add('cookie-consent-open');
@@ -68,7 +70,7 @@ const loadYouTubeProject = (project) => {
   project.classList.add('is-loading');
   const videoId = project.dataset.youtubeId;
   const iframe = document.createElement('iframe');
-  iframe.title = project.dataset.youtubeTitle || 'Przykładowa realizacja Studio Link';
+  iframe.title = project.dataset.youtubeTitle || ui('Przykładowa realizacja Studio Link', 'Studio Link project example');
   iframe.loading = 'lazy';
   iframe.allow = 'autoplay; encrypted-media; picture-in-picture';
   iframe.allowFullscreen = true;
@@ -94,7 +96,7 @@ const disableYouTubeProjects = () => {
 youtubeProjects.forEach((project) => {
   project.tabIndex = 0;
   project.setAttribute('role', 'button');
-  project.setAttribute('aria-label', `Obejrzyj: ${project.dataset.youtubeTitle || 'realizacja Studio Link'}`);
+  project.setAttribute('aria-label', `${ui('Obejrzyj', 'Watch')}: ${project.dataset.youtubeTitle || ui('realizacja Studio Link', 'Studio Link project')}`);
   project.addEventListener('click', () => activateYouTubeProject(project));
   project.addEventListener('keydown', (event) => {
     if (event.key !== 'Enter' && event.key !== ' ') return;
@@ -379,7 +381,7 @@ document.querySelectorAll('[data-carousel]').forEach((carousel) => {
   slides.forEach((_, index) => {
     const dot = document.createElement('button');
     dot.type = 'button';
-    dot.setAttribute('aria-label', `Slajd ${index + 1}`);
+    dot.setAttribute('aria-label', `${ui('Slajd', 'Slide')} ${index + 1}`);
     if (index === 0) dot.classList.add('is-active');
     dot.addEventListener('click', () => goTo(index));
     dots.append(dot);
@@ -455,10 +457,11 @@ if (studioCalendar) {
   let availabilityState = 'loading';
   let busyBookings = new Map();
 
-  const monthFormatter = new Intl.DateTimeFormat('pl-PL', { month: 'long', year: 'numeric' });
-  const fullDateFormatter = new Intl.DateTimeFormat('pl-PL', { weekday: 'long', day: 'numeric', month: 'long' });
-  const summaryDateFormatter = new Intl.DateTimeFormat('pl-PL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-  const priceFormatter = new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN', maximumFractionDigits: 0 });
+  const locale = uiLanguage === 'en' ? 'en-GB' : 'pl-PL';
+  const monthFormatter = new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' });
+  const fullDateFormatter = new Intl.DateTimeFormat(locale, { weekday: 'long', day: 'numeric', month: 'long' });
+  const summaryDateFormatter = new Intl.DateTimeFormat(locale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const priceFormatter = new Intl.NumberFormat(locale, { style: 'currency', currency: 'PLN', maximumFractionDigits: 0 });
   const capitalize = (value) => value.charAt(0).toUpperCase() + value.slice(1);
   const sameDay = (first, second) => first && second
     && first.getFullYear() === second.getFullYear()
@@ -479,10 +482,10 @@ if (studioCalendar) {
       const extraHours = hours - 5;
       return {
         value: 2000 + extraHours * 400,
-        note: extraHours === 0 ? 'pakiet p\u00f3\u0142 dnia \u2022 400 z\u0142/h' : '400 z\u0142/h',
+        note: extraHours === 0 ? ui('pakiet p\u00f3\u0142 dnia \u2022 400 z\u0142/h', 'half-day package \u2022 PLN 400/h') : ui('400 z\u0142/h', 'PLN 400/h'),
       };
     }
-    return { value: hours * 450, note: `${hours} \u00d7 450 z\u0142/h` };
+    return { value: hours * 450, note: ui(`${hours} \u00d7 450 z\u0142/h`, `${hours} \u00d7 PLN 450/h`) };
   };
   const getBookings = (date) => busyBookings.get(toIsoDate(date)) || [];
   const isSlotAvailable = (date, startMinutes, duration) => {
@@ -519,8 +522,8 @@ if (studioCalendar) {
     }
     summaryDate.textContent = capitalize(summaryDateFormatter.format(selectedDate));
     const price = calculatePrice(selectedDuration);
-    summaryTime.textContent = `${selectedStart}\u2013${addHours(selectedStart, selectedDuration)} (${selectedDuration} godz.)`;
-    summaryPrice.textContent = `Cena: ${priceFormatter.format(price.value)}`;
+    summaryTime.textContent = `${selectedStart}\u2013${addHours(selectedStart, selectedDuration)} (${selectedDuration} ${ui('godz.', 'hrs')})`;
+    summaryPrice.textContent = `${ui('Cena', 'Price')}: ${priceFormatter.format(price.value)}`;
     summary.hidden = false;
   };
 
@@ -528,16 +531,16 @@ if (studioCalendar) {
     slotsContainer.replaceChildren();
     selectedDateLabel.textContent = selectedDate
       ? capitalize(fullDateFormatter.format(selectedDate))
-      : 'Wybierz dat\u0119';
+      : ui('Wybierz dat\u0119', 'Choose a date');
 
     if (!selectedDate) {
       const prompt = document.createElement('p');
       prompt.className = 'studio-calendar__empty';
       prompt.textContent = availabilityState === 'loading'
-        ? 'Pobieramy wolne terminy z kalendarza\u2026'
+        ? ui('Pobieramy wolne terminy z kalendarza\u2026', 'Loading available times\u2026')
         : availabilityState === 'error'
-          ? 'Nie uda\u0142o si\u0119 pobra\u0107 termin\u00f3w. Spr\u00f3buj ponownie p\u00f3\u017aniej.'
-          : 'Najpierw wybierz dost\u0119pny dzie\u0144 w kalendarzu.';
+          ? ui('Nie uda\u0142o si\u0119 pobra\u0107 termin\u00f3w. Spr\u00f3buj ponownie p\u00f3\u017aniej.', 'We could not load availability. Please try again later.')
+          : ui('Najpierw wybierz dost\u0119pny dzie\u0144 w kalendarzu.', 'Choose an available date in the calendar first.');
       slotsContainer.append(prompt);
       renderSummary();
       return;
@@ -554,7 +557,7 @@ if (studioCalendar) {
       button.className = 'studio-calendar__slot';
       button.textContent = time;
       button.disabled = overlapsBooking;
-      button.setAttribute('aria-label', overlapsBooking ? `${time}, rezerwacja nak\u0142ada si\u0119 na zaj\u0119ty termin` : `${time}, wybierz godzin\u0119 rozpocz\u0119cia`);
+      button.setAttribute('aria-label', overlapsBooking ? `${time}, ${ui('termin niedost\u0119pny', 'time unavailable')}` : `${time}, ${ui('wybierz godzin\u0119 rozpocz\u0119cia', 'choose start time')}`);
       button.setAttribute('aria-pressed', String(selectedStart === time));
       button.classList.toggle('is-selected', selectedStart === time);
       button.addEventListener('click', () => {
@@ -598,7 +601,7 @@ if (studioCalendar) {
       button.textContent = String(day);
       button.disabled = !available;
       button.setAttribute('role', 'gridcell');
-      button.setAttribute('aria-label', `${capitalize(fullDateFormatter.format(date))}${available ? '' : ', niedost\u0119pny'}`);
+      button.setAttribute('aria-label', `${capitalize(fullDateFormatter.format(date))}${available ? '' : `, ${ui('niedost\u0119pny', 'unavailable')}`}`);
       button.setAttribute('aria-selected', String(sameDay(date, selectedDate)));
       button.classList.toggle('is-today', sameDay(date, today));
       button.classList.toggle('is-selected', sameDay(date, selectedDate));
@@ -689,8 +692,8 @@ if (studioCalendar) {
     form.elements.estimatedPrice.value = String(price.value);
     const bookingPreview = form.querySelector('[data-contact-booking]');
     bookingPreview.querySelector('[data-contact-booking-date]').textContent = capitalize(summaryDateFormatter.format(selectedDate));
-    bookingPreview.querySelector('[data-contact-booking-time]').textContent = `${selectedStart}\u2013${addHours(selectedStart, selectedDuration)} (${selectedDuration} godz.)`;
-    bookingPreview.querySelector('[data-contact-booking-price]').textContent = `Koszt wynajmu: ${priceFormatter.format(price.value)}`;
+    bookingPreview.querySelector('[data-contact-booking-time]').textContent = `${selectedStart}\u2013${addHours(selectedStart, selectedDuration)} (${selectedDuration} ${ui('godz.', 'hrs')})`;
+    bookingPreview.querySelector('[data-contact-booking-price]').textContent = `${ui('Koszt wynajmu', 'Rental price')}: ${priceFormatter.format(price.value)}`;
     bookingPreview.hidden = false;
     form.scrollIntoView({ behavior: 'smooth', block: 'center' });
     window.setTimeout(() => form.elements.name.focus({ preventScroll: true }), 500);
@@ -730,14 +733,14 @@ contactForm?.addEventListener('submit', async (event) => {
 
   form.classList.add('was-validated');
   if (!form.checkValidity()) {
-    setMessage('Uzupe\u0142nij wymagane pola i sprawd\u017a poprawno\u015b\u0107 danych.', 'error');
+    setMessage(ui('Uzupe\u0142nij wymagane pola i sprawd\u017a poprawno\u015b\u0107 danych.', 'Complete the required fields and check that the details are correct.'), 'error');
     form.reportValidity();
     return;
   }
 
   const formData = new FormData(form);
   if (formData.get('website')) {
-    setMessage('Dzi\u0119kujemy! Wiadomo\u015b\u0107 zosta\u0142a przyj\u0119ta.', 'success');
+    setMessage(ui('Dzi\u0119kujemy! Wiadomo\u015b\u0107 zosta\u0142a przyj\u0119ta.', 'Thank you! Your message has been received.'), 'success');
     form.reset();
     clearContactBookingSelection();
     return;
@@ -745,7 +748,7 @@ contactForm?.addEventListener('submit', async (event) => {
 
   const endpoint = form.dataset.endpoint;
   if (!endpoint) {
-    setMessage('Formularz jest gotowy. Wysy\u0142ka zostanie uruchomiona po pod\u0142\u0105czeniu docelowego serwera.', 'info');
+    setMessage(ui('Formularz jest gotowy. Wysy\u0142ka zostanie uruchomiona po pod\u0142\u0105czeniu docelowego serwera.', 'The form is ready. Sending will be enabled once the production server is connected.'), 'info');
     return;
   }
 
@@ -755,7 +758,7 @@ contactForm?.addEventListener('submit', async (event) => {
 
   submitButton.disabled = true;
   form.setAttribute('aria-busy', 'true');
-  setMessage('Wysy\u0142amy wiadomo\u015b\u0107\u2026', 'info');
+  setMessage(ui('Wysy\u0142amy wiadomo\u015b\u0107\u2026', 'Sending your message\u2026'), 'info');
 
   try {
     const response = await fetch(endpoint, {
@@ -770,23 +773,23 @@ contactForm?.addEventListener('submit', async (event) => {
       throw requestError;
     }
     setMessage(responseData.booked
-      ? 'Termin zosta\u0142 zapisany w kalendarzu. Skontaktujemy si\u0119 z Tob\u0105, aby potwierdzi\u0107 szczeg\u00f3\u0142y.'
-      : 'Dzi\u0119kujemy! Odpowiemy najszybciej, jak to mo\u017cliwe.', 'success');
+      ? ui('Termin zosta\u0142 zapisany w kalendarzu. Skontaktujemy si\u0119 z Tob\u0105, aby potwierdzi\u0107 szczeg\u00f3\u0142y.', 'Your time has been added to the calendar. We will contact you to confirm the details.')
+      : ui('Dzi\u0119kujemy! Odpowiemy najszybciej, jak to mo\u017cliwe.', 'Thank you! We will reply as soon as possible.'), 'success');
     form.reset();
     clearContactBookingSelection();
     form.classList.remove('was-validated');
     if (responseData.booked) reloadStudioAvailability?.();
   } catch (error) {
     if (error.code === 'slot_unavailable') {
-      setMessage('Ten termin zosta\u0142 w\u0142a\u015bnie zaj\u0119ty. Wr\u00f3\u0107 do kalendarza i wybierz inny.', 'error');
+      setMessage(ui('Ten termin zosta\u0142 w\u0142a\u015bnie zaj\u0119ty. Wr\u00f3\u0107 do kalendarza i wybierz inny.', 'This time has just been booked. Return to the calendar and choose another one.'), 'error');
       clearContactBookingSelection();
       reloadStudioAvailability?.();
     } else if (error.code === 'booking_rate_limited') {
-      setMessage('Wys\u0142ano ju\u017c rezerwacj\u0119 z tego urz\u0105dzenia. Odczekaj kilka minut albo zadzwo\u0144 do nas.', 'error');
+      setMessage(ui('Wys\u0142ano ju\u017c rezerwacj\u0119 z tego urz\u0105dzenia. Odczekaj kilka minut albo zadzwo\u0144 do nas.', 'A booking has already been sent from this device. Wait a few minutes or call us.'), 'error');
     } else if (error.code === 'calendar_unavailable') {
-      setMessage('Kalendarz jest chwilowo niedost\u0119pny. Spr\u00f3buj ponownie p\u00f3\u017aniej lub skontaktuj si\u0119 z nami telefonicznie.', 'error');
+      setMessage(ui('Kalendarz jest chwilowo niedost\u0119pny. Spr\u00f3buj ponownie p\u00f3\u017aniej lub skontaktuj si\u0119 z nami telefonicznie.', 'The calendar is temporarily unavailable. Try again later or call us.'), 'error');
     } else {
-      setMessage('Nie uda\u0142o si\u0119 wys\u0142a\u0107 wiadomo\u015bci. Spr\u00f3buj ponownie lub skontaktuj si\u0119 z nami telefonicznie.', 'error');
+      setMessage(ui('Nie uda\u0142o si\u0119 wys\u0142a\u0107 wiadomo\u015bci. Spr\u00f3buj ponownie lub skontaktuj si\u0119 z nami telefonicznie.', 'We could not send your message. Try again or call us.'), 'error');
     }
   } finally {
     submitButton.disabled = false;
