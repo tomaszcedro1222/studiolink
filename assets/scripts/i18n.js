@@ -81,12 +81,15 @@
     const active = button.dataset.language === language;
     button.classList.toggle('is-active', active);
     button.setAttribute('aria-pressed', String(active));
-    button.addEventListener('click', () => {
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
       const next = button.dataset.language;
       if (!supported.has(next) || next === language) return;
       try { window.localStorage.setItem(STORAGE_KEY, next); } catch {}
       const url = new URL(window.location.href);
       url.searchParams.delete('lang');
+      url.hash = '';
       window.location.assign(url.href);
     });
   });
