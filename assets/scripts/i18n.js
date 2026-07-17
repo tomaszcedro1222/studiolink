@@ -4,8 +4,7 @@
   const requested = new URLSearchParams(window.location.search).get('lang');
   let saved = '';
   try { saved = window.localStorage.getItem(STORAGE_KEY) || ''; } catch {}
-  const browserLanguage = (navigator.languages?.[0] || navigator.language || 'en').toLowerCase();
-  const language = supported.has(requested) ? requested : supported.has(saved) ? saved : browserLanguage.startsWith('pl') ? 'pl' : 'en';
+  const language = supported.has(requested) ? requested : supported.has(saved) ? saved : 'pl';
   if (supported.has(requested)) try { window.localStorage.setItem(STORAGE_KEY, requested); } catch {}
   document.documentElement.lang = language;
 
