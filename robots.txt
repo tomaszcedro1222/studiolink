@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /server-config/
+
+Sitemap: https://studio.linkvisuals.pl/sitemap.xml

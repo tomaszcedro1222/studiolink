@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+header('X-Robots-Tag: noindex, nofollow', true);
+
 const GOOGLE_CALENDAR_SCOPES = [
     'https://www.googleapis.com/auth/calendar.events',
     'https://www.googleapis.com/auth/calendar.events.freebusy',

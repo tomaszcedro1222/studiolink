@@ -8,6 +8,7 @@ const bookingSection = document.querySelector('#rezerwacja');
 const newsletterSection = document.querySelector('.newsletter');
 const clientsSection = document.querySelector('.clients');
 const autoplayVideos = [...document.querySelectorAll('video[autoplay]')];
+const lazyVideos = [...document.querySelectorAll('video[data-lazy-video]')];
 const servicesMarquee = document.querySelector('.services-marquee');
 const uiLanguage = window.StudioLinkI18n?.language || document.documentElement.lang || 'pl';
 const ui = (polish, english) => uiLanguage === 'en' ? english : polish;
@@ -279,12 +280,37 @@ const playVideo = (video) => {
   if (playback) playback.catch(() => {});
 };
 
+const loadLazyVideo = (video) => {
+  if (video.dataset.videoLoaded) return;
+  video.querySelectorAll('source[data-src]').forEach((source) => {
+    source.src = source.dataset.src;
+    delete source.dataset.src;
+  });
+  video.dataset.videoLoaded = 'true';
+  video.load();
+};
+
+if (lazyVideos.length) {
+  if ('IntersectionObserver' in window) {
+    const lazyVideoObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        loadLazyVideo(entry.target);
+        observer.unobserve(entry.target);
+      });
+    }, { rootMargin: '500px 0px' });
+    lazyVideos.forEach((video) => lazyVideoObserver.observe(video));
+  } else {
+    lazyVideos.forEach(loadLazyVideo);
+  }
+}
+
 autoplayVideos.forEach((video) => {
   video.addEventListener('loadedmetadata', () => playVideo(video), { once:true });
   video.addEventListener('canplay', () => playVideo(video), { once:true });
   document.addEventListener('click', () => playVideo(video), { once: true });
   document.addEventListener('touchstart', () => playVideo(video), { once: true, passive: true });
-  playVideo(video);
+  if (!video.hasAttribute('data-lazy-video')) playVideo(video);
 });
 
 menuButton?.addEventListener('click', () => {

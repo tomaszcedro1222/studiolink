@@ -10,10 +10,12 @@
   document.documentElement.lang = language;
 
   const english = new Map(Object.entries({
-    'Studio Link — studio podcastowe Warszawa': 'Studio Link — podcast studio in Warsaw',
-    'Studio Link — profesjonalne studio podcastowe i videocastowe w centrum Warszawy.': 'Studio Link — a professional podcast and videocast studio in central Warsaw.',
-    'Otwórz menu': 'Open menu', 'Główne menu': 'Main menu', 'Cennik': 'Pricing', 'Realizacje': 'Our work', 'Kontakt': 'Contact',
-    'Sprawdź wolne terminy': 'Check availability', 'Profesjonalne studio podcastowe': 'Professional podcast studio', 'w samym centrum Warszawy': 'in the heart of Warsaw',
+    'Studio podcastowe i videocastowe Warszawa | Studio Link': 'Podcast and videocast studio Warsaw | Studio Link',
+    'Studio Link w centrum Warszawy: podcasty i videocasty, 3 kamery, 4 mikrofony i realizator w cenie. Sprawdź cennik oraz wolne terminy.': 'Studio Link in central Warsaw: podcasts and videocasts, 3 cameras, 4 microphones and a producer included. Check pricing and availability.',
+    'Otwórz menu': 'Open menu', 'Główne menu': 'Main menu', 'Usługi': 'Services', 'Studio i wyposażenie': 'Studio and equipment', 'Cennik': 'Pricing', 'Realizacje': 'Our work', 'Kontakt': 'Contact', 'Rezerwacja': 'Booking',
+    'Studio Link — strona główna': 'Studio Link — home page',
+    'Sprawdź wolne terminy': 'Check availability', 'Studio podcastowe i videocastowe w centrum Warszawy': 'Podcast and videocast studio in central Warsaw',
+    'Nagrywamy podcasty, videocasty, webinary, transmisje na żywo i materiały szkoleniowe z pełną obsługą realizatora.': 'We record podcasts, videocasts, webinars, live streams and training content with full producer support.',
     'Zadzwoń': 'Call us', 'Zadzwoń: +48 533 633 991': 'Call: +48 533 633 991',
     'Nagrywamy: podcasty, videocasty, rolki, castingi online, streamingi na żywo, filmy szkoleniowe i webinary': 'We record podcasts, videocasts, reels, online castings, live streams, training videos and webinars',
     'Podcasty': 'Podcasts', 'Videocasty': 'Videocasts', 'Rolki': 'Reels', 'Castingi online': 'Online castings', 'Streamingi na żywo': 'Live streams', 'Filmy szkoleniowe': 'Training videos', 'Webinary': 'Webinars',

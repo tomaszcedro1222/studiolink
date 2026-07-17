@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+header('X-Robots-Tag: noindex, nofollow', true);
+
 require_once __DIR__ . '/google-calendar.php';
 
 const ALLOWED_ORIGINS = [

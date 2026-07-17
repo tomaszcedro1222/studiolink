@@ -1,0 +1,12 @@
+RewriteEngine On
+
+# Keep the homepage under one canonical URL.
+# THE_REQUEST prevents a redirect loop when the server internally serves
+# index.html as the directory index for `/`.
+RewriteCond %{THE_REQUEST} \s/+index\.html(?:[?\s]) [NC]
+RewriteRule ^index\.html$ / [R=301,L]
+
+<IfModule mod_mime.c>
+  AddType image/avif .avif
+  AddType image/webp .webp
+</IfModule>
