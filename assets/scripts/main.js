@@ -13,47 +13,13 @@ const servicesMarquee = document.querySelector('.services-marquee');
 const uiLanguage = window.StudioLinkI18n?.language || document.documentElement.lang || 'pl';
 const ui = (polish, english) => uiLanguage === 'en' ? english : polish;
 
-const COOKIE_CONSENT_KEY = 'studioLinkCookieConsent';
-const readCookieConsent = () => {
-  try { return window.localStorage.getItem(COOKIE_CONSENT_KEY); } catch { return null; }
+const hasMarketingConsent = () => window.Cookiebot?.consent?.marketing === true;
+const showCookieSettings = () => {
+  if (!window.Cookiebot) return;
+  if (window.Cookiebot.hasResponse) window.Cookiebot.renew();
+  else window.Cookiebot.show();
 };
-const saveCookieConsent = (value) => {
-  try { window.localStorage.setItem(COOKIE_CONSENT_KEY, value); } catch {}
-  document.documentElement.dataset.cookieConsent = value;
-  window.dispatchEvent(new CustomEvent('studioLinkCookieConsent', { detail: { value } }));
-};
-const closeCookieBanner = (banner) => {
-  banner.classList.remove('is-visible');
-  document.body.classList.remove('cookie-consent-open');
-  window.setTimeout(() => banner.remove(), 300);
-};
-const showCookieBanner = () => {
-  document.querySelector('.cookie-banner')?.remove();
-  const banner = document.createElement('section');
-  banner.className = 'cookie-banner';
-  banner.setAttribute('role', 'dialog');
-  banner.setAttribute('aria-modal', 'true');
-  banner.setAttribute('aria-labelledby', 'cookie-banner-title');
-  banner.innerHTML = `
-    <h2 id="cookie-banner-title">${ui('Twoja prywatność', 'Your privacy')}</h2>
-    <p>${ui('Używamy pamięci przeglądarki do zapisania Twojego wyboru. Po wyrażeniu zgody możemy również ładować odtwarzacze YouTube.', 'We use browser storage to remember your choice. With your consent, we may also load YouTube players.')} <a href="privacy.html#cookies">${ui('Dowiedz się więcej', 'Learn more')}</a>.</p>
-    <div class="cookie-banner__actions">
-      <button type="button" data-cookie-choice="essential">${ui('Tylko niezbędne', 'Essential only')}</button>
-      <button class="is-primary" type="button" data-cookie-choice="all">${ui('Akceptuję wszystkie', 'Accept all')}</button>
-    </div>`;
-  document.body.append(banner);
-  document.body.classList.add('cookie-consent-open');
-  window.requestAnimationFrame(() => banner.classList.add('is-visible'));
-  banner.querySelectorAll('[data-cookie-choice]').forEach((button) => button.addEventListener('click', () => {
-    saveCookieConsent(button.dataset.cookieChoice);
-    closeCookieBanner(banner);
-  }));
-};
-
-const storedCookieConsent = readCookieConsent();
-if (storedCookieConsent) saveCookieConsent(storedCookieConsent);
-else showCookieBanner();
-document.querySelectorAll('[data-cookie-settings]').forEach((button) => button.addEventListener('click', showCookieBanner));
+document.querySelectorAll('[data-cookie-settings]').forEach((button) => button.addEventListener('click', showCookieSettings));
 
 const youtubeProjects = [...document.querySelectorAll('[data-youtube-id]')];
 let pendingYoutubeProject;
@@ -84,9 +50,9 @@ const loadYouTubeProject = (project) => {
 };
 const activateYouTubeProject = (project) => {
   if (project.dataset.youtubeLoaded) return;
-  if (document.documentElement.dataset.cookieConsent !== 'all') {
+  if (!hasMarketingConsent()) {
     pendingYoutubeProject = project;
-    showCookieBanner();
+    showCookieSettings();
     return;
   }
   loadYouTubeProject(project);
@@ -105,15 +71,18 @@ youtubeProjects.forEach((project) => {
     activateYouTubeProject(project);
   });
 });
-window.addEventListener('studioLinkCookieConsent', (event) => {
-  if (event.detail?.value === 'all' && pendingYoutubeProject) {
+const syncYouTubeConsent = () => {
+  if (hasMarketingConsent() && pendingYoutubeProject) {
     loadYouTubeProject(pendingYoutubeProject);
     pendingYoutubeProject = undefined;
-  } else if (event.detail?.value !== 'all') {
+  } else if (!hasMarketingConsent()) {
     pendingYoutubeProject = undefined;
     disableYouTubeProjects();
   }
-});
+};
+window.addEventListener('CookiebotOnConsentReady', syncYouTubeConsent);
+window.addEventListener('CookiebotOnAccept', syncYouTubeConsent);
+window.addEventListener('CookiebotOnDecline', syncYouTubeConsent);
 let desktopScrollFrame;
 
 const cancelDesktopScroll = () => {
