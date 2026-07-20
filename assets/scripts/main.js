@@ -12,6 +12,7 @@ const lazyVideos = [...document.querySelectorAll('video[data-lazy-video]')];
 const servicesMarquee = document.querySelector('.services-marquee');
 const uiLanguage = window.StudioLinkI18n?.language || document.documentElement.lang || 'pl';
 const ui = (polish, english) => uiLanguage === 'en' ? english : polish;
+const trackAnalytics = (eventName, parameters = {}, options = {}) => window.StudioLinkAnalytics?.track(eventName, parameters, options);
 
 const hasMarketingConsent = () => window.Cookiebot?.consent?.marketing === true;
 const showCookieSettings = () => {
@@ -50,6 +51,11 @@ const loadYouTubeProject = (project) => {
 };
 const activateYouTubeProject = (project) => {
   if (project.dataset.youtubeLoaded) return;
+  trackAnalytics('video_open', {
+    video_id: project.dataset.youtubeId,
+    video_title: project.dataset.youtubeTitle,
+    marketing_consent: hasMarketingConsent() ? 'granted' : 'required',
+  });
   if (!hasMarketingConsent()) {
     pendingYoutubeProject = project;
     showCookieSettings();
@@ -285,6 +291,7 @@ autoplayVideos.forEach((video) => {
 menuButton?.addEventListener('click', () => {
   const open = menu.classList.toggle('is-open');
   menuButton.setAttribute('aria-expanded', String(open));
+  trackAnalytics('menu_toggle', { menu_state: open ? 'open' : 'closed' });
 });
 
 menu?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => {
@@ -378,12 +385,21 @@ document.querySelectorAll('[data-carousel]').forEach((carousel) => {
     dot.type = 'button';
     dot.setAttribute('aria-label', `${ui('Slajd', 'Slide')} ${index + 1}`);
     if (index === 0) dot.classList.add('is-active');
-    dot.addEventListener('click', () => goTo(index));
+    dot.addEventListener('click', () => {
+      trackAnalytics('scenery_interaction', { interaction_type: 'dot', slide_number: index + 1 });
+      goTo(index);
+    });
     dots.append(dot);
   });
 
-  carousel.querySelector('.carousel__nav--prev').addEventListener('click', () => animateToPhysicalSlide(currentPhysicalIndex() - 1));
-  carousel.querySelector('.carousel__nav--next').addEventListener('click', () => animateToPhysicalSlide(currentPhysicalIndex() + 1));
+  carousel.querySelector('.carousel__nav--prev').addEventListener('click', () => {
+    trackAnalytics('scenery_interaction', { interaction_type: 'arrow', direction: 'previous' });
+    animateToPhysicalSlide(currentPhysicalIndex() - 1);
+  });
+  carousel.querySelector('.carousel__nav--next').addEventListener('click', () => {
+    trackAnalytics('scenery_interaction', { interaction_type: 'arrow', direction: 'next' });
+    animateToPhysicalSlide(currentPhysicalIndex() + 1);
+  });
   track.addEventListener('dragstart', (event) => event.preventDefault());
   track.addEventListener('pointerdown', (event) => {
     if (event.pointerType !== 'mouse' || event.button !== 0) return;
@@ -557,6 +573,12 @@ if (studioCalendar) {
       button.classList.toggle('is-selected', selectedStart === time);
       button.addEventListener('click', () => {
         selectedStart = time;
+        trackAnalytics('booking_time_selected', {
+          start_time: time,
+          rental_duration: selectedDuration,
+          value: calculatePrice(selectedDuration).value,
+          currency: 'PLN',
+        });
         renderSlots();
       });
       slotsContainer.append(button);
@@ -567,6 +589,10 @@ if (studioCalendar) {
   const selectDate = (date) => {
     selectedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     selectedStart = '';
+    trackAnalytics('booking_date_selected', {
+      days_ahead: Math.round((selectedDate.getTime() - today.getTime()) / 86400000),
+      weekday: selectedDate.getDay(),
+    });
     renderDays();
     renderSlots();
   };
@@ -610,15 +636,22 @@ if (studioCalendar) {
 
   previousButton.addEventListener('click', () => {
     displayedMonth = new Date(displayedMonth.getFullYear(), displayedMonth.getMonth() - 1, 1);
+    trackAnalytics('booking_month_changed', { direction: 'previous' });
     renderDays();
   });
   nextButton.addEventListener('click', () => {
     displayedMonth = new Date(displayedMonth.getFullYear(), displayedMonth.getMonth() + 1, 1);
+    trackAnalytics('booking_month_changed', { direction: 'next' });
     renderDays();
   });
   durationButtons.forEach((button) => button.addEventListener('click', () => {
     selectedDuration = Number(button.dataset.calendarDuration);
     selectedStart = '';
+    trackAnalytics('booking_duration_selected', {
+      rental_duration: selectedDuration,
+      value: calculatePrice(selectedDuration).value,
+      currency: 'PLN',
+    });
     if (selectedDate && !hasAvailableSlot(selectedDate, selectedDuration)) selectedDate = null;
     renderDuration();
     renderDays();
@@ -654,6 +687,7 @@ if (studioCalendar) {
       });
       busyBookings = nextBusyBookings;
       availabilityState = 'ready';
+      trackAnalytics('calendar_availability_loaded', { status: 'success' });
       if (selectedDate && !hasAvailableSlot(selectedDate, selectedDuration)) {
         selectedDate = null;
         selectedStart = '';
@@ -664,6 +698,7 @@ if (studioCalendar) {
     } catch {
       busyBookings = new Map();
       availabilityState = 'error';
+      trackAnalytics('calendar_availability_loaded', { status: 'error' });
       selectedDate = null;
       selectedStart = '';
     }
@@ -684,6 +719,13 @@ if (studioCalendar) {
     form.elements.preferredTime.value = selectedStart;
     form.elements.rentalDuration.value = String(selectedDuration);
     const price = calculatePrice(selectedDuration);
+    trackAnalytics('booking_details_confirmed', {
+      rental_duration: selectedDuration,
+      start_time: selectedStart,
+      days_ahead: Math.round((selectedDate.getTime() - today.getTime()) / 86400000),
+      value: price.value,
+      currency: 'PLN',
+    });
     form.elements.estimatedPrice.value = String(price.value);
     const bookingPreview = form.querySelector('[data-contact-booking]');
     bookingPreview.querySelector('[data-contact-booking-date]').textContent = capitalize(summaryDateFormatter.format(selectedDate));
@@ -712,6 +754,7 @@ const clearContactBookingSelection = () => {
 };
 
 contactBookingPreview?.querySelector('[data-contact-booking-remove]')?.addEventListener('click', () => {
+  trackAnalytics('booking_details_removed');
   clearContactBookingSelection();
   contactForm.querySelector('.form-message').textContent = '';
 });
@@ -726,8 +769,28 @@ contactForm?.addEventListener('submit', async (event) => {
     message.className = `form-message ${type ? `is-${type}` : ''}`.trim();
   };
 
+  const hasBooking = Boolean(form.elements.preferredDate?.value && form.elements.preferredTime?.value);
+  const rentalDuration = Number(form.elements.rentalDuration?.value) || undefined;
+  const estimatedValue = Number(form.elements.estimatedPrice?.value) || undefined;
+  trackAnalytics('form_submit_attempt', {
+    form_name: 'contact',
+    includes_booking: hasBooking,
+    rental_duration: rentalDuration,
+    value: estimatedValue,
+    currency: estimatedValue ? 'PLN' : undefined,
+  });
+
   form.classList.add('was-validated');
   if (!form.checkValidity()) {
+    const invalidFields = [...form.elements]
+      .filter((field) => field.willValidate && !field.validity.valid)
+      .map((field) => field.name)
+      .filter(Boolean);
+    trackAnalytics('form_validation_error', {
+      form_name: 'contact',
+      invalid_field_count: invalidFields.length,
+      invalid_fields: invalidFields.join(','),
+    });
     setMessage(ui('Uzupe\u0142nij wymagane pola i sprawd\u017a poprawno\u015b\u0107 danych.', 'Complete the required fields and check that the details are correct.'), 'error');
     form.reportValidity();
     return;
@@ -767,6 +830,18 @@ contactForm?.addEventListener('submit', async (event) => {
       requestError.code = responseData.code || '';
       throw requestError;
     }
+    const leadEvent = responseData.booked ? 'booking_request' : 'generate_lead';
+    trackAnalytics(leadEvent, {
+      form_name: 'contact',
+      includes_booking: Boolean(responseData.booked),
+      rental_duration: rentalDuration,
+      value: estimatedValue,
+      currency: estimatedValue ? 'PLN' : undefined,
+    }, {
+      meta: responseData.booked
+        ? { name: 'Schedule', parameters: { value: estimatedValue, currency: 'PLN' } }
+        : { name: 'Lead', parameters: { content_name: 'contact_form' } },
+    });
     setMessage(responseData.booked
       ? ui('Termin zosta\u0142 zapisany w kalendarzu. Skontaktujemy si\u0119 z Tob\u0105, aby potwierdzi\u0107 szczeg\u00f3\u0142y.', 'Your time has been added to the calendar. We will contact you to confirm the details.')
       : ui('Dzi\u0119kujemy! Odpowiemy najszybciej, jak to mo\u017cliwe.', 'Thank you! We will reply as soon as possible.'), 'success');
@@ -775,6 +850,11 @@ contactForm?.addEventListener('submit', async (event) => {
     form.classList.remove('was-validated');
     if (responseData.booked) reloadStudioAvailability?.();
   } catch (error) {
+    trackAnalytics('form_error', {
+      form_name: 'contact',
+      includes_booking: hasBooking,
+      error_code: error.code || 'request_failed',
+    });
     if (error.code === 'slot_unavailable') {
       setMessage(ui('Ten termin zosta\u0142 w\u0142a\u015bnie zaj\u0119ty. Wr\u00f3\u0107 do kalendarza i wybierz inny.', 'This time has just been booked. Return to the calendar and choose another one.'), 'error');
       clearContactBookingSelection();

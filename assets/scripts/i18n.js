@@ -85,6 +85,7 @@
       event.stopPropagation();
       const next = button.dataset.language;
       if (!supported.has(next) || next === language) return;
+      window.StudioLinkAnalytics?.track('language_change', { previous_language: language, selected_language: next });
       try { window.localStorage.setItem(STORAGE_KEY, next); } catch {}
       const url = new URL(window.location.href);
       url.searchParams.delete('lang');
