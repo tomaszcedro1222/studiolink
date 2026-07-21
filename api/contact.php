@@ -153,12 +153,12 @@ if ($booking !== null) {
         }
 
         $today = new DateTimeImmutable('today', $timezone);
-        $minimumBookingStart = (new DateTimeImmutable('now', $timezone))->modify('+47 hours');
+        $firstBookableDate = $today->modify('+2 days');
         $lastAllowedDay = $today->modify('first day of this month')->modify('+3 months')->modify('-1 day');
         $startMinutes = (int) $bookingStart->format('H') * 60 + (int) $bookingStart->format('i');
         $lastStartMinutes = (18 - $booking['duration']) * 60;
         if (
-            $bookingStart < $minimumBookingStart
+            $bookingStart < $firstBookableDate
             || $bookingStart > $lastAllowedDay->setTime(23, 59, 59)
             || (int) $bookingStart->format('N') > 5
             || $startMinutes < 8 * 60

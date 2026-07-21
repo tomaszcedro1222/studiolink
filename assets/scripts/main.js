@@ -459,6 +459,8 @@ if (studioCalendar) {
   const availabilityEndpoint = studioCalendar.dataset.availabilityEndpoint;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
+  const firstBookableDate = new Date(today);
+  firstBookableDate.setDate(firstBookableDate.getDate() + 2);
   const firstAllowedMonth = new Date(today.getFullYear(), today.getMonth(), 1);
   const lastAllowedMonth = new Date(today.getFullYear(), today.getMonth() + 2, 1);
   let displayedMonth = new Date(firstAllowedMonth);
@@ -483,7 +485,7 @@ if (studioCalendar) {
     String(date.getMonth() + 1).padStart(2, '0'),
     String(date.getDate()).padStart(2, '0'),
   ].join('-');
-  const isWorkingDay = (date) => date > today && date.getDay() !== 0 && date.getDay() !== 6;
+  const isWorkingDay = (date) => date >= firstBookableDate && date.getDay() !== 0 && date.getDay() !== 6;
   const addHours = (time, hours) => {
     const [hour, minute] = time.split(':').map(Number);
     return `${String(hour + hours).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
@@ -501,10 +503,8 @@ if (studioCalendar) {
   const getBookings = (date) => busyBookings.get(toIsoDate(date)) || [];
   const isSlotAvailable = (date, startMinutes, duration) => {
     const endMinutes = startMinutes + duration * 60;
-    const slotStart = new Date(date.getFullYear(), date.getMonth(), date.getDate(), Math.floor(startMinutes / 60), startMinutes % 60);
-    const meetsAdvanceNotice = slotStart.getTime() >= Date.now() + 47 * 60 * 60 * 1000;
     return availabilityState === 'ready'
-      && meetsAdvanceNotice
+      && date >= firstBookableDate
       && !getBookings(date).some((booking) => startMinutes < booking.end && endMinutes > booking.start);
   };
   const getLastStartMinutes = (duration) => (18 - duration) * 60;
