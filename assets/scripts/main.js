@@ -541,10 +541,33 @@ if (studioCalendar) {
     }
     return false;
   };
-  const setCalendarNotice = (message = '') => {
+  const getAvailableDurations = (date) => durationButtons
+    .map((button) => Number(button.dataset.calendarDuration))
+    .filter((duration) => hasAvailableSlot(date, duration));
+  const formatDurationOptions = (durations) => {
+    const options = durations.map(String);
+    if (options.length < 2) return options[0] || '';
+    return `${options.slice(0, -1).join(', ')} ${ui('lub', 'or')} ${options.at(-1)}`;
+  };
+  const getDurationUnavailableNotice = (date, duration) => {
+    const availableDurations = getAvailableDurations(date);
+    if (!availableDurations.length) {
+      return ui(
+        'Tego dnia studio jest ju\u017c zaj\u0119te i nie ma wolnego wariantu wynajmu.',
+        'The studio is already booked on this date and no rental option is available.',
+      );
+    }
+    const availableOptions = formatDurationOptions(availableDurations);
+    return ui(
+      `Tego dnia studio nie jest dost\u0119pne przez ${duration} godz. Mo\u017ce wystarczy Ci kr\u00f3tszy wariant? Dost\u0119pne opcje: ${availableOptions} godz.`,
+      `The studio is not available for ${duration} hours on this date. Would a shorter session work? Available options: ${availableOptions} hours.`,
+    );
+  };
+  const setCalendarNotice = (message = '', reason = '') => {
     if (!calendarNotice) return;
     calendarNotice.textContent = message;
     calendarNotice.hidden = !message;
+    calendarNotice.dataset.reason = reason;
   };
 
   const renderDuration = () => {
@@ -584,6 +607,18 @@ if (studioCalendar) {
         : availabilityState === 'error'
           ? ui('Nie uda\u0142o si\u0119 pobra\u0107 termin\u00f3w. Spr\u00f3buj ponownie p\u00f3\u017aniej.', 'We could not load availability. Please try again later.')
           : ui('Najpierw wybierz dost\u0119pny dzie\u0144 w kalendarzu.', 'Choose an available date in the calendar first.');
+      slotsContainer.append(prompt);
+      renderSummary();
+      return;
+    }
+
+    if (!hasAvailableSlot(selectedDate, selectedDuration)) {
+      const prompt = document.createElement('p');
+      prompt.className = 'studio-calendar__empty';
+      prompt.textContent = ui(
+        'Brak dost\u0119pnej godziny rozpocz\u0119cia dla wybranej d\u0142ugo\u015bci.',
+        'No start time is available for the selected duration.',
+      );
       slotsContainer.append(prompt);
       renderSummary();
       return;
@@ -681,13 +716,16 @@ if (studioCalendar) {
   durationButtons.forEach((button) => button.addEventListener('click', () => {
     selectedDuration = Number(button.dataset.calendarDuration);
     selectedStart = '';
-    setCalendarNotice();
+    if (selectedDate && !hasAvailableSlot(selectedDate, selectedDuration)) {
+      setCalendarNotice(getDurationUnavailableNotice(selectedDate, selectedDuration), 'duration');
+    } else {
+      setCalendarNotice();
+    }
     trackAnalytics('booking_duration_selected', {
       rental_duration: selectedDuration,
       value: calculatePrice(selectedDuration).value,
       currency: 'PLN',
     });
-    if (selectedDate && !hasAvailableSlot(selectedDate, selectedDuration)) selectedDate = null;
     renderDuration();
     renderDays();
     renderSlots();
@@ -746,11 +784,13 @@ if (studioCalendar) {
         setCalendarNotice(ui(
           'Wybrany termin został właśnie zarezerwowany. Wybierz inną godzinę.',
           'The selected time has just been booked. Please choose another start time.',
-        ));
+        ), 'conflict');
         document.dispatchEvent(new CustomEvent('studio-booking-conflict'));
-      } else if (!silent && selectedDate && !hasAvailableSlot(selectedDate, selectedDuration)) {
-        selectedDate = null;
+      } else if (selectedDate && !hasAvailableSlot(selectedDate, selectedDuration)) {
         selectedStart = '';
+        setCalendarNotice(getDurationUnavailableNotice(selectedDate, selectedDuration), 'duration');
+      } else if (calendarNotice?.dataset.reason === 'duration') {
+        setCalendarNotice();
       }
     } catch {
       if (!silent) {

@@ -211,6 +211,7 @@ a { color:inherit; text-decoration:none; }
 .studio-calendar__day.is-today { border-color:#77777d; }
 .studio-calendar__day.is-selected { border-color:var(--red); color:#171719; background:var(--red); box-shadow:0 10px 22px rgba(238,97,85,.24); }
 .studio-calendar__day:disabled { color:#6f6f74; background:#2d2d31; cursor:not-allowed; }
+.studio-calendar__day.is-selected:disabled { border-color:var(--red); color:var(--red); background:rgba(238,97,85,.12); box-shadow:0 10px 22px rgba(238,97,85,.14); }
 .studio-calendar__day-placeholder { aspect-ratio:1; }
 .studio-calendar__legend { display:flex; flex-wrap:wrap; gap:18px; margin-top:24px; color:#aaaab0; font-size:11px; }
 .studio-calendar__legend span { display:flex; align-items:center; gap:7px; }
