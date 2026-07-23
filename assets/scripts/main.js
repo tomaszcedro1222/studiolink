@@ -311,7 +311,15 @@ document.querySelectorAll('[data-carousel]').forEach((carousel) => {
   const cloneSlides = () => slides.map((slide) => {
     const clone = slide.cloneNode(true);
     clone.setAttribute('aria-hidden', 'true');
+    clone.querySelectorAll('img').forEach((image) => {
+      image.loading = 'eager';
+    });
     return clone;
+  });
+  slides.forEach((slide) => {
+    slide.querySelectorAll('img').forEach((image) => {
+      image.loading = 'eager';
+    });
   });
   track.prepend(...cloneSlides());
   track.append(...cloneSlides());
@@ -338,9 +346,21 @@ document.querySelectorAll('[data-carousel]').forEach((carousel) => {
   };
   const normalizeLoopPosition = () => {
     const physicalIndex = currentPhysicalIndex();
-    if (physicalIndex < slides.length) jumpToPhysicalSlide(physicalIndex + slides.length);
-    if (physicalIndex >= slides.length * 2) jumpToPhysicalSlide(physicalIndex - slides.length);
-    updateDots();
+    let normalizedIndex = physicalIndex;
+    if (physicalIndex < slides.length) normalizedIndex = physicalIndex + slides.length;
+    if (physicalIndex >= slides.length * 2) normalizedIndex = physicalIndex - slides.length;
+
+    if (normalizedIndex !== physicalIndex) {
+      track.classList.add('is-repositioning');
+      jumpToPhysicalSlide(normalizedIndex);
+      updateDots(normalizedIndex);
+      window.requestAnimationFrame(() => {
+        track.classList.remove('is-repositioning');
+      });
+      return;
+    }
+
+    updateDots(physicalIndex);
   };
   const animateToPhysicalSlide = (index) => {
     if (!loopSlides[index]) return;

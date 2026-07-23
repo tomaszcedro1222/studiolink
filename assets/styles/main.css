@@ -101,6 +101,7 @@ a { color:inherit; text-decoration:none; }
 .carousel__track::-webkit-scrollbar { display:none; }
 .carousel__track picture { display:block; width:100%; aspect-ratio:1.75; scroll-snap-align:center; opacity:.68; filter:brightness(.48); transform:scale(.8); transform-origin:center; transition:transform .58s cubic-bezier(.22,1,.36,1),filter .58s ease,opacity .58s ease; }
 .carousel__track picture.is-active { opacity:1; filter:brightness(1); transform:scale(1); }
+.carousel__track.is-repositioning picture { transition:none; }
 .carousel__track img { display:block; width:100%; height:100%; object-fit:cover; border-radius:26px; }
 .carousel__track.is-dragging { cursor:grabbing; user-select:none; }
 .carousel__nav { position:absolute; z-index:2; top:42%; width:44px; height:44px; border:0; border-radius:50%; color:#fff; background:rgba(0,0,0,.5); font-size:32px; cursor:pointer; }
