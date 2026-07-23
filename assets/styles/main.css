@@ -309,7 +309,7 @@ a { color:inherit; text-decoration:none; }
 }
 .contact__inner { position:relative; min-height:720px; padding-top:82px; }
 .contact h2 { margin:0; font-size:50px; font-weight:400; line-height:1.25; }
-.seo-overview__heading h2,.newsletter h2,.booking h2,.faq__heading h2,.contact h2 { font-family:'Poppins',Arial,sans-serif; font-size:46px; font-weight:400; line-height:1.2; letter-spacing:-.025em; }
+.seo-overview__heading h2,.newsletter h2,.booking h2,.faq__heading h2,.contact h2 { font-family:'Poppins',Arial,sans-serif; font-size:22px; font-weight:500; line-height:normal; letter-spacing:normal; }
 .contact-card { position:absolute; z-index:1; top:245px; left:0; display:grid; grid-template-columns:170px minmax(0,1fr); align-items:start; gap:34px; width:620px; padding:34px; border-radius:28px; background:var(--bg); box-shadow:0 24px 60px rgba(0,0,0,.18); }
 .contact-card > picture { display:block; width:170px; height:170px; }
 .contact-card > picture img { width:100%; height:100%; border-radius:18px; object-fit:cover; }
@@ -488,7 +488,7 @@ a { color:inherit; text-decoration:none; }
   }
   .contact__inner { min-height:0; padding-top:70px; padding-bottom:64px; }
   .contact h2 { font-size:31px; }
-  .seo-overview__heading h2,.newsletter h2,.booking h2,.faq__heading h2,.contact h2 { font-size:30px; font-weight:400; line-height:1.2; letter-spacing:-.025em; }
+  .seo-overview__heading h2,.newsletter h2,.booking h2,.faq__heading h2,.contact h2 { font-size:20px; font-weight:500; line-height:normal; letter-spacing:normal; }
   .contact-card { position:relative; top:auto; left:auto; display:block; width:100%; margin-top:64px; padding:30px; border-radius:25px; }
   .contact-card > picture { width:150px; height:150px; margin-bottom:28px; }
   .contact-card__details { padding-top:0; }
