@@ -344,7 +344,11 @@ document.querySelectorAll('[data-carousel]').forEach((carousel) => {
   const updateDots = (physicalIndex = currentPhysicalIndex()) => {
     const active = logicalIndex(physicalIndex);
     dots.querySelectorAll('button').forEach((dot, index) => dot.classList.toggle('is-active', index === active));
-    loopSlides.forEach((slide, index) => slide.classList.toggle('is-active', index === physicalIndex));
+    loopSlides.forEach((slide, index) => {
+      slide.classList.toggle('is-active', index === physicalIndex);
+      slide.classList.toggle('is-before-active', index === physicalIndex - 1);
+      slide.classList.toggle('is-after-active', index === physicalIndex + 1);
+    });
   };
   const normalizeLoopPosition = () => {
     const physicalIndex = currentPhysicalIndex();
