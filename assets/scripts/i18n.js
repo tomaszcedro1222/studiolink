@@ -57,7 +57,7 @@
     '3 godz.': '3 hrs', '4 godz.': '4 hrs', '5 godz.': '5 hrs', '6 godz.': '6 hrs', '7 godz.': '7 hrs', '8 godz.': '8 hrs', '9 godz.': '9 hrs', '10 godz.': '10 hrs',
     'Szacowana cena': 'Estimated price', 'Potrzebuję promptera': 'I need a teleprompter', '+250 zł': '+PLN 250', 'Twój termin': 'Your booking', 'Wybieram ten termin': 'Select this time', 'Przykładowe ustawienia studia': 'Example studio setups', 'Zaufali nam': 'Trusted by',
     'Zapraszamy': 'Join us', 'na nagranie!': 'for a recording!', 'Otwórz lokalizację Studio Link w Mapach Google': 'Open Studio Link location in Google Maps',
-    'Najczęstsze pytania': 'Frequently asked questions', 'Studio podcastowe Warszawa — FAQ': 'Podcast studio Warsaw — FAQ',
+    'Najczęstsze pytania': 'Frequently asked questions', 'Studio podcastowe Warszawa – FAQ': 'Podcast studio Warsaw – FAQ',
     'Najważniejsze informacje o cenach, wyposażeniu, dojeździe i rezerwacji nagrania.': 'Key information about pricing, equipment, directions and booking a recording.',
     'Ile kosztuje wynajem studia podcastowego w Warszawie?': 'How much does it cost to rent a podcast studio in Warsaw?',
     'Przy wynajmie na 3–4 godziny cena wynosi 450 zł za godzinę. Sesja 5-godzinna kosztuje 2000 zł, a 10-godzinny dzień nagraniowy 4000 zł. Minimalny czas wynajmu to 3 godziny.': 'For a 3–4 hour booking, the rate is PLN 450 per hour. A 5-hour session costs PLN 2,000 and a 10-hour recording day costs PLN 4,000. The minimum booking time is 3 hours.',
