@@ -126,7 +126,7 @@ a { color:inherit; text-decoration:none; }
 .photo-grid figure { position:relative; overflow:hidden; margin:0; border-radius:18px; }
 .photo-grid picture { display:block; width:100%; height:100%; }
 .photo-grid img { width:100%; height:100%; object-fit:cover; }
-.photo-grid figcaption { position:absolute; top:18px; left:20px; right:10px; font-size:18px; font-weight:600; text-shadow:0 1px 6px rgba(0,0,0,.5); }
+.photo-grid figcaption { position:absolute; top:18px; right:10px; left:20px; font-size:18px; font-weight:600; line-height:1.15; text-shadow:0 1px 6px rgba(0,0,0,.5); }
 .photo-grid--studio figure { aspect-ratio:1; }
 .photo-grid--backstage figure { aspect-ratio:.8; }
 .photo-grid--facilities figure:nth-child(-n+4) { aspect-ratio:1; }
