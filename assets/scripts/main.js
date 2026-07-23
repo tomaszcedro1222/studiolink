@@ -286,12 +286,14 @@ autoplayVideos.forEach((video) => {
 
 menuButton?.addEventListener('click', () => {
   const open = menu.classList.toggle('is-open');
+  document.body.classList.toggle('menu-open', open);
   menuButton.setAttribute('aria-expanded', String(open));
   trackAnalytics('menu_toggle', { menu_state: open ? 'open' : 'closed' });
 });
 
 menu?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => {
   menu.classList.remove('is-open');
+  document.body.classList.remove('menu-open');
   menuButton.setAttribute('aria-expanded', 'false');
 }));
 

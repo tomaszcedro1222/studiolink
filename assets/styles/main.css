@@ -377,7 +377,7 @@ a { color:inherit; text-decoration:none; }
   .hero { min-height:max(680px,100svh); background-position:56% center; }
   .hero__video { object-position:56% center; }
   .hero__content { position:static; width:auto; transform:none; }
-  .hero__logo-link { position:absolute; z-index:4; top:24px; left:22px; pointer-events:auto; }
+  .hero__logo-link { position:absolute; z-index:31; top:24px; left:22px; pointer-events:auto; }
   .hero__logo { width:104px; margin:0; }
   .hero__content .button { position:absolute; z-index:3; right:76px; bottom:26px; left:20px; width:auto; min-height:48px; margin:0; padding:12px 14px; transform:none; pointer-events:auto; }
   .hero__intro { right:20px; bottom:92px; left:20px; width:auto; transform:none; text-align:left; }
@@ -386,9 +386,11 @@ a { color:inherit; text-decoration:none; }
   .phone-fab--hero { display:flex; position:absolute; z-index:3; right:20px; bottom:26px; width:48px; min-height:48px; padding:0; border-radius:50%; pointer-events:auto; }
   .phone-fab--hero span { display:none; }
   .phone-fab--hero svg { width:21px; height:21px; }
-  .menu-button { position:absolute; z-index:4; top:27px; right:20px; display:flex; flex-direction:column; gap:6px; padding:8px; border:0; background:transparent; }
+  body.menu-open { overflow:hidden; overscroll-behavior:none; }
+  .language-switch { z-index:31; }
+  .menu-button { position:absolute; z-index:31; top:27px; right:20px; display:flex; flex-direction:column; gap:6px; padding:8px; border:0; background:transparent; }
   .menu-button span { width:24px; height:2px; background:#fff; transition:.2s; }
-  .menu { position:absolute; z-index:3; inset:0 0 auto; display:none; flex-direction:column; align-items:center; gap:20px; padding:100px 25px 35px; transform:none; background:rgba(0,0,0,.94); font-size:16px; white-space:normal; }
+  .menu { position:fixed; z-index:30; inset:0; display:none; width:100%; height:100vh; height:100dvh; min-height:100svh; flex-direction:column; align-items:center; gap:20px; overflow-y:auto; padding:100px 25px max(35px,env(safe-area-inset-bottom)); transform:none; background:rgba(0,0,0,.96); font-size:16px; white-space:normal; overscroll-behavior:contain; }
   .menu.is-open { display:flex; }
   .services { padding-top:54px; padding-bottom:44px; }
   .services-marquee__group { gap:22px; padding-right:22px; font-size:16px; }
