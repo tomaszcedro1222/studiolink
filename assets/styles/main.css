@@ -6,7 +6,7 @@ body { margin:0; color:var(--text); background:var(--bg); font-family:'Poppins',
 #CookiebotWidget { display:none !important; }
 main { display:flex; flex-direction:column; }
 main > .services { order:10; }
-main > .seo-overview { order:15; }
+main > .seo-overview { order:95; }
 main > .scenery { order:20; }
 main > .facilities { order:30; }
 main > .process { order:40; }
