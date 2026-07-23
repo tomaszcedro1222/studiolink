@@ -24,6 +24,15 @@ document.querySelectorAll('[data-cookie-settings]').forEach((button) => button.a
 
 const youtubeProjects = [...document.querySelectorAll('[data-youtube-id]')];
 let pendingYoutubeProject;
+const pauseYouTubeProject = (project) => {
+  const iframe = project.querySelector('iframe');
+  if (!iframe?.contentWindow) return;
+  iframe.contentWindow.postMessage(JSON.stringify({
+    event: 'command',
+    func: 'pauseVideo',
+    args: [],
+  }), '*');
+};
 const resetYouTubeProject = (project) => {
   project.querySelector('iframe')?.remove();
   project.classList.remove('is-loading','is-loaded');
@@ -42,10 +51,11 @@ const loadYouTubeProject = (project) => {
   iframe.loading = 'lazy';
   iframe.allow = 'autoplay; encrypted-media; picture-in-picture';
   iframe.allowFullscreen = true;
-  iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&playsinline=1&rel=0`;
+  iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&playsinline=1&rel=0&enablejsapi=1`;
   iframe.addEventListener('load', () => {
     project.classList.remove('is-loading');
     project.classList.add('is-loaded');
+    if (project.dataset.youtubeVisible === 'false' || document.hidden) pauseYouTubeProject(project);
   }, { once:true });
   project.append(iframe);
 };
@@ -85,6 +95,18 @@ const syncYouTubeConsent = () => {
 window.addEventListener('CookiebotOnConsentReady', syncYouTubeConsent);
 window.addEventListener('CookiebotOnAccept', syncYouTubeConsent);
 window.addEventListener('CookiebotOnDecline', syncYouTubeConsent);
+if ('IntersectionObserver' in window) {
+  const youtubeVisibilityObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      entry.target.dataset.youtubeVisible = String(entry.isIntersecting);
+      if (!entry.isIntersecting) pauseYouTubeProject(entry.target);
+    });
+  }, { threshold:0.01 });
+  youtubeProjects.forEach((project) => youtubeVisibilityObserver.observe(project));
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) youtubeProjects.forEach(pauseYouTubeProject);
+});
 let desktopScrollFrame;
 
 const cancelDesktopScroll = () => {
