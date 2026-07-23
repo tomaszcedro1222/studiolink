@@ -305,10 +305,15 @@ document.querySelectorAll('[data-carousel]').forEach((carousel) => {
   let animationFrame;
   let isAnimating = false;
   let isDragging = false;
+  let autoplayPaused = false;
   let dragStartX = 0;
   let dragStartScroll = 0;
 
   if (slides.length < 2) return;
+
+  const pauseAutoplay = () => {
+    autoplayPaused = true;
+  };
 
   const cloneSlides = () => slides.map((slide) => {
     const clone = slide.cloneNode(true);
@@ -409,6 +414,7 @@ document.querySelectorAll('[data-carousel]').forEach((carousel) => {
     dot.setAttribute('aria-label', `${ui('Slajd', 'Slide')} ${index + 1}`);
     if (index === 0) dot.classList.add('is-active');
     dot.addEventListener('click', () => {
+      pauseAutoplay();
       trackAnalytics('scenery_interaction', { interaction_type: 'dot', slide_number: index + 1 });
       goTo(index);
     });
@@ -416,10 +422,12 @@ document.querySelectorAll('[data-carousel]').forEach((carousel) => {
   });
 
   carousel.querySelector('.carousel__nav--prev').addEventListener('click', () => {
+    pauseAutoplay();
     trackAnalytics('scenery_interaction', { interaction_type: 'arrow', direction: 'previous' });
     animateToPhysicalSlide(currentPhysicalIndex() - 1);
   });
   carousel.querySelector('.carousel__nav--next').addEventListener('click', () => {
+    pauseAutoplay();
     trackAnalytics('scenery_interaction', { interaction_type: 'arrow', direction: 'next' });
     animateToPhysicalSlide(currentPhysicalIndex() + 1);
   });
@@ -438,9 +446,12 @@ document.querySelectorAll('[data-carousel]').forEach((carousel) => {
   });
   track.addEventListener('pointermove', (event) => {
     if (!isDragging) return;
+    if (Math.abs(event.clientX - dragStartX) > 4) pauseAutoplay();
     track.scrollLeft = dragStartScroll - (event.clientX - dragStartX);
     updateDots();
   });
+  track.addEventListener('touchmove', pauseAutoplay, { passive: true });
+  track.addEventListener('wheel', pauseAutoplay, { passive: true });
   const finishCarouselDrag = (event) => {
     if (!isDragging) return;
     isDragging = false;
@@ -458,7 +469,7 @@ document.querySelectorAll('[data-carousel]').forEach((carousel) => {
   }, { passive: true });
 
   window.setInterval(() => {
-    if (document.hidden || isAnimating || isDragging) return;
+    if (autoplayPaused || document.hidden || isAnimating || isDragging) return;
     animateToPhysicalSlide(currentPhysicalIndex() + 1);
   }, 3000);
 
