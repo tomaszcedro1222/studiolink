@@ -1,12 +1,36 @@
+Options -Indexes
+DirectoryIndex index.html
+ErrorDocument 404 /404.html
+
 RewriteEngine On
 
-# Keep the homepage under one canonical URL.
-# THE_REQUEST prevents a redirect loop when the server internally serves
-# index.html as the directory index for `/`.
+# Send every public URL variant to one HTTPS hostname.
 RewriteCond %{THE_REQUEST} \s/+index\.html(?:[?\s]) [NC]
-RewriteRule ^index\.html$ / [R=301,L]
+RewriteRule ^index\.html$ https://studio.linkvisuals.pl/ [R=301,L]
+
+RewriteCond %{HTTPS} !=on [OR]
+RewriteCond %{HTTP_HOST} !^studio\.linkvisuals\.pl$ [NC]
+RewriteRule ^ https://studio.linkvisuals.pl%{REQUEST_URI} [R=301,L,NE]
+
+# Do not expose deployment examples even when a crawler ignores robots.txt.
+RewriteRule ^server-config/ - [F,L]
 
 <IfModule mod_mime.c>
   AddType image/avif .avif
   AddType image/webp .webp
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript application/javascript application/json application/xml image/svg+xml
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  <FilesMatch "\.(?:css|js|jpg|jpeg|png|webp|avif|svg|mp4|woff|woff2)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.(?:html|xml|txt)$">
+    Header set Cache-Control "public, max-age=3600, must-revalidate"
+  </FilesMatch>
 </IfModule>

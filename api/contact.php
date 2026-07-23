@@ -66,6 +66,7 @@ $consent = ($payload['consent'] ?? false) === true;
 $preferredDate = trim((string) ($payload['preferredDate'] ?? ''));
 $preferredTime = trim((string) ($payload['preferredTime'] ?? ''));
 $rentalDuration = trim((string) ($payload['rentalDuration'] ?? ''));
+$prompterNeeded = trim((string) ($payload['prompterNeeded'] ?? ''));
 $hasBookingSelection = $preferredDate !== '' || $preferredTime !== '' || $rentalDuration !== '';
 
 if (
@@ -87,15 +88,18 @@ if ($hasBookingSelection) {
         || !preg_match('/^(?:0\d|1\d|2[0-3]):(?:00|30)$/', $preferredTime)
         || !in_array($duration, range(3, 10), true)
         || $rentalDuration !== (string) $duration
+        || !in_array($prompterNeeded, ['0', '1'], true)
     ) {
         respond(422, ['ok' => false, 'message' => 'Invalid booking data']);
     }
 
-    $price = $duration >= 5 ? 2000 + ($duration - 5) * 400 : $duration * 450;
+    $needsPrompter = $prompterNeeded === '1';
+    $price = ($duration >= 5 ? 2000 + ($duration - 5) * 400 : $duration * 450) + ($needsPrompter ? 250 : 0);
     $booking = [
         'date' => $preferredDate,
         'time' => $preferredTime,
         'duration' => $duration,
+        'prompter' => $needsPrompter,
         'price' => $price,
     ];
 }
@@ -129,6 +133,7 @@ $details = [
     'Preferowana data' => $booking['date'] ?? '',
     'Preferowana godzina' => $booking['time'] ?? '',
     'Czas wynajmu' => $booking !== null ? $booking['duration'] . ' h' : '',
+    'Prompter' => $booking !== null ? ($booking['prompter'] ? 'Tak (+250 zł)' : 'Nie') : '',
     'Szacowana cena' => $booking !== null ? $booking['price'] . ' zł' : '',
     'Wiadomość' => $message,
 ];
@@ -152,8 +157,9 @@ if ($booking !== null) {
             respond(422, ['ok' => false, 'message' => 'Invalid booking data']);
         }
 
-        $today = new DateTimeImmutable('today', $timezone);
-        $firstBookableDate = $today->modify('+2 days');
+        $now = new DateTimeImmutable('now', $timezone);
+        $today = $now->setTime(0, 0);
+        $firstBookableDate = $today->modify((int) $now->format('H') < 14 ? '+1 day' : '+2 days');
         $lastAllowedDay = $today->modify('first day of this month')->modify('+3 months')->modify('-1 day');
         $startMinutes = (int) $bookingStart->format('H') * 60 + (int) $bookingStart->format('i');
         $lastStartMinutes = (18 - $booking['duration']) * 60;
@@ -210,6 +216,7 @@ if ($booking !== null) {
                 'email' => $email,
                 'phone' => $phone,
                 'duration' => $booking['duration'],
+                'prompter' => $booking['prompter'],
                 'price' => $booking['price'],
                 'message' => $message,
             ]);

@@ -53,8 +53,8 @@
     <!-- End Meta Pixel Code -->
     <meta name="theme-color" content="#222226" />
     <meta name="color-scheme" content="dark" />
-    <meta name="description" content="Studio Link w centrum Warszawy: podcasty i videocasty, 3 kamery, 4 mikrofony i realizator w cenie. Sprawdź cennik oraz wolne terminy." />
-    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <meta name="description" content="Studio podcastowe i videocastowe w centrum Warszawy. 3 kamery, 4 mikrofony i realizator w cenie. Poznaj cennik i sprawdź wolne terminy online." />
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="pl_PL" />
     <meta property="og:site_name" content="Studio Link" />
@@ -62,52 +62,181 @@
     <meta property="og:description" content="Podcasty i videocasty z pełną obsługą realizatora w centrum Warszawy." />
     <meta property="og:url" content="https://studio.linkvisuals.pl/" />
     <meta property="og:image" content="https://studio.linkvisuals.pl/assets/images/og-image.jpg" />
+    <meta property="og:image:secure_url" content="https://studio.linkvisuals.pl/assets/images/og-image.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Studio Link — studio podcastowe i videocastowe w Warszawie" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Studio podcastowe i videocastowe Warszawa | Studio Link" />
     <meta name="twitter:description" content="Podcasty i videocasty z pełną obsługą realizatora w centrum Warszawy." />
     <meta name="twitter:image" content="https://studio.linkvisuals.pl/assets/images/og-image.jpg" />
+    <meta name="twitter:image:alt" content="Studio Link — studio podcastowe i videocastowe w Warszawie" />
     <title>Studio podcastowe i videocastowe Warszawa | Studio Link</title>
     <link rel="canonical" href="https://studio.linkvisuals.pl/" />
+    <link rel="preload" as="image" href="assets/images/hero-studio-1280.webp" type="image/webp" fetchpriority="high" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "LocalBusiness",
-        "@id": "https://studio.linkvisuals.pl/#studio",
-        "name": "Studio Link",
-        "url": "https://studio.linkvisuals.pl/",
-        "logo": "https://studio.linkvisuals.pl/assets/images/logo.svg",
-        "image": "https://studio.linkvisuals.pl/assets/images/og-image.jpg",
-        "telephone": "+48533633991",
-        "email": "stanislaw.komar@linkvisuals.pl",
-        "address": {
-          "@type": "PostalAddress",
-          "streetAddress": "Langiewicza 16/1",
-          "postalCode": "02-071",
-          "addressLocality": "Warszawa",
-          "addressCountry": "PL"
-        },
-        "areaServed": {
-          "@type": "City",
-          "name": "Warszawa"
-        },
-        "sameAs": [
-          "https://www.facebook.com/studio.linkvisuals",
-          "https://www.instagram.com/studio.linkvisuals/",
-          "https://pl.linkedin.com/company/link-visuals"
-        ],
-        "parentOrganization": {
-          "@type": "Organization",
-          "name": "Link Visuals sp. z o.o."
-        }
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://linkvisuals.pl/#organization",
+            "name": "Link Visuals sp. z o.o.",
+            "url": "https://linkvisuals.pl/",
+            "logo": "https://studio.linkvisuals.pl/assets/images/logo.svg"
+          },
+          {
+            "@type": "LocalBusiness",
+            "@id": "https://studio.linkvisuals.pl/#business",
+            "name": "Studio Link",
+            "alternateName": "Studio Link Warszawa",
+            "description": "Studio podcastowe i videocastowe w centrum Warszawy z trzema kamerami, czterema mikrofonami i obsługą realizatora w cenie.",
+            "url": "https://studio.linkvisuals.pl/",
+            "logo": "https://studio.linkvisuals.pl/assets/images/logo.svg",
+            "image": "https://studio.linkvisuals.pl/assets/images/og-image.jpg",
+            "telephone": "+48533633991",
+            "email": "stanislaw.komar@linkvisuals.pl",
+            "priceRange": "450–4000 PLN",
+            "currenciesAccepted": "PLN",
+            "knowsLanguage": ["pl", "en"],
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Langiewicza 16/1",
+              "postalCode": "02-071",
+              "addressLocality": "Warszawa",
+              "addressRegion": "mazowieckie",
+              "addressCountry": "PL"
+            },
+            "areaServed": {
+              "@type": "City",
+              "name": "Warszawa"
+            },
+            "openingHoursSpecification": {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+              "opens": "08:00",
+              "closes": "18:00"
+            },
+            "sameAs": [
+              "https://www.facebook.com/studio.linkvisuals",
+              "https://www.instagram.com/studio.linkvisuals/",
+              "https://pl.linkedin.com/company/link-visuals"
+            ],
+            "parentOrganization": {
+              "@id": "https://linkvisuals.pl/#organization"
+            },
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Nagrania i wynajem studia",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "name": "Krótka sesja — 3–4 godziny",
+                  "price": "450",
+                  "priceCurrency": "PLN",
+                  "description": "Cena za godzinę wynajmu studia z realizatorem."
+                },
+                {
+                  "@type": "Offer",
+                  "name": "Sesja 5-godzinna",
+                  "price": "2000",
+                  "priceCurrency": "PLN"
+                },
+                {
+                  "@type": "Offer",
+                  "name": "Pełny dzień nagrań — 10 godzin",
+                  "price": "4000",
+                  "priceCurrency": "PLN"
+                }
+              ]
+            }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://studio.linkvisuals.pl/#website",
+            "url": "https://studio.linkvisuals.pl/",
+            "name": "Studio Link",
+            "publisher": {
+              "@id": "https://studio.linkvisuals.pl/#business"
+            },
+            "inLanguage": "pl-PL"
+          },
+          {
+            "@type": "WebPage",
+            "@id": "https://studio.linkvisuals.pl/#webpage",
+            "url": "https://studio.linkvisuals.pl/",
+            "name": "Studio podcastowe i videocastowe Warszawa | Studio Link",
+            "description": "Studio podcastowe i videocastowe w centrum Warszawy z realizatorem, trzema kamerami i czterema mikrofonami.",
+            "isPartOf": {
+              "@id": "https://studio.linkvisuals.pl/#website"
+            },
+            "about": {
+              "@id": "https://studio.linkvisuals.pl/#business"
+            },
+            "primaryImageOfPage": {
+              "@type": "ImageObject",
+              "url": "https://studio.linkvisuals.pl/assets/images/og-image.jpg",
+              "width": 1200,
+              "height": 630
+            },
+            "dateModified": "2026-07-22",
+            "inLanguage": "pl-PL"
+          },
+          {
+            "@type": "FAQPage",
+            "@id": "https://studio.linkvisuals.pl/#faq",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Ile kosztuje wynajem studia podcastowego w Warszawie?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Przy wynajmie na 3–4 godziny cena wynosi 450 zł za godzinę. Sesja 5-godzinna kosztuje 2000 zł, a 10-godzinny dzień nagraniowy 4000 zł. Minimalny czas wynajmu to 3 godziny."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Co obejmuje wynajem Studio Link?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "W cenie otrzymujesz przygotowane studio, trzy kamery, cztery mikrofony oraz realizację obrazu i dźwięku. Realizator prowadzi nagranie na żywo, więc nie musisz organizować osobnej ekipy technicznej."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Jakie materiały można nagrać w Studio Link?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Realizujemy podcasty audio, videocasty, webinary, transmisje na żywo, rolki, castingi online i filmy szkoleniowe. Ustawienie studia dobieramy do formatu i identyfikacji marki."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Gdzie znajduje się studio i czy ma parking?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Studio Link mieści się przy ul. Langiewicza 16/1, 02-071 Warszawa. To lokalizacja w centrum Warszawy, a dla klientów dostępny jest prywatny parking."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Jak zarezerwować termin nagrania?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Wybierz datę, godzinę i długość sesji w kalendarzu na stronie, a następnie wyślij formularz. Możesz też zadzwonić pod numer +48 533 633 991 lub napisać na stanislaw.komar@linkvisuals.pl."
+                }
+              }
+            ]
+          }
+        ]
       }
     </script>
     <link rel="icon" href="assets/images/logo.svg?v=favicon-2" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="assets/styles/main.css?v=65" />
+    <link rel="stylesheet" href="assets/styles/main.css?v=85" />
   </head>
   <body>
     <!-- Google Tag Manager (noscript) -->
@@ -115,8 +244,8 @@
     <!-- End Google Tag Manager (noscript) -->
     <header class="hero" id="start">
       <video class="hero__video" autoplay muted loop playsinline preload="metadata" poster="assets/images/hero-studio-1280.webp" disablepictureinpicture aria-hidden="true">
-        <source src="assets/media/welcome-video-mobile.mp4?v=3" type="video/mp4" media="(max-width: 700px)" />
-        <source src="assets/media/welcome-video-desktop.mp4?v=3" type="video/mp4" />
+        <source src="assets/media/welcome-video-mobile.mp4?v=4" type="video/mp4" media="(max-width: 700px)" />
+        <source src="assets/media/welcome-video-desktop.mp4?v=4" type="video/mp4" />
       </video>
       <button class="menu-button" type="button" aria-label="Otwórz menu" aria-expanded="false"><span></span><span></span><span></span></button>
       <nav class="menu" aria-label="Główne menu">
@@ -124,6 +253,7 @@
         <a href="#studio">Studio i wyposażenie</a>
         <a href="#realizacje">Realizacje</a>
         <a href="#cennik">Cennik</a>
+        <a href="#faq">FAQ</a>
         <a href="#kontakt">Kontakt</a>
         <a href="#rezerwacja">Rezerwacja</a>
       </nav>
@@ -194,15 +324,15 @@
           <p class="process__lead">Od przygotowanego studia do gotowych plików — w trzech prostych krokach.</p>
           <ol class="process__list">
             <li>
-              <span class="process__number">01</span>
+              <span class="process__number">1</span>
               <div><strong>Przed nagraniem</strong><p>Przygotujemy wybrane ustawienie studia przed Twoim przyjazdem.</p></div>
             </li>
             <li>
-              <span class="process__number">02</span>
+              <span class="process__number">2</span>
               <div><strong>W trakcie</strong><p>Nagrywamy i realizujemy na żywo, tak żebyś po nagraniu dostał zmiksowany materiał. Nie musisz wynajmować dodatkowej obsługi. Realizator studia jest już w cenie.</p></div>
             </li>
             <li>
-              <span class="process__number">03</span>
+              <span class="process__number">3</span>
               <div><strong>Po nagraniu</strong><p>Dostajesz pliki w chmurze lub na własny dysk — jak Ci wygodniej.</p></div>
             </li>
           </ol>
@@ -292,6 +422,7 @@
               <input name="preferredTime" type="hidden" />
               <input name="rentalDuration" type="hidden" />
               <input name="estimatedPrice" type="hidden" />
+              <input name="prompterNeeded" type="hidden" />
               <label class="form-field form-field--wide">
                 <span>Co chcesz wiedzieć? <b aria-hidden="true">*</b></span>
                 <textarea name="message" rows="5" minlength="10" maxlength="2000" placeholder="Napisz, czego chcesz się dowiedzieć." required></textarea>
@@ -315,10 +446,10 @@
         <div class="container booking__inner">
           <div class="booking__heading">
             <div>
-              <h2>Zarezerwuj termin</h2>
+              <h2 class="heading-accent">Zarezerwuj termin</h2>
               <p>Wybierz datę i godzinę rozpoczęcia. Minimalny czas wynajmu studia to 3 godziny.</p>
             </div>
-            <p class="booking__project-note">Jeśli masz niestandardowy projekt, <a href="#oferta">skontaktuj się z nami</a>.</p>
+            <p class="booking__project-note">Jeśli masz niestandardowy projekt, <a href="#oferta">skontaktuj się z nami</a></p>
           </div>
           <div class="studio-calendar" data-studio-calendar data-availability-endpoint="https://studio.linkvisuals.pl/api/calendar-availability.php">
             <div class="studio-calendar__date-panel">
@@ -349,15 +480,45 @@
                   <button type="button" data-calendar-duration="9">9 godz.</button>
                   <button type="button" data-calendar-duration="10">10 godz.</button>
                 </div>
+                <label class="studio-calendar__addon">
+                  <input type="checkbox" data-calendar-prompter />
+                  <span><strong>Potrzebuję promptera</strong><small>+250 zł</small></span>
+                </label>
                 <p class="studio-calendar__price"><span>Szacowana cena</span><strong data-calendar-price></strong><small data-calendar-price-note></small></p>
               </fieldset>
               <div class="studio-calendar__slots" data-calendar-slots aria-live="polite"></div>
+              <p class="studio-calendar__notice" data-calendar-notice role="alert" hidden></p>
               <div class="studio-calendar__summary" data-calendar-summary hidden>
                 <div><span>Twój termin</span><strong data-calendar-summary-date></strong><small data-calendar-summary-time></small><b data-calendar-summary-price></b></div>
                 <button class="button button--primary" type="button" data-calendar-confirm>Wybieram ten termin</button>
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section class="section seo-overview" id="studio-podcastowe-warszawa">
+        <div class="container">
+          <div class="seo-overview__heading">
+            <p class="eyebrow">Studio Link • Warszawa</p>
+            <h2 class="heading-accent">Studio podcastowe w Warszawie z pełną realizacją audio i wideo</h2>
+            <p>Przyjeżdżasz z pomysłem, a my przygotowujemy scenografię, kamery, mikrofony i realizację. Studio Link to profesjonalne studio nagrań w centrum Warszawy dla firm, twórców, ekspertów i zespołów marketingowych. Realizator jest w cenie, dlatego nie musisz kompletować osobnej ekipy technicznej.</p>
+          </div>
+          <div class="seo-overview__grid">
+            <article>
+              <h3>Podcasty i videocasty</h3>
+              <p>Nagrywamy czysty dźwięk i obraz z trzech kamer. Materiał realizujemy na żywo i przekazujemy w chmurze lub na Twoim dysku.</p>
+            </article>
+            <article>
+              <h3>Webinary i transmisje na żywo</h3>
+              <p>Zapewniamy przygotowane studio, realizację obrazu i dźwięku oraz wsparcie techniczne podczas streamingu i wydarzeń online.</p>
+            </article>
+            <article>
+              <h3>Rolki, castingi i filmy szkoleniowe</h3>
+              <p>Dopasowujemy ustawienie studia do krótkich formatów social media, nagrań eksperckich, kursów, castingów i komunikacji marki.</p>
+            </article>
+          </div>
+          <p class="seo-overview__cta">Zobacz <a href="#cennik">cennik studia</a>, sprawdź <a href="#rezerwacja">wolne terminy</a> albo <a href="#kontakt">porozmawiaj z realizatorem</a> o swoim projekcie.</p>
         </div>
       </section>
 
@@ -369,12 +530,12 @@
         <div class="container">
           <h2 class="section-title">Realizacje</h2>
           <div class="portfolio__grid">
-            <div class="portfolio__item" data-youtube-id="3UyW6a1GYD8" data-youtube-title="Why Big Brands Spend More Keeping Customers"><picture><source type="image/avif" srcset="assets/images/project-1-400.avif 400w, assets/images/project-1-800.avif 800w, assets/images/project-1-1200.avif 1200w, assets/images/project-1-1600.avif 1600w" sizes="(max-width: 700px) calc(100vw - 40px), 580px" /><source type="image/webp" srcset="assets/images/project-1-400.webp 400w, assets/images/project-1-800.webp 800w, assets/images/project-1-1200.webp 1200w, assets/images/project-1-1600.webp 1600w" sizes="(max-width: 700px) calc(100vw - 40px), 580px" /><img class="portfolio__poster" src="assets/images/project-1-800.webp" width="1919" height="1079" loading="lazy" decoding="async" alt="Realizacja dla GetResponse" /></picture><span class="portfolio__hint" aria-hidden="true"></span></div>
-            <div class="portfolio__item" data-youtube-id="y5ylKFv-jkQ" data-youtube-title="Jak jasne zasady budują zaufanie i bezpieczeństwo?"><picture><source type="image/avif" srcset="assets/images/project-2-400.avif 400w, assets/images/project-2-800.avif 800w, assets/images/project-2-1160.avif 1160w" sizes="(max-width: 700px) calc(100vw - 40px), 580px" /><source type="image/webp" srcset="assets/images/project-2-400.webp 400w, assets/images/project-2-800.webp 800w, assets/images/project-2-1160.webp 1160w" sizes="(max-width: 700px) calc(100vw - 40px), 580px" /><img class="portfolio__poster" src="assets/images/project-2-800.webp" width="1160" height="640" loading="lazy" decoding="async" alt="Rozmowa z Malwiną Faliszewską" /></picture><span class="portfolio__hint" aria-hidden="true"></span></div>
-            <div class="portfolio__item" data-youtube-id="No1UJ4ewub4" data-youtube-title="Otyłość: co warto wiedzieć?"><picture><source type="image/avif" srcset="assets/images/project-3-400.avif 400w, assets/images/project-3-800.avif 800w, assets/images/project-3-1160.avif 1160w" sizes="(max-width: 700px) calc(100vw - 40px), 580px" /><source type="image/webp" srcset="assets/images/project-3-400.webp 400w, assets/images/project-3-800.webp 800w, assets/images/project-3-1160.webp 1160w" sizes="(max-width: 700px) calc(100vw - 40px), 580px" /><img class="portfolio__poster" src="assets/images/project-3-800.webp" width="1160" height="640" loading="lazy" decoding="async" alt="Realizacja dla ALAB laboratoria" /></picture><span class="portfolio__hint" aria-hidden="true"></span></div>
-            <div class="portfolio__item" data-youtube-id="efHHFqJx50w" data-youtube-title="Moje dziecko doprowadza mnie do szału"><picture><source type="image/avif" srcset="assets/images/project-4-400.avif 400w, assets/images/project-4-800.avif 800w, assets/images/project-4-1160.avif 1160w" sizes="(max-width: 700px) calc(100vw - 40px), 580px" /><source type="image/webp" srcset="assets/images/project-4-400.webp 400w, assets/images/project-4-800.webp 800w, assets/images/project-4-1160.webp 1160w" sizes="(max-width: 700px) calc(100vw - 40px), 580px" /><img class="portfolio__poster" src="assets/images/project-4-800.webp" width="1160" height="640" loading="lazy" decoding="async" alt="Podcast Studio dobrych praktyk" /></picture><span class="portfolio__hint" aria-hidden="true"></span></div>
-            <div class="portfolio__item" data-youtube-id="gBaHZR-z7wM" data-youtube-title="Remigiusz Mróz: Polskie kryminały?"><picture><source type="image/avif" srcset="assets/images/project-5-400.avif 400w, assets/images/project-5-800.avif 800w, assets/images/project-5-1160.avif 1160w" sizes="(max-width: 700px) calc(100vw - 40px), 580px" /><source type="image/webp" srcset="assets/images/project-5-400.webp 400w, assets/images/project-5-800.webp 800w, assets/images/project-5-1160.webp 1160w" sizes="(max-width: 700px) calc(100vw - 40px), 580px" /><img class="portfolio__poster" src="assets/images/project-5-800.webp" width="1160" height="640" loading="lazy" decoding="async" alt="Rozmowa z Remigiuszem Mrozem" /></picture><span class="portfolio__hint" aria-hidden="true"></span></div>
-            <div class="portfolio__item" data-youtube-id="lnb-viiB0_0" data-youtube-title="Past Simple — English Puzzle"><picture><source type="image/avif" srcset="assets/images/project-6-400.avif 400w, assets/images/project-6-800.avif 800w, assets/images/project-6-1160.avif 1160w" sizes="(max-width: 700px) calc(100vw - 40px), 580px" /><source type="image/webp" srcset="assets/images/project-6-400.webp 400w, assets/images/project-6-800.webp 800w, assets/images/project-6-1160.webp 1160w" sizes="(max-width: 700px) calc(100vw - 40px), 580px" /><img class="portfolio__poster" src="assets/images/project-6-800.webp" width="1160" height="640" loading="lazy" decoding="async" alt="Lekcja English Puzzle" /></picture><span class="portfolio__hint" aria-hidden="true"></span></div>
+            <a class="portfolio__item" href="https://www.youtube.com/watch?v=3UyW6a1GYD8" data-youtube-id="3UyW6a1GYD8" data-youtube-title="Why Big Brands Spend More Keeping Customers"><picture><source type="image/avif" srcset="assets/images/project-1-400.avif 400w, assets/images/project-1-800.avif 800w, assets/images/project-1-1200.avif 1200w, assets/images/project-1-1600.avif 1600w" sizes="(max-width: 700px) calc(100vw - 40px), 580px" /><source type="image/webp" srcset="assets/images/project-1-400.webp 400w, assets/images/project-1-800.webp 800w, assets/images/project-1-1200.webp 1200w, assets/images/project-1-1600.webp 1600w" sizes="(max-width: 700px) calc(100vw - 40px), 580px" /><img class="portfolio__poster" src="assets/images/project-1-800.webp" width="1919" height="1079" loading="lazy" decoding="async" alt="Realizacja podcastu dla GetResponse" /></picture><span class="portfolio__hint" aria-hidden="true"></span></a>
+            <a class="portfolio__item" href="https://www.youtube.com/watch?v=y5ylKFv-jkQ" data-youtube-id="y5ylKFv-jkQ" data-youtube-title="Jak jasne zasady budują zaufanie i bezpieczeństwo?"><picture><source type="image/avif" srcset="assets/images/project-2-400.avif 400w, assets/images/project-2-800.avif 800w, assets/images/project-2-1160.avif 1160w" sizes="(max-width: 700px) calc(100vw - 40px), 580px" /><source type="image/webp" srcset="assets/images/project-2-400.webp 400w, assets/images/project-2-800.webp 800w, assets/images/project-2-1160.webp 1160w" sizes="(max-width: 700px) calc(100vw - 40px), 580px" /><img class="portfolio__poster" src="assets/images/project-2-800.webp" width="1160" height="640" loading="lazy" decoding="async" alt="Realizacja videocastu z Malwiną Faliszewską" /></picture><span class="portfolio__hint" aria-hidden="true"></span></a>
+            <a class="portfolio__item" href="https://www.youtube.com/watch?v=No1UJ4ewub4" data-youtube-id="No1UJ4ewub4" data-youtube-title="Otyłość: co warto wiedzieć?"><picture><source type="image/avif" srcset="assets/images/project-3-400.avif 400w, assets/images/project-3-800.avif 800w, assets/images/project-3-1160.avif 1160w" sizes="(max-width: 700px) calc(100vw - 40px), 580px" /><source type="image/webp" srcset="assets/images/project-3-400.webp 400w, assets/images/project-3-800.webp 800w, assets/images/project-3-1160.webp 1160w" sizes="(max-width: 700px) calc(100vw - 40px), 580px" /><img class="portfolio__poster" src="assets/images/project-3-800.webp" width="1160" height="640" loading="lazy" decoding="async" alt="Realizacja podcastu dla ALAB laboratoria" /></picture><span class="portfolio__hint" aria-hidden="true"></span></a>
+            <a class="portfolio__item" href="https://www.youtube.com/watch?v=efHHFqJx50w" data-youtube-id="efHHFqJx50w" data-youtube-title="Moje dziecko doprowadza mnie do szału"><picture><source type="image/avif" srcset="assets/images/project-4-400.avif 400w, assets/images/project-4-800.avif 800w, assets/images/project-4-1160.avif 1160w" sizes="(max-width: 700px) calc(100vw - 40px), 580px" /><source type="image/webp" srcset="assets/images/project-4-400.webp 400w, assets/images/project-4-800.webp 800w, assets/images/project-4-1160.webp 1160w" sizes="(max-width: 700px) calc(100vw - 40px), 580px" /><img class="portfolio__poster" src="assets/images/project-4-800.webp" width="1160" height="640" loading="lazy" decoding="async" alt="Realizacja podcastu Studio dobrych praktyk" /></picture><span class="portfolio__hint" aria-hidden="true"></span></a>
+            <a class="portfolio__item" href="https://www.youtube.com/watch?v=gBaHZR-z7wM" data-youtube-id="gBaHZR-z7wM" data-youtube-title="Remigiusz Mróz: Polskie kryminały?"><picture><source type="image/avif" srcset="assets/images/project-5-400.avif 400w, assets/images/project-5-800.avif 800w, assets/images/project-5-1160.avif 1160w" sizes="(max-width: 700px) calc(100vw - 40px), 580px" /><source type="image/webp" srcset="assets/images/project-5-400.webp 400w, assets/images/project-5-800.webp 800w, assets/images/project-5-1160.webp 1160w" sizes="(max-width: 700px) calc(100vw - 40px), 580px" /><img class="portfolio__poster" src="assets/images/project-5-800.webp" width="1160" height="640" loading="lazy" decoding="async" alt="Realizacja videocastu z Remigiuszem Mrozem" /></picture><span class="portfolio__hint" aria-hidden="true"></span></a>
+            <a class="portfolio__item" href="https://www.youtube.com/watch?v=lnb-viiB0_0" data-youtube-id="lnb-viiB0_0" data-youtube-title="Past Simple — English Puzzle"><picture><source type="image/avif" srcset="assets/images/project-6-400.avif 400w, assets/images/project-6-800.avif 800w, assets/images/project-6-1160.avif 1160w" sizes="(max-width: 700px) calc(100vw - 40px), 580px" /><source type="image/webp" srcset="assets/images/project-6-400.webp 400w, assets/images/project-6-800.webp 800w, assets/images/project-6-1160.webp 1160w" sizes="(max-width: 700px) calc(100vw - 40px), 580px" /><img class="portfolio__poster" src="assets/images/project-6-800.webp" width="1160" height="640" loading="lazy" decoding="async" alt="Realizacja filmu szkoleniowego English Puzzle" /></picture><span class="portfolio__hint" aria-hidden="true"></span></a>
           </div>
         </div>
       </section>
@@ -391,9 +552,41 @@
         </div>
       </section>
 
+      <section class="section faq" id="faq">
+        <div class="container faq__inner">
+          <div class="faq__heading">
+            <p class="eyebrow">Najczęstsze pytania</p>
+            <h2 class="heading-accent">Studio podcastowe Warszawa — FAQ</h2>
+            <p>Najważniejsze informacje o cenach, wyposażeniu, dojeździe i rezerwacji nagrania.</p>
+          </div>
+          <div class="faq__list">
+            <details>
+              <summary>Ile kosztuje wynajem studia podcastowego w Warszawie?</summary>
+              <p>Przy wynajmie na 3–4 godziny cena wynosi 450 zł za godzinę. Sesja 5-godzinna kosztuje 2000 zł, a 10-godzinny dzień nagraniowy 4000 zł. Minimalny czas wynajmu to 3 godziny.</p>
+            </details>
+            <details>
+              <summary>Co obejmuje wynajem Studio Link?</summary>
+              <p>W cenie otrzymujesz przygotowane studio, trzy kamery, cztery mikrofony oraz realizację obrazu i dźwięku. Realizator prowadzi nagranie na żywo, więc nie musisz organizować osobnej ekipy technicznej.</p>
+            </details>
+            <details>
+              <summary>Jakie materiały można nagrać w Studio Link?</summary>
+              <p>Realizujemy podcasty audio, videocasty, webinary, transmisje na żywo, rolki, castingi online i filmy szkoleniowe. Ustawienie studia dobieramy do formatu i identyfikacji marki.</p>
+            </details>
+            <details>
+              <summary>Gdzie znajduje się studio i czy ma parking?</summary>
+              <p>Studio Link mieści się przy ul. Langiewicza 16/1, 02-071 Warszawa. To lokalizacja w centrum Warszawy, a dla klientów dostępny jest prywatny parking.</p>
+            </details>
+            <details>
+              <summary>Jak zarezerwować termin nagrania?</summary>
+              <p>Wybierz datę, godzinę i długość sesji w <a href="#rezerwacja">kalendarzu na stronie</a>, a następnie wyślij formularz. Możesz też zadzwonić pod numer <a href="tel:+48533633991">+48 533 633 991</a> lub napisać na <a href="mailto:stanislaw.komar@linkvisuals.pl">stanislaw.komar@linkvisuals.pl</a>.</p>
+            </details>
+          </div>
+        </div>
+      </section>
+
       <section class="contact" id="kontakt">
         <div class="container contact__inner">
-          <h2>Zapraszamy<br />na nagranie!</h2>
+          <h2 class="heading-accent">Zapraszamy<br /> na nagranie!</h2>
           <article class="contact-card">
             <picture><source type="image/avif" srcset="assets/images/contact-stanislaw-340.avif 340w" sizes="150px" /><source type="image/webp" srcset="assets/images/contact-stanislaw-340.webp 340w" sizes="150px" /><img src="assets/images/contact-stanislaw-340.webp" width="340" height="340" loading="lazy" decoding="async" alt="Stanisław Komar" /></picture>
             <div class="contact-card__details">
@@ -430,8 +623,8 @@
       <div class="footer__socials"><a href="https://www.facebook.com/studio.linkvisuals" target="_blank" rel="noopener noreferrer" aria-label="Facebook">f</a><a href="https://www.instagram.com/studio.linkvisuals/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4.25" /><circle class="instagram-dot" cx="17.4" cy="6.7" r="1" /></svg></a><a href="https://pl.linkedin.com/company/link-visuals" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg class="linkedin-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5.3 3.5A2.3 2.3 0 1 1 5.3 8a2.3 2.3 0 0 1 0-4.5ZM3.4 9.6h3.8V21H3.4V9.6Zm6.1 0h3.6v1.6h.1c.5-1 1.8-2 3.7-2 4 0 4.7 2.6 4.7 6V21h-3.8v-5.2c0-1.3 0-3-1.9-3s-2.2 1.4-2.2 2.9V21H9.5V9.6Z" /></svg></a></div>
       <div class="footer__legal"><a href="privacy.html">Polityka prywatności</a><button type="button" data-cookie-settings>Ustawienia cookies</button></div>
     </footer>
-    <script charset="UTF-8" src="assets/scripts/i18n.js?v=8"></script>
+    <script charset="UTF-8" src="assets/scripts/i18n.js?v=12"></script>
     <script charset="UTF-8" src="assets/scripts/analytics.js?v=1"></script>
-    <script charset="UTF-8" src="assets/scripts/main.js?v=47"></script>
+    <script charset="UTF-8" src="assets/scripts/main.js?v=55"></script>
   </body>
 </html>

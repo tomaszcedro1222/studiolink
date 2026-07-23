@@ -242,6 +242,7 @@ function google_calendar_insert_booking(
             'E-mail: ' . $booking['email'],
             'Telefon: ' . $booking['phone'],
             'Czas wynajmu: ' . $booking['duration'] . ' h',
+            'Prompter: ' . (!empty($booking['prompter']) ? 'Tak (+250 zł)' : 'Nie'),
             'Szacowana cena: ' . $booking['price'] . ' zł',
             '',
             'Wiadomość:',

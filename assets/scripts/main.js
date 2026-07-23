@@ -67,12 +67,8 @@ const disableYouTubeProjects = () => {
   youtubeProjects.forEach(resetYouTubeProject);
 };
 youtubeProjects.forEach((project) => {
-  project.tabIndex = 0;
-  project.setAttribute('role', 'button');
   project.setAttribute('aria-label', `${ui('Obejrzyj', 'Watch')}: ${project.dataset.youtubeTitle || ui('realizacja Studio Link', 'Studio Link project')}`);
-  project.addEventListener('click', () => activateYouTubeProject(project));
-  project.addEventListener('keydown', (event) => {
-    if (event.key !== 'Enter' && event.key !== ' ') return;
+  project.addEventListener('click', (event) => {
     event.preventDefault();
     activateYouTubeProject(project);
   });
@@ -338,6 +334,7 @@ document.querySelectorAll('[data-carousel]').forEach((carousel) => {
   const updateDots = (physicalIndex = currentPhysicalIndex()) => {
     const active = logicalIndex(physicalIndex);
     dots.querySelectorAll('button').forEach((dot, index) => dot.classList.toggle('is-active', index === active));
+    loopSlides.forEach((slide, index) => slide.classList.toggle('is-active', index === physicalIndex));
   };
   const normalizeLoopPosition = () => {
     const physicalIndex = currentPhysicalIndex();
@@ -434,7 +431,15 @@ document.querySelectorAll('[data-carousel]').forEach((carousel) => {
     scrollEndTimer = window.setTimeout(normalizeLoopPosition, 220);
   }, { passive: true });
 
-  requestAnimationFrame(() => jumpToPhysicalSlide(slides.length));
+  window.setInterval(() => {
+    if (document.hidden || isAnimating || isDragging) return;
+    animateToPhysicalSlide(currentPhysicalIndex() + 1);
+  }, 3000);
+
+  requestAnimationFrame(() => {
+    jumpToPhysicalSlide(slides.length);
+    updateDots(slides.length);
+  });
 });
 
 let reloadStudioAvailability = null;
@@ -444,6 +449,7 @@ const studioCalendar = document.querySelector('[data-studio-calendar]');
 if (studioCalendar) {
   const daysContainer = studioCalendar.querySelector('[data-calendar-days]');
   const slotsContainer = studioCalendar.querySelector('[data-calendar-slots]');
+  const calendarNotice = studioCalendar.querySelector('[data-calendar-notice]');
   const monthLabel = studioCalendar.querySelector('[data-calendar-month]');
   const selectedDateLabel = studioCalendar.querySelector('[data-calendar-selected-date]');
   const summary = studioCalendar.querySelector('[data-calendar-summary]');
@@ -453,22 +459,39 @@ if (studioCalendar) {
   const priceLabel = studioCalendar.querySelector('[data-calendar-price]');
   const priceNote = studioCalendar.querySelector('[data-calendar-price-note]');
   const durationButtons = [...studioCalendar.querySelectorAll('[data-calendar-duration]')];
+  const prompterCheckbox = studioCalendar.querySelector('[data-calendar-prompter]');
   const previousButton = studioCalendar.querySelector('[data-calendar-prev]');
   const nextButton = studioCalendar.querySelector('[data-calendar-next]');
   const confirmButton = studioCalendar.querySelector('[data-calendar-confirm]');
   const availabilityEndpoint = studioCalendar.dataset.availabilityEndpoint;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const firstBookableDate = new Date(today);
-  firstBookableDate.setDate(firstBookableDate.getDate() + 2);
-  const firstAllowedMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-  const lastAllowedMonth = new Date(today.getFullYear(), today.getMonth() + 2, 1);
+  const studioClockFormatter = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/Warsaw',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    hourCycle: 'h23',
+  });
+  const getStudioCalendarDates = () => {
+    const parts = Object.fromEntries(studioClockFormatter.formatToParts(new Date())
+      .filter((part) => part.type !== 'literal')
+      .map((part) => [part.type, Number(part.value)]));
+    const studioToday = new Date(parts.year, parts.month - 1, parts.day);
+    const firstDate = new Date(studioToday);
+    firstDate.setDate(firstDate.getDate() + (parts.hour < 14 ? 1 : 2));
+    return { studioToday, firstDate };
+  };
+  let { studioToday: today, firstDate: firstBookableDate } = getStudioCalendarDates();
+  let firstAllowedMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  let lastAllowedMonth = new Date(today.getFullYear(), today.getMonth() + 2, 1);
   let displayedMonth = new Date(firstAllowedMonth);
   let selectedDate = null;
   let selectedStart = '';
   let selectedDuration = 3;
+  let selectedPrompter = false;
   let availabilityState = 'loading';
   let busyBookings = new Map();
+  let availabilityRequestInFlight = false;
 
   const locale = uiLanguage === 'en' ? 'en-GB' : 'pl-PL';
   const monthFormatter = new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' });
@@ -491,14 +514,18 @@ if (studioCalendar) {
     return `${String(hour + hours).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
   };
   const calculatePrice = (hours) => {
+    const prompterPrice = selectedPrompter ? 250 : 0;
     if (hours >= 5) {
       const extraHours = hours - 5;
       return {
-        value: 2000 + extraHours * 400,
-        note: extraHours === 0 ? ui('pakiet p\u00f3\u0142 dnia \u2022 400 z\u0142/h', 'half-day package \u2022 PLN 400/h') : ui('400 z\u0142/h', 'PLN 400/h'),
+        value: 2000 + extraHours * 400 + prompterPrice,
+        note: `${extraHours === 0 ? ui('pakiet p\u00f3\u0142 dnia \u2022 400 z\u0142/h', 'half-day package \u2022 PLN 400/h') : ui('400 z\u0142/h', 'PLN 400/h')}${selectedPrompter ? ui(' \u2022 prompter +250 z\u0142', ' \u2022 teleprompter +PLN 250') : ''}`,
       };
     }
-    return { value: hours * 450, note: ui(`${hours} \u00d7 450 z\u0142/h`, `${hours} \u00d7 PLN 450/h`) };
+    return {
+      value: hours * 450 + prompterPrice,
+      note: `${ui(`${hours} \u00d7 450 z\u0142/h`, `${hours} \u00d7 PLN 450/h`)}${selectedPrompter ? ui(' \u2022 prompter +250 z\u0142', ' \u2022 teleprompter +PLN 250') : ''}`,
+    };
   };
   const getBookings = (date) => busyBookings.get(toIsoDate(date)) || [];
   const isSlotAvailable = (date, startMinutes, duration) => {
@@ -513,6 +540,11 @@ if (studioCalendar) {
       if (isSlotAvailable(date, minutes, duration)) return true;
     }
     return false;
+  };
+  const setCalendarNotice = (message = '') => {
+    if (!calendarNotice) return;
+    calendarNotice.textContent = message;
+    calendarNotice.hidden = !message;
   };
 
   const renderDuration = () => {
@@ -534,7 +566,7 @@ if (studioCalendar) {
     summaryDate.textContent = capitalize(summaryDateFormatter.format(selectedDate));
     const price = calculatePrice(selectedDuration);
     summaryTime.textContent = `${selectedStart}\u2013${addHours(selectedStart, selectedDuration)} (${selectedDuration} ${ui('godz.', 'hrs')})`;
-    summaryPrice.textContent = `${ui('Cena', 'Price')}: ${priceFormatter.format(price.value)}`;
+    summaryPrice.textContent = `${ui('Cena', 'Price')}: ${priceFormatter.format(price.value)}${selectedPrompter ? ui(' • z prompterem', ' • with teleprompter') : ''}`;
     summary.hidden = false;
   };
 
@@ -573,6 +605,7 @@ if (studioCalendar) {
       button.classList.toggle('is-selected', selectedStart === time);
       button.addEventListener('click', () => {
         selectedStart = time;
+        setCalendarNotice();
         trackAnalytics('booking_time_selected', {
           start_time: time,
           rental_duration: selectedDuration,
@@ -589,6 +622,7 @@ if (studioCalendar) {
   const selectDate = (date) => {
     selectedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     selectedStart = '';
+    setCalendarNotice();
     trackAnalytics('booking_date_selected', {
       days_ahead: Math.round((selectedDate.getTime() - today.getTime()) / 86400000),
       weekday: selectedDate.getDay(),
@@ -647,6 +681,7 @@ if (studioCalendar) {
   durationButtons.forEach((button) => button.addEventListener('click', () => {
     selectedDuration = Number(button.dataset.calendarDuration);
     selectedStart = '';
+    setCalendarNotice();
     trackAnalytics('booking_duration_selected', {
       rental_duration: selectedDuration,
       value: calculatePrice(selectedDuration).value,
@@ -657,11 +692,25 @@ if (studioCalendar) {
     renderDays();
     renderSlots();
   }));
+  prompterCheckbox?.addEventListener('change', () => {
+    selectedPrompter = prompterCheckbox.checked;
+    trackAnalytics('booking_prompter_changed', {
+      prompter_needed: selectedPrompter,
+      value: calculatePrice(selectedDuration).value,
+      currency: 'PLN',
+    });
+    renderDuration();
+    renderSummary();
+  });
 
-  const loadAvailability = async () => {
-    availabilityState = 'loading';
-    renderDays();
-    renderSlots();
+  const loadAvailability = async ({ silent = false } = {}) => {
+    if (availabilityRequestInFlight) return;
+    availabilityRequestInFlight = true;
+    if (!silent) {
+      availabilityState = 'loading';
+      renderDays();
+      renderSlots();
+    }
 
     try {
       if (!availabilityEndpoint) throw new Error('Missing availability endpoint');
@@ -688,23 +737,51 @@ if (studioCalendar) {
       busyBookings = nextBusyBookings;
       availabilityState = 'ready';
       trackAnalytics('calendar_availability_loaded', { status: 'success' });
-      if (selectedDate && !hasAvailableSlot(selectedDate, selectedDuration)) {
+      const selectedSlotBecameUnavailable = Boolean(selectedDate && selectedStart && (() => {
+        const [hour, minute] = selectedStart.split(':').map(Number);
+        return !isSlotAvailable(selectedDate, hour * 60 + minute, selectedDuration);
+      })());
+      if (selectedSlotBecameUnavailable) {
+        selectedStart = '';
+        setCalendarNotice(ui(
+          'Wybrany termin został właśnie zarezerwowany. Wybierz inną godzinę.',
+          'The selected time has just been booked. Please choose another start time.',
+        ));
+        document.dispatchEvent(new CustomEvent('studio-booking-conflict'));
+      } else if (!silent && selectedDate && !hasAvailableSlot(selectedDate, selectedDuration)) {
         selectedDate = null;
         selectedStart = '';
-      } else if (selectedDate && selectedStart) {
-        const [hour, minute] = selectedStart.split(':').map(Number);
-        if (!isSlotAvailable(selectedDate, hour * 60 + minute, selectedDuration)) selectedStart = '';
       }
     } catch {
-      busyBookings = new Map();
-      availabilityState = 'error';
-      trackAnalytics('calendar_availability_loaded', { status: 'error' });
+      if (!silent) {
+        busyBookings = new Map();
+        availabilityState = 'error';
+        trackAnalytics('calendar_availability_loaded', { status: 'error' });
+        selectedDate = null;
+        selectedStart = '';
+      }
+    } finally {
+      availabilityRequestInFlight = false;
+    }
+
+    if (!silent || availabilityState === 'ready') {
+      renderDays();
+      renderSlots();
+    }
+  };
+  const refreshStudioCalendarClock = () => {
+    const { studioToday, firstDate } = getStudioCalendarDates();
+    if (sameDay(studioToday, today) && sameDay(firstDate, firstBookableDate)) return;
+    today = studioToday;
+    firstBookableDate = firstDate;
+    firstAllowedMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    lastAllowedMonth = new Date(today.getFullYear(), today.getMonth() + 2, 1);
+    if (displayedMonth < firstAllowedMonth) displayedMonth = new Date(firstAllowedMonth);
+    if (selectedDate && !isWorkingDay(selectedDate)) {
       selectedDate = null;
       selectedStart = '';
     }
-
-    renderDays();
-    renderSlots();
+    loadAvailability();
   };
   reloadStudioAvailability = loadAvailability;
   clearStudioBookingSelection = () => {
@@ -718,6 +795,7 @@ if (studioCalendar) {
     form.elements.preferredDate.value = toIsoDate(selectedDate);
     form.elements.preferredTime.value = selectedStart;
     form.elements.rentalDuration.value = String(selectedDuration);
+    form.elements.prompterNeeded.value = selectedPrompter ? '1' : '0';
     const price = calculatePrice(selectedDuration);
     trackAnalytics('booking_details_confirmed', {
       rental_duration: selectedDuration,
@@ -730,7 +808,7 @@ if (studioCalendar) {
     const bookingPreview = form.querySelector('[data-contact-booking]');
     bookingPreview.querySelector('[data-contact-booking-date]').textContent = capitalize(summaryDateFormatter.format(selectedDate));
     bookingPreview.querySelector('[data-contact-booking-time]').textContent = `${selectedStart}\u2013${addHours(selectedStart, selectedDuration)} (${selectedDuration} ${ui('godz.', 'hrs')})`;
-    bookingPreview.querySelector('[data-contact-booking-price]').textContent = `${ui('Koszt wynajmu', 'Rental price')}: ${priceFormatter.format(price.value)}`;
+    bookingPreview.querySelector('[data-contact-booking-price]').textContent = `${ui('Koszt wynajmu', 'Rental price')}: ${priceFormatter.format(price.value)}${selectedPrompter ? ui(' • z prompterem', ' • with teleprompter') : ''}`;
     bookingPreview.hidden = false;
     form.scrollIntoView({ behavior: 'smooth', block: 'center' });
     window.setTimeout(() => form.elements.name.focus({ preventScroll: true }), 500);
@@ -740,13 +818,15 @@ if (studioCalendar) {
   renderDuration();
   renderSlots();
   loadAvailability();
+  window.setInterval(() => loadAvailability({ silent: true }), 60 * 1000);
+  window.setInterval(refreshStudioCalendarClock, 60 * 1000);
 }
 
 const contactForm = document.querySelector('.contact-form');
 const contactBookingPreview = contactForm?.querySelector('[data-contact-booking]');
 const clearContactBookingSelection = () => {
   if (!contactForm || !contactBookingPreview) return;
-  ['preferredDate', 'preferredTime', 'rentalDuration', 'estimatedPrice'].forEach((name) => {
+  ['preferredDate', 'preferredTime', 'rentalDuration', 'estimatedPrice', 'prompterNeeded'].forEach((name) => {
     contactForm.elements[name].value = '';
   });
   contactBookingPreview.hidden = true;
@@ -757,6 +837,10 @@ contactBookingPreview?.querySelector('[data-contact-booking-remove]')?.addEventL
   trackAnalytics('booking_details_removed');
   clearContactBookingSelection();
   contactForm.querySelector('.form-message').textContent = '';
+});
+
+document.addEventListener('studio-booking-conflict', () => {
+  clearContactBookingSelection();
 });
 
 contactForm?.addEventListener('submit', async (event) => {
