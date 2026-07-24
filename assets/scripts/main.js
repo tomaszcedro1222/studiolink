@@ -642,7 +642,7 @@ if (studioCalendar) {
     calendarNotice.dataset.reason = reason;
     if (waitlistButton) {
       waitlistButton.textContent = ui(
-        'Poinformuj mnie, jeśli ten termin się zwolni',
+        'Poinformuj, jeśli ten termin się zwolni.',
         'Notify me if this time becomes available',
       );
       waitlistButton.hidden = reason !== 'duration' || !selectedDate;
