@@ -509,6 +509,7 @@ if (studioCalendar) {
   const daysContainer = studioCalendar.querySelector('[data-calendar-days]');
   const slotsContainer = studioCalendar.querySelector('[data-calendar-slots]');
   const calendarNotice = studioCalendar.querySelector('[data-calendar-notice]');
+  const waitlistButton = studioCalendar.querySelector('[data-calendar-waitlist]');
   const monthLabel = studioCalendar.querySelector('[data-calendar-month]');
   const selectedDateLabel = studioCalendar.querySelector('[data-calendar-selected-date]');
   const summary = studioCalendar.querySelector('[data-calendar-summary]');
@@ -548,6 +549,7 @@ if (studioCalendar) {
   let selectedStart = '';
   let selectedDuration = 3;
   let selectedPrompter = false;
+  let unavailableInterestStart = '';
   let availabilityState = 'loading';
   let busyBookings = new Map();
   let availabilityRequestInFlight = false;
@@ -556,6 +558,7 @@ if (studioCalendar) {
   const monthFormatter = new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' });
   const fullDateFormatter = new Intl.DateTimeFormat(locale, { weekday: 'long', day: 'numeric', month: 'long' });
   const summaryDateFormatter = new Intl.DateTimeFormat(locale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const interestDateFormatter = new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long', year: 'numeric' });
   const priceFormatter = new Intl.NumberFormat(locale, { style: 'currency', currency: 'PLN', maximumFractionDigits: 0 });
   const capitalize = (value) => value.charAt(0).toUpperCase() + value.slice(1);
   const sameDay = (first, second) => first && second
@@ -594,6 +597,16 @@ if (studioCalendar) {
       && !getBookings(date).some((booking) => startMinutes < booking.end && endMinutes > booking.start);
   };
   const getLastStartMinutes = (duration) => (18 - duration) * 60;
+  const getUnavailableInterestStart = (preferredStart, duration) => {
+    const earliestStart = 8 * 60;
+    const latestStart = getLastStartMinutes(duration);
+    const [preferredHour, preferredMinute] = (preferredStart || '08:00').split(':').map(Number);
+    const preferredMinutes = Number.isFinite(preferredHour) && Number.isFinite(preferredMinute)
+      ? preferredHour * 60 + preferredMinute
+      : earliestStart;
+    const minutes = Math.min(Math.max(preferredMinutes, earliestStart), latestStart);
+    return `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
+  };
   const hasAvailableSlot = (date, duration) => {
     for (let minutes = 8 * 60; minutes <= getLastStartMinutes(duration); minutes += 30) {
       if (isSlotAvailable(date, minutes, duration)) return true;
@@ -627,6 +640,13 @@ if (studioCalendar) {
     calendarNotice.textContent = message;
     calendarNotice.hidden = !message;
     calendarNotice.dataset.reason = reason;
+    if (waitlistButton) {
+      waitlistButton.textContent = ui(
+        'Poinformuj mnie, jeśli ten termin się zwolni',
+        'Notify me if this time becomes available',
+      );
+      waitlistButton.hidden = reason !== 'duration' || !selectedDate;
+    }
   };
 
   const renderDuration = () => {
@@ -716,6 +736,7 @@ if (studioCalendar) {
   const selectDate = (date) => {
     selectedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     selectedStart = '';
+    unavailableInterestStart = '';
     setCalendarNotice();
     trackAnalytics('booking_date_selected', {
       days_ahead: Math.round((selectedDate.getTime() - today.getTime()) / 86400000),
@@ -773,11 +794,14 @@ if (studioCalendar) {
     renderDays();
   });
   durationButtons.forEach((button) => button.addEventListener('click', () => {
+    const previousStart = selectedStart;
     selectedDuration = Number(button.dataset.calendarDuration);
     selectedStart = '';
     if (selectedDate && !hasAvailableSlot(selectedDate, selectedDuration)) {
+      unavailableInterestStart = getUnavailableInterestStart(previousStart || unavailableInterestStart, selectedDuration);
       setCalendarNotice(getDurationUnavailableNotice(selectedDate, selectedDuration), 'duration');
     } else {
+      unavailableInterestStart = '';
       setCalendarNotice();
     }
     trackAnalytics('booking_duration_selected', {
@@ -839,6 +863,7 @@ if (studioCalendar) {
         return !isSlotAvailable(selectedDate, hour * 60 + minute, selectedDuration);
       })());
       if (selectedSlotBecameUnavailable) {
+        unavailableInterestStart = getUnavailableInterestStart(selectedStart, selectedDuration);
         selectedStart = '';
         setCalendarNotice(ui(
           'Wybrany termin został właśnie zarezerwowany. Wybierz inną godzinę.',
@@ -846,6 +871,7 @@ if (studioCalendar) {
         ), 'conflict');
         document.dispatchEvent(new CustomEvent('studio-booking-conflict'));
       } else if (selectedDate && !hasAvailableSlot(selectedDate, selectedDuration)) {
+        unavailableInterestStart = getUnavailableInterestStart(selectedStart || unavailableInterestStart, selectedDuration);
         selectedStart = '';
         setCalendarNotice(getDurationUnavailableNotice(selectedDate, selectedDuration), 'duration');
       } else if (calendarNotice?.dataset.reason === 'duration') {
@@ -887,6 +913,35 @@ if (studioCalendar) {
     selectedStart = '';
     renderSlots();
   };
+  waitlistButton?.addEventListener('click', () => {
+    if (!selectedDate || calendarNotice?.dataset.reason !== 'duration') return;
+    const form = document.querySelector('.contact-form');
+    const messageField = form?.elements.message;
+    if (!form || !messageField) return;
+    const requestedStart = unavailableInterestStart || getUnavailableInterestStart('', selectedDuration);
+    const formattedDate = interestDateFormatter.format(selectedDate);
+    const durationLabel = ui(
+      `${selectedDuration} ${selectedDuration === 3 || selectedDuration === 4 ? 'godziny' : 'godzin'}`,
+      `${selectedDuration} hours`,
+    );
+    messageField.value = ui(
+      `Interesuje mnie wynajem studia ${formattedDate} od godz. ${requestedStart} na ${durationLabel}. Termin jest obecnie niedostępny. Proszę o informację, jeśli się zwolni.`,
+      `I am interested in renting the studio on ${formattedDate} from ${requestedStart} for ${durationLabel}. This time is currently unavailable. Please let me know if it becomes available.`,
+    );
+    ['preferredDate', 'preferredTime', 'rentalDuration', 'estimatedPrice', 'prompterNeeded'].forEach((name) => {
+      if (form.elements[name]) form.elements[name].value = '';
+    });
+    form.querySelector('[data-contact-booking]')?.setAttribute('hidden', '');
+    form.classList.remove('was-validated');
+    form.querySelector('.form-message').textContent = '';
+    trackAnalytics('calendar_waitlist_clicked', {
+      requested_date: toIsoDate(selectedDate),
+      requested_start: requestedStart,
+      rental_duration: selectedDuration,
+    });
+    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    window.setTimeout(() => messageField.focus({ preventScroll: true }), 500);
+  });
   confirmButton.addEventListener('click', () => {
     if (!selectedDate || !selectedStart) return;
     const form = document.querySelector('.contact-form');
