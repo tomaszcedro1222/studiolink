@@ -105,7 +105,7 @@ mark.mark-invert {
 }
 .hero-copy h1 {
   font-size: clamp(2.1rem, 3.2vw, 3rem);
-  font-weight: 700;
+  font-weight: 500;
   line-height: 1.1;
   letter-spacing: -0.01em;
 }
@@ -120,7 +120,7 @@ mark.mark-invert {
 
 /* ===== Lead / form section ===== */
 .lead-section {
-  background: var(--black);
+  background: var(--blue);
   color: #fff;
   margin-top: 64px;
   padding: 96px 0 0;
@@ -133,13 +133,13 @@ mark.mark-invert {
   gap: 48px;
   padding-bottom: 96px;
 }
-.lead-copy h2 { font-size: clamp(1.8rem, 2.6vw, 2.4rem); font-weight: 700; line-height: 1.2; }
+.lead-copy h2 { font-size: clamp(1.8rem, 2.6vw, 2.4rem); font-weight: 500; line-height: 1.2; }
 .lead-copy p { margin-top: 20px; max-width: 40ch; }
-.lead-copy .muted { color: #9a9aa4; margin-top: 8px; }
+.lead-copy .muted { color: rgba(255,255,255,0.72); margin-top: 8px; }
 .lead-arrow { color: #ffffff; margin-top: 48px; opacity: 0.85; }
 
 .lead-form {
-  background: #12142c;
+  background: rgba(6,8,30,0.22);
   border-radius: var(--radius-lg);
   padding: 32px;
   display: flex;
@@ -152,21 +152,21 @@ mark.mark-invert {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #babac6;
+  color: rgba(255,255,255,0.85);
 }
 .field input {
-  background: #1c1e3a;
-  border: 1px solid #2c2e52;
+  background: rgba(255,255,255,0.14);
+  border: 1px solid rgba(255,255,255,0.28);
   border-radius: 10px;
   padding: 14px 16px;
   color: #fff;
   font-size: 0.95rem;
   font-family: inherit;
 }
-.field input::placeholder { color: #6d6f8f; }
-.field input:focus { outline: none; border-color: var(--blue); }
-.lead-form .btn-light { margin-top: 8px; }
-.form-note { min-height: 1em; font-size: 0.85rem; color: #8fe3a8; }
+.field input::placeholder { color: rgba(255,255,255,0.6); }
+.field input:focus { outline: none; border-color: #ffffff; }
+.lead-form .btn-light { margin-top: 8px; background: var(--black); color: #fff; }
+.form-note { min-height: 1em; font-size: 0.85rem; color: #d9ffe6; }
 
 .badge-stamp {
   position: absolute;
@@ -225,7 +225,7 @@ mark.mark-invert {
   justify-content: center;
   box-shadow: 0 4px 14px rgba(0,0,0,0.3);
 }
-.compare-copy h2 { font-size: clamp(1.7rem, 2.4vw, 2.2rem); font-weight: 700; line-height: 1.25; }
+.compare-copy h2 { font-size: clamp(1.7rem, 2.4vw, 2.2rem); font-weight: 500; line-height: 1.25; }
 .compare-copy p { margin-top: 18px; max-width: 42ch; color: #c9c9d2; }
 .compare-copy .muted { color: #8b8b96; margin-top: 12px; }
 
@@ -233,7 +233,7 @@ mark.mark-invert {
 .packages { padding: 96px 0 0; }
 .section-title {
   font-size: clamp(1.6rem, 2.4vw, 2.1rem);
-  font-weight: 700;
+  font-weight: 500;
   text-align: center;
   max-width: 720px;
   margin: 0 auto;
@@ -250,11 +250,13 @@ mark.mark-invert {
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
+  cursor: grab;
 }
 .carousel-track::-webkit-scrollbar { display: none; }
+.carousel-track.dragging { cursor: grabbing; scroll-snap-type: none; user-select: none; }
 .pack-card {
-  scroll-snap-align: start;
-  flex: 0 0 min(720px, 88vw);
+  scroll-snap-align: center;
+  flex: 0 0 min(1400px, 92vw);
   background: var(--blue);
   border-radius: var(--radius-lg);
   display: grid;
@@ -295,11 +297,11 @@ mark.mark-invert {
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 48px;
+  gap: clamp(32px, 6vw, 80px);
   opacity: 0.75;
   filter: grayscale(1);
 }
-.trust-logos img { height: 32px; width: auto; }
+.trust-logos img { height: clamp(32px, 4.5vw, 60px); width: auto; }
 
 /* ===== Values (blue section) ===== */
 .values { background: var(--blue); color: #fff; padding: 96px 0; }
@@ -338,7 +340,7 @@ mark.mark-invert {
 }
 .final-cta-content { position: relative; z-index: 2; }
 .final-cta-mascot { width: 110px; height: auto; margin: 0 auto 16px; }
-.final-cta h2 { font-size: clamp(1.8rem, 2.8vw, 2.6rem); font-weight: 700; }
+.final-cta h2 { font-size: clamp(1.8rem, 2.8vw, 2.6rem); font-weight: 500; }
 .final-cta p { margin: 20px auto 32px; max-width: 52ch; color: #e6e6ea; }
 
 /* ===== Footer ===== */
