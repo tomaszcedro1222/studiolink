@@ -61,18 +61,31 @@
 
   const DRAG_THRESHOLD = 8;    // px — mniejszy ruch to klik, nie przesuwanie
   const FLICK_VELOCITY = 0.45; // px/ms — od tej prędkości uznajemy szybki gest
-  const REAL_START = 1;
-  const REAL_END = count;
+  const REAL_START = count;
+  const REAL_END = 2 * count - 1;
 
-  // klony na oba końce dają wrażenie nieskończonej pętli
-  const headClone = realCards[count - 1].cloneNode(true);
-  const tailClone = realCards[0].cloneNode(true);
-  [headClone, tailClone].forEach((c) => {
-    c.setAttribute('aria-hidden', 'true');
-    c.querySelectorAll('video').forEach((v) => v.removeAttribute('controls'));
-  });
-  track.insertBefore(headClone, realCards[0]);
-  track.appendChild(tailClone);
+  // Pełny zestaw klonów z obu stron, nie jeden kafelek. Przy kafelkach 86vw
+  // sąsiad jest widoczny, więc stojąc na skrajnym klonie widać puste miejsce
+  // tam, gdzie powinien być następny kafelek. Z pełnym zestawem każda osiągalna
+  // pozycja ma sąsiadów po obu stronach.
+  // W klonach podmieniamy <video> na <img> z posterem — wygląda identycznie
+  // (ten sam plik, więc trafienie w cache), a nie mnoży dekoderów wideo.
+  function makeClone(card) {
+    const clone = card.cloneNode(true);
+    clone.setAttribute('aria-hidden', 'true');
+    clone.querySelectorAll('video').forEach((v) => {
+      const poster = v.getAttribute('poster');
+      if (!poster) { v.removeAttribute('controls'); return; }
+      const img = document.createElement('img');
+      img.src = poster;
+      img.alt = '';
+      v.replaceWith(img);
+    });
+    return clone;
+  }
+
+  realCards.map(makeClone).forEach((c) => track.insertBefore(c, realCards[0]));
+  realCards.map(makeClone).forEach((c) => track.appendChild(c));
 
   const slides = Array.from(track.children);
 

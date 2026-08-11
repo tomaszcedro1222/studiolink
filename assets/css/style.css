@@ -106,12 +106,21 @@ mark.mark-invert {
 .logo-mark { height: 22px; width: auto; display: block; }
 
 /* ===== Hero ===== */
-.hero { padding: 64px 0 0; }
+/* Hero mieści się w jednym ekranie — bez tego pionowy film 9:16 rozpychał
+   sekcję na własną wysokość i tekst nie wypadał na środku ekranu. */
+.hero {
+  padding: 48px 0;
+  min-height: calc(100vh - 76px);
+  min-height: calc(100svh - 76px);
+  display: flex;
+  align-items: center;
+}
 .hero-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 48px;
   align-items: center;
+  width: 100%;
 }
 .hero-copy h1 {
   font-size: var(--fs-h);
@@ -128,7 +137,16 @@ mark.mark-invert {
   max-width: 30ch;
 }
 .hero-copy .btn { margin-top: 32px; }
-.hero-media img, .hero-media video { border-radius: 4px; width: 100%; height: auto; display: block; }
+/* Kadr 720x855 jak w referencji, nie natywne 9:16 filmu; nadwyżkę przycinamy */
+.hero-media img, .hero-media video {
+  border-radius: 4px;
+  width: 100%;
+  aspect-ratio: 720 / 855;
+  max-height: calc(100vh - 172px);
+  max-height: calc(100svh - 172px);
+  object-fit: cover;
+  display: block;
+}
 
 /* ===== Lead / form section ===== */
 .lead-section {
@@ -388,7 +406,10 @@ mark.mark-invert {
 @media (max-width: 900px) {
   .container { padding: 0 20px; }
   .hero-grid, .lead-grid, .compare-grid { grid-template-columns: 1fr; }
+  /* w kolumnie nie wymuszamy pełnego ekranu — inaczej treść byłaby ściśnięta */
+  .hero { min-height: 0; display: block; padding: 40px 0 0; }
   .hero-media { order: -1; }
+  .hero-media img, .hero-media video { max-height: 62svh; }
   .lead-form { order: -1; }
   .values-grid { grid-template-columns: 1fr; gap: 48px; }
   .pack-card { grid-template-columns: 1fr; }
