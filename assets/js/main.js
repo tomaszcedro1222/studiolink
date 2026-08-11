@@ -118,11 +118,25 @@
     setActiveDot();
   }
 
-  // po dojechaniu na klon przeskakujemy bez animacji na bliźniaczy kafelek
+  // Przeskok z klona na jego bliźniaka. Zachowujemy bieżące odchylenie od pozycji
+  // docelowej, więc przeskok jest niewidoczny także w trakcie animacji — klon
+  // i bliźniak wyglądają identycznie, więc na ekranie nic się nie zmienia.
+  // Wywoływane nie tylko z transitionend, ale i przy każdym nowym chwyceniu,
+  // bo przerwana animacja nie emituje transitionend (to psuło zapętlenie).
+  function normalize() {
+    let shift = 0;
+    if (index < REAL_START) shift = count;
+    else if (index > REAL_END) shift = -count;
+    if (!shift) return;
+    const delta = offset - offsetFor(index);
+    index += shift;
+    offset = offsetFor(index) + delta;
+    render(false);
+    setActiveDot();
+  }
+
   track.addEventListener('transitionend', (e) => {
-    if (e.propertyName !== 'transform') return;
-    if (index === 0) goTo(REAL_END, false);
-    else if (index === slides.length - 1) goTo(REAL_START, false);
+    if (e.propertyName === 'transform') normalize();
   });
 
   realCards.forEach((_, i) => {
@@ -130,7 +144,7 @@
     dot.type = 'button';
     dot.setAttribute('aria-label', 'Przejdź do slajdu ' + (i + 1));
     if (i === 0) dot.classList.add('active');
-    dot.addEventListener('click', () => goTo(i + REAL_START, true));
+    dot.addEventListener('click', () => { normalize(); goTo(i + REAL_START, true); });
     dotsWrap.appendChild(dot);
   });
   const dots = Array.from(dotsWrap.children);
@@ -139,6 +153,7 @@
   function onDown(e) {
     if (e.button != null && e.button !== 0) return;
     if (e.target.closest('a, button, input')) return;
+    normalize();   // startujemy zawsze z realnego kafelka, nie z klona
     armed = true;
     dragging = false;
     pointerId = e.pointerId;
@@ -193,6 +208,8 @@
     let target = index;
     if (velocity < -FLICK_VELOCITY || dx < -step / 3) target = index + 1;
     else if (velocity > FLICK_VELOCITY || dx > step / 3) target = index - 1;
+    // nigdy poza pasek kafelków — nawet gdyby normalize() zostało pominięte
+    target = Math.max(0, Math.min(slides.length - 1, target));
     goTo(target, true);
   }
 
@@ -211,8 +228,11 @@
   // ---- responsywność: przeliczamy wymiary i trzymamy ten sam kafelek ----
   function relayout() {
     measure();
+    if (index < REAL_START) index += count;
+    else if (index > REAL_END) index -= count;
     offset = offsetFor(index);
     render(false);
+    setActiveDot();
   }
 
   if (typeof ResizeObserver !== 'undefined') {
