@@ -1,5 +1,6 @@
 /* ===== Reset & base ===== */
 *, *::before, *::after { box-sizing: border-box; }
+html { scrollbar-gutter: stable both-edges; }
 html, body { margin: 0; padding: 0; }
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
@@ -259,7 +260,7 @@ mark.mark-invert {
 .carousel-track.dragging { cursor: grabbing; scroll-snap-type: none; user-select: none; }
 .pack-card {
   scroll-snap-align: center;
-  flex: 0 0 min(1400px, 92vw);
+  flex: 0 0 min(980px, 78vw);
   background: var(--blue);
   border-radius: var(--radius-lg);
   display: grid;
@@ -297,14 +298,17 @@ mark.mark-invert {
 .trust-logos {
   margin-top: 40px;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: center;
-  gap: clamp(32px, 6vw, 80px);
+  gap: clamp(14px, 4vw, 80px);
   opacity: 0.75;
   filter: grayscale(1);
+  overflow-x: auto;
+  scrollbar-width: none;
 }
-.trust-logos img { height: clamp(32px, 4.5vw, 60px); width: auto; }
+.trust-logos::-webkit-scrollbar { display: none; }
+.trust-logos img { height: clamp(20px, 4.5vw, 60px); width: auto; flex-shrink: 0; }
 
 /* ===== Values (blue section) ===== */
 .values { background: var(--blue); color: #fff; padding: 96px 0; }
