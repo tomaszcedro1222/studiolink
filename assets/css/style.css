@@ -263,17 +263,15 @@ mark.mark-invert {
 .carousel-track {
   display: flex;
   gap: 24px;
-  padding: 0 32px 8px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
+  padding-bottom: 8px;
   cursor: grab;
+  touch-action: pan-y;   /* w pionie nadal przewija się strona */
+  user-select: none;
+  will-change: transform;
 }
-.carousel-track::-webkit-scrollbar { display: none; }
-.carousel-track.dragging { cursor: grabbing; scroll-snap-type: none; user-select: none; }
+.carousel-track.dragging { cursor: grabbing; }
 .pack-card {
-  scroll-snap-align: center;
-  flex: 0 0 min(980px, 78vw);
+  flex: 0 0 min(1120px, 86vw);
   background: var(--blue);
   border-radius: var(--radius-lg);
   display: grid;

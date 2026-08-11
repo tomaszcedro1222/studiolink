@@ -43,195 +43,190 @@
   setPosition(50);
 })();
 
-// ===== Packages carousel: infinite loop + drag + dots =====
+// ===== Packages carousel =====
+// Pozycję kontroluje wyłącznie transform — bez overflow-scroll i bez scroll-snap.
+// Wcześniej o tę samą wartość scrollLeft walczyły trzy strony (własna animacja,
+// natywny snap przeglądarki i przeskok pętli), co dawało losowe zatrzymania.
+// Ruch myszy/palca czytamy z window w fazie capture, więc kontrolki <video>
+// nie mogą ich pochłonąć i kafelki da się ciągnąć również za filmik.
 (function initCarousel() {
   const track = document.getElementById('carouselTrack');
   const dotsWrap = document.getElementById('carouselDots');
   if (!track || !dotsWrap) return;
 
+  const wrap = track.parentElement;
   const realCards = Array.from(track.children);
   const count = realCards.length;
   if (count === 0) return;
 
-  const firstClone = realCards[0].cloneNode(true);
-  const lastClone = realCards[count - 1].cloneNode(true);
-  firstClone.setAttribute('aria-hidden', 'true');
-  lastClone.setAttribute('aria-hidden', 'true');
-  track.insertBefore(lastClone, realCards[0]);
-  track.appendChild(firstClone);
-
-  const slides = Array.from(track.children);
+  const DRAG_THRESHOLD = 8;    // px — mniejszy ruch to klik, nie przesuwanie
+  const FLICK_VELOCITY = 0.45; // px/ms — od tej prędkości uznajemy szybki gest
   const REAL_START = 1;
   const REAL_END = count;
 
-  // Kafelki mają scroll-snap-align: center, więc pozycja docelowa musi
-  // wyśrodkowywać kafelek — inaczej przeglądarka dosuwałaby go po nas (skok).
-  function slideTargetLeft(el) {
-    const left = el.getBoundingClientRect().left - track.getBoundingClientRect().left + track.scrollLeft;
-    return left - (track.clientWidth - el.offsetWidth) / 2;
+  // klony na oba końce dają wrażenie nieskończonej pętli
+  const headClone = realCards[count - 1].cloneNode(true);
+  const tailClone = realCards[0].cloneNode(true);
+  [headClone, tailClone].forEach((c) => {
+    c.setAttribute('aria-hidden', 'true');
+    c.querySelectorAll('video').forEach((v) => v.removeAttribute('controls'));
+  });
+  track.insertBefore(headClone, realCards[0]);
+  track.appendChild(tailClone);
+
+  const slides = Array.from(track.children);
+
+  let index = REAL_START;
+  let step = 0;        // szerokość kafelka + odstęp
+  let baseOffset = 0;  // przesunięcie centrujące kafelek
+  let offset = 0;      // aktualny transform
+  let dragging = false;
+  let armed = false;
+  let pointerId = null;
+  let startX = 0, startY = 0, startOffset = 0;
+  let lastX = 0, lastT = 0, velocity = 0;
+
+  // Wymiary ułamkowe, nie offsetWidth — zaokrąglenie do pełnych pikseli
+  // kumulowałoby się z każdym kafelkiem (przy 86vw nawet ~7px przy trzecim).
+  function measure() {
+    const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+    const slideWidth = slides[REAL_START].getBoundingClientRect().width;
+    step = slideWidth + gap;
+    baseOffset = (wrap.getBoundingClientRect().width - slideWidth) / 2;
   }
 
-  function jumpTo(index, smooth) {
-    track.scrollTo({ left: slideTargetLeft(slides[index]), behavior: smooth ? 'smooth' : 'auto' });
+  function offsetFor(i) {
+    return baseOffset - i * step;
   }
 
-  function closestSlideIndex() {
-    const trackRect = track.getBoundingClientRect();
-    const trackCenter = trackRect.left + track.clientWidth / 2;
-    let closestIndex = REAL_START;
-    let closestDist = Infinity;
-    slides.forEach((slide, i) => {
-      const r = slide.getBoundingClientRect();
-      const dist = Math.abs(r.left + r.width / 2 - trackCenter);
-      if (dist < closestDist) { closestDist = dist; closestIndex = i; }
-    });
-    return closestIndex;
+  function render(withTransition) {
+    track.style.transition = withTransition
+      ? 'transform 460ms cubic-bezier(0.22, 0.61, 0.36, 1)'
+      : 'none';
+    track.style.transform = 'translate3d(' + offset + 'px, 0, 0)';
   }
+
+  function setActiveDot() {
+    const real = ((index - REAL_START) % count + count) % count;
+    dots.forEach((d, i) => d.classList.toggle('active', i === real));
+  }
+
+  function goTo(i, animate) {
+    index = i;
+    offset = offsetFor(index);
+    render(animate);
+    setActiveDot();
+  }
+
+  // po dojechaniu na klon przeskakujemy bez animacji na bliźniaczy kafelek
+  track.addEventListener('transitionend', (e) => {
+    if (e.propertyName !== 'transform') return;
+    if (index === 0) goTo(REAL_END, false);
+    else if (index === slides.length - 1) goTo(REAL_START, false);
+  });
 
   realCards.forEach((_, i) => {
     const dot = document.createElement('button');
     dot.type = 'button';
     dot.setAttribute('aria-label', 'Przejdź do slajdu ' + (i + 1));
     if (i === 0) dot.classList.add('active');
-    dot.addEventListener('click', () => jumpTo(i + 1, true));
+    dot.addEventListener('click', () => goTo(i + REAL_START, true));
     dotsWrap.appendChild(dot);
   });
   const dots = Array.from(dotsWrap.children);
 
-  function setActiveDot(realIndex) {
-    dots.forEach((d, i) => d.classList.toggle('active', i === realIndex));
-  }
-
-  let dragging = false;
-  let animating = false;
-
-  let settleTimer = null;
-  track.addEventListener('scroll', () => {
-    if (animating || dragging) return;
-    if (settleTimer) clearTimeout(settleTimer);
-    settleTimer = setTimeout(() => {
-      const idx = closestSlideIndex();
-      if (idx === 0) {
-        jumpTo(REAL_END, false);
-        setActiveDot(REAL_END - 1);
-      } else if (idx === slides.length - 1) {
-        jumpTo(REAL_START, false);
-        setActiveDot(0);
-      } else {
-        setActiveDot(idx - 1);
-      }
-    }, 80);
-  }, { passive: true });
-
-  window.addEventListener('resize', () => jumpTo(closestSlideIndex(), false));
-
-  // ===== Chwytanie i przesuwanie kafelków (także za wideo) z wyhamowaniem =====
-  const DRAG_THRESHOLD = 6;   // px — poniżej tego traktujemy gest jako klik
-  const GLIDE = 180;          // mnożnik wybiegu z prędkości gestu
-  const SETTLE_MS = 480;      // czas dojechania do najbliższego kafelka
-
-  let armed = false;
-  let startX = 0;
-  let startScroll = 0;
-  let lastX = 0;
-  let lastT = 0;
-  let velocity = 0;           // px/ms
-
-  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
-
-  function animateTo(targetLeft, duration) {
-    const from = track.scrollLeft;
-    const delta = targetLeft - from;
-    if (Math.abs(delta) < 1) { track.classList.remove('dragging'); return; }
-    animating = true;
-    const t0 = performance.now();
-    (function step(now) {
-      const p = Math.min(1, (now - t0) / duration);
-      track.scrollLeft = from + delta * easeOutCubic(p);
-      if (p < 1) {
-        requestAnimationFrame(step);
-      } else {
-        animating = false;
-        track.classList.remove('dragging');   // snap wraca dopiero na pozycji docelowej
-        const idx = closestSlideIndex();
-        if (idx === 0) { jumpTo(REAL_END, false); setActiveDot(REAL_END - 1); }
-        else if (idx === slides.length - 1) { jumpTo(REAL_START, false); setActiveDot(0); }
-        else { setActiveDot(idx - 1); }
-      }
-    })(t0);
-  }
-
-  function nearestSlideLeftTo(scrollPos) {
-    let best = null;
-    let bestDist = Infinity;
-    slides.forEach((slide) => {
-      const left = slideTargetLeft(slide);
-      const dist = Math.abs(left - scrollPos);
-      if (dist < bestDist) { bestDist = dist; best = left; }
-    });
-    return best;
-  }
-
-  track.addEventListener('pointerdown', (e) => {
-    if (e.pointerType === 'touch') return;   // dotyk: zostawiamy natywne przewijanie
-    if (e.button !== 0) return;
+  // ---- chwytanie i przesuwanie ----
+  function onDown(e) {
+    if (e.button != null && e.button !== 0) return;
+    if (e.target.closest('a, button, input')) return;
     armed = true;
     dragging = false;
+    pointerId = e.pointerId;
     startX = lastX = e.clientX;
-    startScroll = track.scrollLeft;
-    lastT = performance.now();
+    startY = e.clientY;
+    startOffset = offset;
+    lastT = e.timeStamp;
     velocity = 0;
-  });
-
-  track.addEventListener('pointermove', (e) => {
-    if (!armed) return;
-    const dx = e.clientX - startX;
-
-    // dopóki nie przekroczymy progu, nie przechwytujemy gestu —
-    // dzięki temu klikanie kontrolek wideo nadal działa
-    if (!dragging) {
-      if (Math.abs(dx) < DRAG_THRESHOLD) return;
-      dragging = true;
-      track.classList.add('dragging');
-      track.setPointerCapture(e.pointerId);
-    }
-
-    const now = performance.now();
-    const dt = now - lastT;
-    if (dt > 0) {
-      const inst = (e.clientX - lastX) / dt;
-      velocity = velocity * 0.7 + inst * 0.3;   // wygładzona prędkość
-      lastT = now;
-      lastX = e.clientX;
-    }
-    track.scrollLeft = startScroll - dx;
-    e.preventDefault();
-  });
-
-  function endDrag(e) {
-    if (!armed) return;
-    armed = false;
-    if (!dragging) return;
-    dragging = false;
-
-    // po przeciągnięciu blokujemy klik, by wideo nie startowało/nie pauzowało
-    if (e && e.target) {
-      const swallow = (ev) => { ev.stopPropagation(); ev.preventDefault(); };
-      track.addEventListener('click', swallow, { capture: true, once: true });
-      setTimeout(() => track.removeEventListener('click', swallow, { capture: true }), 0);
-    }
-
-    // wybieg ograniczony do ~1 kafelka, by szybki flick nie przelatywał całej karuzeli
-    const slideStep = slides[REAL_START].offsetWidth + 24;
-    const glide = Math.max(-slideStep, Math.min(slideStep, -velocity * GLIDE));
-    animateTo(nearestSlideLeftTo(track.scrollLeft + glide), SETTLE_MS);
   }
 
-  track.addEventListener('pointerup', endDrag);
-  track.addEventListener('pointercancel', endDrag);
-  track.addEventListener('dragstart', (e) => { if (dragging) e.preventDefault(); });
+  function onMove(e) {
+    if (!armed || e.pointerId !== pointerId) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
 
-  jumpTo(REAL_START, false);
+    if (!dragging) {
+      if (Math.abs(dx) < DRAG_THRESHOLD) return;
+      // gest głównie w pionie zostawiamy przeglądarce (przewijanie strony)
+      if (Math.abs(dy) > Math.abs(dx)) { armed = false; return; }
+      dragging = true;
+      track.style.transition = 'none';
+      track.classList.add('dragging');
+    }
+
+    const dt = e.timeStamp - lastT;
+    if (dt > 0) {
+      velocity = velocity * 0.7 + ((e.clientX - lastX) / dt) * 0.3;
+      lastT = e.timeStamp;
+      lastX = e.clientX;
+    }
+
+    offset = startOffset + dx;
+    track.style.transform = 'translate3d(' + offset + 'px, 0, 0)';
+    if (e.cancelable) e.preventDefault();
+  }
+
+  function onUp(e) {
+    if (!armed || (pointerId !== null && e.pointerId !== pointerId)) return;
+    armed = false;
+    pointerId = null;
+    if (!dragging) return;
+    dragging = false;
+    track.classList.remove('dragging');
+
+    // po przeciągnięciu blokujemy jeden klik, żeby wideo nie startowało
+    const swallow = (ev) => { ev.stopPropagation(); ev.preventDefault(); };
+    window.addEventListener('click', swallow, { capture: true, once: true });
+    setTimeout(() => window.removeEventListener('click', swallow, { capture: true }), 250);
+
+    // zawsze lądujemy na konkretnym kafelku — maksymalnie o jeden od bieżącego
+    const dx = e.clientX - startX;
+    let target = index;
+    if (velocity < -FLICK_VELOCITY || dx < -step / 3) target = index + 1;
+    else if (velocity > FLICK_VELOCITY || dx > step / 3) target = index - 1;
+    goTo(target, true);
+  }
+
+  track.addEventListener('pointerdown', onDown);
+  // capture na window: kontrolki <video> nie zdążą pochłonąć zdarzeń
+  window.addEventListener('pointermove', onMove, { capture: true, passive: false });
+  window.addEventListener('pointerup', onUp, true);
+  window.addEventListener('pointercancel', onUp, true);
+  track.addEventListener('dragstart', (e) => e.preventDefault());
+
+  wrap.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') goTo(index + 1, true);
+    else if (e.key === 'ArrowLeft') goTo(index - 1, true);
+  });
+
+  // ---- responsywność: przeliczamy wymiary i trzymamy ten sam kafelek ----
+  function relayout() {
+    measure();
+    offset = offsetFor(index);
+    render(false);
+  }
+
+  if (typeof ResizeObserver !== 'undefined') {
+    let first = true;
+    new ResizeObserver(() => {
+      if (first) { first = false; return; }
+      relayout();
+    }).observe(wrap);
+  }
+  window.addEventListener('resize', relayout);
+  window.addEventListener('orientationchange', relayout);
+
+  measure();
+  goTo(REAL_START, false);
 })();
 
 // ===== Lead form (placeholder submit) =====
