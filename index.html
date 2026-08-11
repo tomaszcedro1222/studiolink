@@ -45,37 +45,39 @@
 
   <!-- LEAD FORM + BADGE -->
   <section class="lead-section" id="kontakt-formularz">
-    <div class="container lead-grid">
-      <div class="lead-copy">
-        <h2>Odbierz <mark>bezpłatną</mark> propozycję assetów</h2>
-        <p>Wypełnij formularz, a przygotujemy dedykowaną koncepcję dla Twojej marki.</p>
-        <p class="muted">Gwarantujemy 100% poufności Twoich materiałów.</p>
-        <svg class="lead-arrow" width="220" height="40" viewBox="0 0 220 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <line x1="0" y1="20" x2="200" y2="20" stroke="currentColor" stroke-width="2"/>
-          <path d="M188 8l14 12-14 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-        </svg>
-      </div>
+    <div class="lead-form-band">
+      <div class="container lead-grid">
+        <div class="lead-copy">
+          <h2>Odbierz <mark>bezpłatną</mark> propozycję assetów</h2>
+          <p>Wypełnij formularz, a przygotujemy dedykowaną koncepcję dla Twojej marki.</p>
+          <p class="muted">Gwarantujemy 100% poufności Twoich materiałów.</p>
+          <svg class="lead-arrow" width="220" height="40" viewBox="0 0 220 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <line x1="0" y1="20" x2="200" y2="20" stroke="currentColor" stroke-width="2"/>
+            <path d="M188 8l14 12-14 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg>
+        </div>
 
-      <form class="lead-form" id="quoteForm" novalidate>
-        <div class="field">
-          <label for="fullname">Imię i nazwisko</label>
-          <input type="text" id="fullname" name="fullname" placeholder="np. Jan Kowalski" required>
-        </div>
-        <div class="field">
-          <label for="email">E-mail</label>
-          <input type="email" id="email" name="email" placeholder="jan@firma.pl" required>
-        </div>
-        <div class="field">
-          <label for="website">Adres www marki</label>
-          <input type="text" id="website" name="website" placeholder="www.twojamarka.pl" required>
-        </div>
-        <div class="field">
-          <label for="packshot">Link do packshotu / produktu</label>
-          <input type="text" id="packshot" name="packshot" placeholder="Wklej URL do zdjęcia" required>
-        </div>
-        <button type="submit" class="btn btn-light btn-block">Zamów wycenę swojego projektu</button>
-        <p class="form-note" id="formNote" role="status" aria-live="polite"></p>
-      </form>
+        <form class="lead-form" id="quoteForm" novalidate>
+          <div class="field">
+            <label for="fullname">Imię i nazwisko</label>
+            <input type="text" id="fullname" name="fullname" placeholder="np. Jan Kowalski" required>
+          </div>
+          <div class="field">
+            <label for="email">E-mail</label>
+            <input type="email" id="email" name="email" placeholder="jan@firma.pl" required>
+          </div>
+          <div class="field">
+            <label for="website">Adres www marki</label>
+            <input type="text" id="website" name="website" placeholder="www.twojamarka.pl" required>
+          </div>
+          <div class="field">
+            <label for="packshot">Link do packshotu / produktu</label>
+            <input type="text" id="packshot" name="packshot" placeholder="Wklej URL do zdjęcia" required>
+          </div>
+          <button type="submit" class="btn btn-light btn-block">Zamów wycenę swojego projektu</button>
+          <p class="form-note" id="formNote" role="status" aria-live="polite"></p>
+        </form>
+      </div>
     </div>
 
     <div class="badge-stamp" aria-hidden="true">

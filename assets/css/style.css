@@ -120,12 +120,15 @@ mark.mark-invert {
 
 /* ===== Lead / form section ===== */
 .lead-section {
-  background: var(--blue);
+  background: var(--black);
   color: #fff;
   margin-top: 64px;
-  padding: 96px 0 0;
   position: relative;
   overflow: hidden;
+}
+.lead-form-band {
+  background: var(--blue);
+  padding: 96px 0 0;
 }
 .lead-grid {
   display: grid;
@@ -378,7 +381,7 @@ mark.mark-invert {
   .footer-grid { flex-direction: column; }
   .footer-contact { text-align: left; }
   .badge-stamp { display: none; }
-  .lead-section { padding-top: 64px; }
+  .lead-form-band { padding-top: 64px; }
   .lead-grid { padding-bottom: 64px; }
   .compare-grid, .packages, .trust, .values { padding: 64px 0; }
   .final-cta { padding: 96px 0; }
