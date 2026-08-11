@@ -94,7 +94,7 @@ mark.mark-invert {
   text-transform: uppercase;
   font-size: 0.9rem;
 }
-.logo-icon { color: var(--blue); flex-shrink: 0; }
+.logo-icon { color: var(--black); flex-shrink: 0; }
 
 /* ===== Hero ===== */
 .hero { padding: 64px 0 0; }
