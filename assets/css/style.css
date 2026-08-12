@@ -219,15 +219,18 @@ mark.mark-accent {
 .lead-form .btn-light { margin-top: 8px; background: var(--black); color: #fff; }
 .form-note { min-height: 1em; font-size: 0.85rem; color: #d9ffe6; }
 
+/* W referencji znaczek ma 419px przy kanwie 1440 (29.1vw), a krawędź styku
+   niebieskiego z czernią przecina go na 31% jego wysokości. */
 .badge-stamp {
   position: absolute;
   right: 6%;
   top: 100%;
-  transform: translateY(-50%);
+  transform: translateY(-31%);
+  width: min(419px, 29.1vw);
   z-index: 5;
   pointer-events: none;
 }
-.badge-stamp img { display: block; }
+.badge-stamp img { display: block; width: 100%; height: auto; }
 
 /* ===== Before/after compare ===== */
 .compare-grid {
@@ -344,20 +347,23 @@ mark.mark-accent {
 
 /* ===== Trust logos ===== */
 .trust { padding: 96px 0; }
+/* Logotypy wycięte jako wektory z referencji (Desktop.pdf), więc kształty są
+   dokładne. W referencji każdy ma własny rozmiar optyczny (wysokości 20–41px
+   przy 1440), dlatego szerokości są ustawiane osobno, a nie jedną wysokością. */
 .trust-logos {
   margin-top: 40px;
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
   justify-content: center;
-  gap: clamp(14px, 4vw, 80px);
-  opacity: 0.75;
-  filter: grayscale(1);
-  overflow-x: auto;
-  scrollbar-width: none;
+  gap: min(140px, 9.7vw);
+  color: #000;
 }
-.trust-logos::-webkit-scrollbar { display: none; }
-.trust-logos img { height: clamp(20px, 4.5vw, 60px); width: auto; flex-shrink: 0; }
+.trust-logo { height: auto; flex-shrink: 0; }
+.trust-logo--alab      { width: min(213px, 14.80vw); }
+.trust-logo--bocian    { width: min(165px, 11.44vw); }
+.trust-logo--hippo     { width: min(142px,  9.83vw); }
+.trust-logo--fresenius { width: min(157px, 10.88vw); }
 
 /* ===== Values (blue section) ===== */
 .values { background: var(--blue); color: #fff; padding: 96px 0; }
@@ -428,18 +434,38 @@ mark.mark-accent {
   .hero-grid, .lead-grid, .compare-grid { grid-template-columns: 1fr; }
   /* bez tego kolumny nie schodzą poniżej szerokości min-content i rozpychają stronę */
   .hero-grid > *, .lead-grid > *, .compare-grid > * { min-width: 0; }
-  .lead-copy .lead-arrow { margin-top: 40px; margin-bottom: 0; }
+  /* strzałka nie ma sensu w układzie kolumnowym */
+  .lead-arrow { display: none; }
   /* w kolumnie nie wymuszamy pełnego ekranu — inaczej treść byłaby ściśnięta */
   .hero { min-height: 0; display: block; padding: 40px 0 0; }
   .hero-media { order: -1; }
   .hero-media img, .hero-media video { max-height: 62svh; }
-  .lead-form { order: -1; }
+  /* tekst nad zdjęciem, jak w referencji mobilnej (nagłówek przed kadrem) */
+  .compare-copy { order: -1; }
+  /* logotypy w dwóch kolumnach, jak w referencji mobilnej */
+  .trust-logos {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 56px 24px;
+    justify-items: center;
+    align-items: center;
+  }
+  .trust-logo--alab      { width: min(150px, 40.0vw); }
+  .trust-logo--bocian    { width: min(116px, 31.0vw); }
+  .trust-logo--hippo     { width: min( 99px, 26.4vw); }
+  .trust-logo--fresenius { width: min(110px, 29.3vw); }
   .values-grid { grid-template-columns: 1fr; gap: 48px; }
   .pack-card { grid-template-columns: 1fr; }
   .pack-card img { aspect-ratio: 4/3; }
   .footer-grid { flex-direction: column; }
   .footer-contact { text-align: left; }
-  .badge-stamp { display: none; }
+  /* na wąskich ekranach znaczek wyśrodkowany, nadal na styku sekcji */
+  .badge-stamp {
+    right: auto;
+    left: 50%;
+    width: min(206px, 52.8vw);
+    transform: translate(-50%, -31%);
+  }
   .lead-form-band { padding-top: 64px; }
   .lead-grid { padding-bottom: 64px; }
   .compare-grid, .packages, .trust, .values { padding: 64px 0; }
