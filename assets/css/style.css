@@ -238,7 +238,9 @@ mark.mark-accent {
   grid-template-columns: 1fr 1fr;
   gap: 48px;
   align-items: center;
-  padding: 96px 0;
+  /* padding-block, nie padding — ten element jest też .container i skrót
+     zerowałby jego marginesy boczne */
+  padding-block: 96px;
 }
 .compare-media { position: relative; }
 .compare-slider {
@@ -430,7 +432,8 @@ mark.mark-accent {
 
 /* ===== Responsive ===== */
 @media (max-width: 900px) {
-  .container { padding: 0 20px; }
+  /* marginesy boczne jak w referencji mobilnej: 30px przy kanwie 390 (7.7%) */
+  .container { padding: 0 clamp(20px, 7.7vw, 32px); }
   .hero-grid, .lead-grid, .compare-grid { grid-template-columns: 1fr; }
   /* bez tego kolumny nie schodzą poniżej szerokości min-content i rozpychają stronę */
   .hero-grid > *, .lead-grid > *, .compare-grid > * { min-width: 0; }
@@ -468,7 +471,10 @@ mark.mark-accent {
   }
   .lead-form-band { padding-top: 64px; }
   .lead-grid { padding-bottom: 64px; }
-  .compare-grid, .packages, .trust, .values { padding: 64px 0; }
+  .packages, .trust, .values { padding: 64px 0; }
+  /* znaczek wystaje 69% swojej wysokości pod krawędź apli — sekcja poniżej
+     musi zrobić na niego miejsce, inaczej nachodzi na nagłówek */
+  .compare-grid { padding-block: calc(min(206px, 52.8vw) * 0.7 + 24px) 64px; }
   .final-cta { padding: 96px 0; }
 }
 
