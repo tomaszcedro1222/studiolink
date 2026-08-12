@@ -348,12 +348,13 @@ mark.mark-accent {
 .carousel-dots button.active { background: var(--blue); width: 22px; border-radius: 4px; }
 
 /* ===== Trust logos ===== */
-.trust { padding: 96px 0; }
+/* odstęp nad i pod nagłówkiem równy (suma jak wcześniej: 96+40 = 68+68) */
+.trust { padding: 68px 0 96px; }
 /* Logotypy wycięte jako wektory z referencji (Desktop.pdf), więc kształty są
    dokładne. W referencji każdy ma własny rozmiar optyczny (wysokości 20–41px
    przy 1440), dlatego szerokości są ustawiane osobno, a nie jedną wysokością. */
 .trust-logos {
-  margin-top: 40px;
+  margin-top: 68px;
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
@@ -480,6 +481,11 @@ mark.mark-accent {
   .lead-form-band { padding-top: 64px; }
   .lead-grid { padding-bottom: 64px; }
   .packages, .trust, .values { padding: 64px 0; }
+  /* Nad "Zaufali nam" sumowały się dwa paddingi (128px), a pod nim był tylko
+     margines logotypów (40px) — nagłówek wyglądał na zepchnięty w dół.
+     Kropki karuzeli mają własny odstęp, więc .packages nie potrzebuje dolnego. */
+  .packages { padding-bottom: 0; }
+  .trust-logos { margin-top: 64px; }
   /* znaczek wystaje 69% swojej wysokości pod krawędź apli — sekcja poniżej
      musi zrobić na niego miejsce, inaczej nachodzi na nagłówek */
   .compare-grid { padding-block: calc(min(206px, 52.8vw) * 0.7 + 24px) 64px; }
