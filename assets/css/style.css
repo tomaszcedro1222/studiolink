@@ -418,14 +418,12 @@ mark.mark-accent {
   gap: 32px;
 }
 .footer-brand p { font-weight: 500; font-size: var(--fs-small); }
-.social-icons { display: flex; gap: 14px; margin-top: 16px; }
-.social-icons a {
-  width: 34px; height: 34px;
-  border-radius: 50%;
-  border: 1px solid var(--border-light);
-  display: flex; align-items: center; justify-content: center;
-  color: #111;
-}
+/* Ikony w oryginałach od grafika (#C4C4C4, jak w referencji), bez obwódek.
+   Odstępy z referencji: 48px na desktopie, 25px na wąskich ekranach. */
+.social-icons { display: flex; gap: 48px; margin-top: 28px; }
+.social-icons a { display: block; line-height: 0; }
+.social-icons img { display: block; width: 21px; height: 21px; }
+.social-icons a:hover { opacity: 0.7; }
 .footer-contact { text-align: right; }
 .footer-contact h3 { font-size: var(--fs-small); font-weight: 500; margin-bottom: 10px; }
 .footer-contact p { color: var(--gray-text); font-size: var(--fs-small); margin-top: 4px; }
@@ -459,10 +457,19 @@ mark.mark-accent {
   .trust-logo--hippo     { width: min( 99px, 26.4vw); }
   .trust-logo--fresenius { width: min(110px, 29.3vw); }
   .values-grid { grid-template-columns: 1fr; gap: 48px; }
-  .pack-card { grid-template-columns: 1fr; }
-  .pack-card img { aspect-ratio: 4/3; }
-  .footer-grid { flex-direction: column; }
-  .footer-contact { text-align: left; }
+  /* Kafel wg referencji mobilnej: kadr 270x200 na górze, pod nim wyśrodkowany
+     nagłówek i opis na niebieskim. Kafel 270/390 = 69.2vw, odstęp 30/390. */
+  .pack-card { grid-template-columns: 1fr; flex-basis: 69.2vw; }
+  .carousel-track { gap: 7.7vw; }
+  .pack-card video, .pack-card img { order: -1; aspect-ratio: 27 / 20; height: auto; }
+  .pack-copy { text-align: center; padding: 12.8vw 7.7vw 13.8vw; }
+  .pack-copy p { max-width: none; margin-left: auto; margin-right: auto; font-size: 12px; }
+  /* Stopka jak w referencji mobilnej: kontakt na górze, pod nim copyright,
+     a media społecznościowe na samym dole; wszystko wyśrodkowane. */
+  .footer-grid { flex-direction: column; align-items: center; text-align: center; gap: 40px; }
+  .footer-contact { text-align: center; order: 1; }
+  .footer-brand { order: 2; display: flex; flex-direction: column; align-items: center; }
+  .social-icons { gap: 25px; }
   /* na wąskich ekranach znaczek wyśrodkowany, nadal na styku sekcji */
   .badge-stamp {
     right: auto;
