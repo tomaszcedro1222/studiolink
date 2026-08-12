@@ -460,7 +460,10 @@ mark.mark-accent {
   .values-grid { grid-template-columns: 1fr; gap: 48px; }
   /* Kafel wg referencji mobilnej: kadr 270x200 na górze, pod nim wyśrodkowany
      nagłówek i opis na niebieskim. Kafel 270/390 = 69.2vw, odstęp 30/390. */
-  .pack-card { grid-template-columns: 1fr; flex-basis: 69.2vw; }
+  /* Kafle rozciągają się do wysokości najwyższego, a align-items: center
+     rozdzielał nadwyżkę na górę i dół — nad filmem wystawał pasek apli.
+     Wiersz kadru = auto, wiersz tekstu = 1fr, więc nadwyżkę pochłania tekst. */
+  .pack-card { grid-template-columns: 1fr; grid-template-rows: auto 1fr; flex-basis: 69.2vw; }
   .carousel-track { gap: 7.7vw; }
   .pack-card video, .pack-card img { order: -1; aspect-ratio: 27 / 20; height: auto; }
   .pack-copy { text-align: center; padding: 12.8vw 7.7vw 13.8vw; }
