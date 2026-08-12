@@ -376,7 +376,8 @@ mark.mark-accent {
   gap: 40px;
 }
 .value-item { text-align: center; }
-.value-item svg { margin: 0 auto 20px; }
+/* ikony w oryginalnych rozmiarach z referencji (58x52, 49x48, 48x44) */
+.value-icon { display: block; margin: 0 auto 28px; height: auto; }
 .value-item h3 { font-size: var(--fs-h-sm); font-weight: 300; line-height: var(--lh-h); letter-spacing: -0.02em; }
 .value-item p { margin-top: 12px; color: #dcdfff; font-size: var(--fs-body); line-height: var(--lh-body); letter-spacing: var(--ls-body); max-width: 24ch; margin-left: auto; margin-right: auto; }
 
