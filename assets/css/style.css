@@ -16,9 +16,10 @@ ul { list-style: none; margin: 0; padding: 0; }
 button { font-family: inherit; }
 
 :root {
-  --blue: #2f3eff;
+  /* kolory pobrane z referencji (Desktop.pdf) */
+  --blue: #2644f9;
   --blue-dark: #1b25b8;
-  --black: #0a0a0c;
+  --black: #000000;
   --gray-text: #6c6c76;
   --border-light: #e6e6ea;
   --radius-lg: 20px;
@@ -46,17 +47,24 @@ button { font-family: inherit; }
   padding: 0 32px;
 }
 
+/* Podświetlenie 1:1 z referencji: pasek o wysokości 0.4977em przesunięty w dół —
+   górna krawędź 0.2523em pod górą x-height, dolna 0.189em pod linią pisma.
+   Rysowany gradientem, bo tło elementu inline objęłoby całą wysokość pudełka.
+   Litery zostają w kolorze tekstu, pasek jest tylko za nimi. */
 mark {
-  background: var(--blue);
-  color: #ffffff;
-  padding: 0 6px;
-  border-radius: 2px;
+  background: linear-gradient(#000, #000) no-repeat;
+  background-size: 100% 0.4977em;
+  background-position: 0 0.6613em;
+  color: inherit;
+  padding-left: 0.085em;
+  margin-left: -0.085em;
+  border-radius: 0;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 }
-mark.mark-invert {
-  background: #0a0a0c;
-  color: #ffffff;
+/* na czarnym tle pasek jest niebieski (jak w referencji) */
+mark.mark-accent {
+  background-image: linear-gradient(var(--blue), var(--blue));
 }
 
 .muted { color: var(--gray-text); font-size: var(--fs-small); letter-spacing: var(--ls-body); }
