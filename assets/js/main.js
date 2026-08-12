@@ -5,7 +5,12 @@
   const handle = document.getElementById('compareHandle');
   if (!slider || !clip || !handle) return;
 
-  let dragging = false;
+  // Blokada kierunku gestu: gdy ruch jest poziomy, przejmujemy go i blokujemy
+  // przewijanie strony; gest wyraźnie pionowy oddajemy przeglądarce.
+  const LOCK_THRESHOLD = 6;
+  let activeId = null;
+  let startX = 0, startY = 0;
+  let lock = null;              // null = jeszcze nie wiemy, 'h' = poziom, 'v' = pion
 
   function syncBeforeImageWidth() {
     const rect = slider.getBoundingClientRect();
@@ -26,16 +31,46 @@
   }
 
   slider.addEventListener('pointerdown', (e) => {
-    dragging = true;
-    slider.setPointerCapture(e.pointerId);
-    updateFromClientX(e.clientX);
+    activeId = e.pointerId;
+    startX = e.clientX;
+    startY = e.clientY;
+    if (e.pointerType === 'touch') {
+      lock = null;                       // czekamy, aż kierunek gestu się wyjaśni
+    } else {
+      lock = 'h';                        // mysz: reagujemy od razu
+      slider.setPointerCapture(e.pointerId);
+      updateFromClientX(e.clientX);
+    }
   });
+
   slider.addEventListener('pointermove', (e) => {
-    if (!dragging) return;
+    if (activeId === null || e.pointerId !== activeId) return;
+
+    if (lock === null) {
+      const dx = Math.abs(e.clientX - startX);
+      const dy = Math.abs(e.clientY - startY);
+      if (dx < LOCK_THRESHOLD && dy < LOCK_THRESHOLD) return;
+      if (dy > dx) { lock = 'v'; activeId = null; return; }   // pion → przewijanie strony
+      lock = 'h';
+      slider.setPointerCapture(e.pointerId);
+    }
+    if (lock !== 'h') return;
     updateFromClientX(e.clientX);
-  });
-  slider.addEventListener('pointerup', () => { dragging = false; });
-  slider.addEventListener('pointercancel', () => { dragging = false; });
+    if (e.cancelable) e.preventDefault();
+  }, { passive: false });
+
+  // twarda blokada: po zaryglowaniu poziomu strona nie może zacząć się przewijać
+  slider.addEventListener('touchmove', (e) => {
+    if (lock === 'h' && e.cancelable) e.preventDefault();
+  }, { passive: false });
+
+  function endGesture(e) {
+    if (activeId !== null && e.pointerId !== activeId) return;
+    activeId = null;
+    lock = null;
+  }
+  slider.addEventListener('pointerup', endGesture);
+  slider.addEventListener('pointercancel', endGesture);
 
   window.addEventListener('resize', syncBeforeImageWidth);
 

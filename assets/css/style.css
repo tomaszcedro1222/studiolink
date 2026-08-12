@@ -56,8 +56,6 @@ mark {
   background-size: 100% 0.4977em;
   background-position: 0 0.6613em;
   color: inherit;
-  padding-left: 0.085em;
-  margin-left: -0.085em;
   border-radius: 0;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
@@ -178,7 +176,17 @@ mark.mark-accent {
 .lead-copy h2 { font-size: var(--fs-h); font-weight: 300; line-height: var(--lh-h); letter-spacing: var(--ls-h); }
 .lead-copy p { margin-top: 20px; max-width: 28ch; font-size: var(--fs-body); line-height: var(--lh-body); letter-spacing: var(--ls-body); }
 .lead-copy .muted { color: rgba(255,255,255,0.72); margin-top: 8px; font-size: var(--fs-small); }
-.lead-arrow { color: #ffffff; margin-top: 48px; opacity: 0.85; }
+/* Strzałka dosunięta do dołu kolumny, żeby wypadła na wysokości przycisku CTA
+   w formularzu (w referencji jej linia leży dokładnie na środku przycisku). */
+.lead-copy { display: flex; flex-direction: column; }
+.lead-arrow {
+  color: #ffffff;
+  opacity: 0.85;
+  margin-top: auto;
+  margin-bottom: 54px;   /* zmierzony dystans od dołu kolumny do środka przycisku */
+  max-width: 100%;
+  height: auto;
+}
 
 .lead-form {
   background: rgba(6,8,30,0.22);
@@ -237,6 +245,8 @@ mark.mark-accent {
   overflow: hidden;
   user-select: none;
   cursor: ew-resize;
+  /* poziomy gest oddajemy suwakowi, pionowy zostaje przewijaniem strony */
+  touch-action: pan-y;
 }
 .compare-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .compare-clip {
@@ -273,7 +283,9 @@ mark.mark-accent {
 .compare-copy .muted { color: #8b8b96; margin-top: 12px; font-size: var(--fs-small); }
 
 /* ===== Packages carousel ===== */
-.packages { padding: 96px 0 0; }
+/* odstęp nad i pod nagłówkiem równy, żeby tekst był wyśrodkowany w białym pasie
+   (suma jak wcześniej: 96+48 = 72+72, więc wysokość sekcji bez zmian) */
+.packages { padding: 72px 0 0; }
 .section-title {
   font-size: var(--fs-h);
   font-weight: 300;
@@ -285,7 +297,7 @@ mark.mark-accent {
 }
 .section-title--light { color: #fff; }
 
-.carousel-wrap { margin-top: 48px; overflow: hidden; }
+.carousel-wrap { margin-top: 72px; overflow: hidden; }
 .carousel-track {
   display: flex;
   gap: 24px;
@@ -414,6 +426,9 @@ mark.mark-accent {
 @media (max-width: 900px) {
   .container { padding: 0 20px; }
   .hero-grid, .lead-grid, .compare-grid { grid-template-columns: 1fr; }
+  /* bez tego kolumny nie schodzą poniżej szerokości min-content i rozpychają stronę */
+  .hero-grid > *, .lead-grid > *, .compare-grid > * { min-width: 0; }
+  .lead-copy .lead-arrow { margin-top: 40px; margin-bottom: 0; }
   /* w kolumnie nie wymuszamy pełnego ekranu — inaczej treść byłaby ściśnięta */
   .hero { min-height: 0; display: block; padding: 40px 0 0; }
   .hero-media { order: -1; }
@@ -432,6 +447,10 @@ mark.mark-accent {
 }
 
 @media (max-width: 520px) {
-  .btn { padding: 15px 22px; font-size: 0.78rem; }
+  /* CTA z trackingiem +0.1em nie mieści się w jednej linii na wąskim ekranie
+     i przez nowrap rozpychało cały formularz poza ekran */
+  .btn { padding: 15px 20px; font-size: 13px; white-space: normal; text-align: center; }
   .header-inner { height: 64px; }
+  .packages { padding-top: 48px; }
+  .carousel-wrap { margin-top: 48px; }
 }
