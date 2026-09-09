@@ -39,6 +39,10 @@ button { font-family: inherit; }
   --ls-caps: 0.1em;
   --lh-h: 1.2;
   --lh-body: 1.41;
+
+  /* header startuje wysoki i kurczy się przy scrollowaniu */
+  --header-h: 120px;
+  --header-h-compact: 76px;
 }
 
 .container {
@@ -99,25 +103,38 @@ mark.mark-accent {
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--border-light);
 }
+.site-header { height: var(--header-h); transition: height 0.25s ease; }
+.site-header.is-compact { height: var(--header-h-compact); }
 .header-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 76px;
+  height: 100%;
 }
 .logo {
   display: flex;
   align-items: center;
 }
-.logo-mark { height: 22px; width: auto; display: block; }
+.logo-mark { height: 30px; width: auto; display: block; transition: height 0.25s ease; }
+.site-header.is-compact .logo-mark { height: 22px; }
+.site-header .btn-sm {
+  padding: 16px 28px;
+  font-size: 14px;
+  white-space: nowrap;
+  transition: padding 0.25s ease, font-size 0.25s ease, transform 0.15s ease, opacity 0.15s ease;
+}
+.site-header.is-compact .btn-sm {
+  padding: 11px 20px;
+  font-size: 12px;
+}
 
 /* ===== Hero ===== */
 /* Hero mieści się w jednym ekranie — bez tego pionowy film 9:16 rozpychał
    sekcję na własną wysokość i tekst nie wypadał na środku ekranu. */
 .hero {
   padding: 48px 0;
-  min-height: calc(100vh - 76px);
-  min-height: calc(100svh - 76px);
+  min-height: calc(100vh - var(--header-h));
+  min-height: calc(100svh - var(--header-h));
   display: flex;
   align-items: center;
 }
@@ -432,6 +449,7 @@ mark.mark-accent {
 
 /* ===== Responsive ===== */
 @media (max-width: 900px) {
+  :root { --header-h: 88px; --header-h-compact: 68px; }
   /* marginesy boczne jak w referencji mobilnej: 30px przy kanwie 390 (7.7%) */
   .container { padding: 0 clamp(20px, 7.7vw, 32px); }
   .hero-grid, .lead-grid, .compare-grid { grid-template-columns: 1fr; }
@@ -499,7 +517,10 @@ mark.mark-accent {
   /* CTA z trackingiem +0.1em nie mieści się w jednej linii na wąskim ekranie
      i przez nowrap rozpychało cały formularz poza ekran */
   .btn { padding: 15px 20px; font-size: 13px; white-space: normal; text-align: center; }
-  .header-inner { height: 64px; }
+  /* Na telefonie różnica jest subtelniejsza, ale przycisk nadal płynnie maleje. */
+  :root { --header-h: 72px; --header-h-compact: 58px; }
+  .site-header .btn-sm { padding: 12px 18px; font-size: 12px; }
+  .site-header.is-compact .btn-sm { padding: 8px 14px; font-size: 10px; }
   .packages { padding-top: 48px; }
   .carousel-wrap { margin-top: 48px; }
 }

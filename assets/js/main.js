@@ -1,3 +1,21 @@
+// ===== Header: wysoki na starcie, kurczy się po zescrollowaniu =====
+(function initHeaderShrink() {
+  const header = document.querySelector('.site-header');
+  if (!header) return;
+  const THRESHOLD = 40;   // px przewinięcia, po których header się zmniejsza
+  let compact = null;
+
+  function update() {
+    const should = window.scrollY > THRESHOLD;
+    if (should !== compact) {
+      compact = should;
+      header.classList.toggle('is-compact', compact);
+    }
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+})();
+
 // ===== Before / after compare slider =====
 (function initCompareSlider() {
   const slider = document.getElementById('compareSlider');
