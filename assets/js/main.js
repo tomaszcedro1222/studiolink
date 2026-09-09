@@ -2,11 +2,15 @@
 (function initHeaderShrink() {
   const header = document.querySelector('.site-header');
   if (!header) return;
-  const THRESHOLD = 40;   // px przewinięcia, po których header się zmniejsza
-  let compact = null;
+  // Osobne progi zapobiegają oscylacji. Zmiana wysokości sticky headera
+  // wpływa na scrollY, więc jeden próg potrafił natychmiast odwrócić stan.
+  const COMPACT_AT = 96;
+  const EXPAND_AT = 16;
+  let compact = header.classList.contains('is-compact');
 
   function update() {
-    const should = window.scrollY > THRESHOLD;
+    const scrollTop = Math.max(0, window.scrollY);
+    const should = compact ? scrollTop > EXPAND_AT : scrollTop > COMPACT_AT;
     if (should !== compact) {
       compact = should;
       header.classList.toggle('is-compact', compact);
