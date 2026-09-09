@@ -407,18 +407,31 @@ mark.mark-accent {
 .trust-logo--fresenius { width: min(157px, 10.88vw); }
 
 /* ===== Values (blue section) ===== */
-.values { background: var(--blue); color: #fff; padding: 96px 0; }
+.values {
+  min-height: 82svh;
+  display: flex;
+  align-items: center;
+  background: var(--blue);
+  color: #fff;
+  padding: clamp(96px, 10svh, 140px) 0;
+}
+.values .container { width: 100%; }
 .values-grid {
-  margin-top: 56px;
+  margin-top: clamp(80px, 10svh, 120px);
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 40px;
+  gap: 0;
 }
-.value-item { text-align: center; }
+.value-item {
+  min-height: 294px;
+  padding: 6px clamp(28px, 3vw, 52px) 0;
+  text-align: center;
+}
+.value-item + .value-item { border-left: 1px solid rgba(255, 255, 255, 0.72); }
 /* ikony w oryginalnych rozmiarach z referencji (58x52, 49x48, 48x44) */
-.value-icon { display: block; margin: 0 auto 28px; height: auto; }
+.value-icon { display: block; margin: 0 auto 42px; height: auto; }
 .value-item h3 { font-size: var(--fs-h-sm); font-weight: 300; line-height: var(--lh-h); letter-spacing: -0.02em; }
-.value-item p { margin-top: 12px; color: #dcdfff; font-size: var(--fs-body); line-height: var(--lh-body); letter-spacing: var(--ls-body); max-width: 24ch; margin-left: auto; margin-right: auto; }
+.value-item p { margin: 20px auto 0; color: #eef0ff; font-size: 16px; font-weight: 300; line-height: 1.4; letter-spacing: -0.02em; max-width: 31ch; }
 
 /* ===== Final CTA ===== */
 .final-cta {
@@ -488,7 +501,11 @@ mark.mark-accent {
   .trust-logo--bocian    { width: min(116px, 31.0vw); }
   .trust-logo--hippo     { width: min( 99px, 26.4vw); }
   .trust-logo--fresenius { width: min(110px, 29.3vw); }
-  .values-grid { grid-template-columns: 1fr; gap: 48px; }
+  .values { min-height: auto; }
+  .values-grid { grid-template-columns: 1fr; gap: 48px; margin-top: 64px; }
+  .value-item { min-height: 0; padding: 0; }
+  .value-item + .value-item { border-left: 0; }
+  .value-icon { margin-bottom: 28px; }
   /* Kafel wg referencji mobilnej: kadr 270x200 na górze, pod nim wyśrodkowany
      nagłówek i opis na niebieskim. Kafel 270/390 = 69.2vw, odstęp 30/390. */
   /* Kafle rozciągają się do wysokości najwyższego, a align-items: center
