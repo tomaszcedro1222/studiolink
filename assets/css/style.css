@@ -81,7 +81,7 @@ mark.mark-accent {
   letter-spacing: var(--ls-caps);
   text-transform: uppercase;
   padding: 16px 28px;
-  border-radius: 999px;
+  border-radius: 0;
   border: none;
   cursor: pointer;
   transition: transform 0.15s ease, opacity 0.15s ease;
