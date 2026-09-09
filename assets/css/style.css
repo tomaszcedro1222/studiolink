@@ -322,7 +322,7 @@ mark.mark-accent {
 .carousel-wrap { margin-top: 72px; overflow: hidden; }
 .carousel-track {
   display: flex;
-  gap: 24px;
+  gap: min(80px, 5.56vw);   /* w referencji 80px przy kanwie 1440 */
   padding-bottom: 8px;
   cursor: grab;
   touch-action: pan-y;   /* w pionie nadal przewija się strona */
@@ -333,19 +333,28 @@ mark.mark-accent {
 .pack-card {
   flex: 0 0 min(1120px, 86vw);
   background: var(--blue);
-  border-radius: var(--radius-lg);
+  border-radius: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
   overflow: hidden;
   color: #fff;
 }
-.pack-card--static { background: #1b2470; }
-.pack-card--ab { background: #7a1f4f; }
+/* Wszystkie kafle w jednym niebieskim — w referencji nie ma dodatkowych kolorów
+   (uwaga Pauliny: „nie wprowadzałabym dodatkowych kolorów"). */
 .pack-copy { padding: 40px; }
 .pack-copy h3 { font-size: var(--fs-h); font-weight: 300; line-height: var(--lh-h); letter-spacing: var(--ls-h); }
 .pack-copy p { margin-top: 16px; color: #e4e5ff; max-width: 26ch; font-size: var(--fs-body); line-height: var(--lh-body); letter-spacing: var(--ls-body); }
-.pack-card img, .pack-card video { width: 100%; height: 100%; object-fit: cover; display: block; background: #000; }
+/* Kadr kwadratowy jak w referencji (560x560 w kaflu 1120x560). Bez tego
+   wysokość kafla dyktował pionowy film 9:16 i kafel rósł do ~996px. */
+.pack-card img, .pack-card video {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  height: auto;
+  object-fit: cover;
+  display: block;
+  background: #000;
+}
 
 .carousel-dots {
   display: flex;
