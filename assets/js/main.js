@@ -315,6 +315,117 @@
   goTo(REAL_START, false);
 })();
 
+// ===== Trust logos: automatyczna, zapętlona taśma z przeciąganiem =====
+(function initTrustMarquee() {
+  const marquee = document.getElementById('trustMarquee');
+  const track = document.getElementById('trustTrack');
+  const group = track && track.querySelector('.trust-logo-group');
+  if (!marquee || !track || !group) return;
+
+  const clone = group.cloneNode(true);
+  clone.setAttribute('aria-hidden', 'true');
+  clone.querySelectorAll('img').forEach((img) => {
+    img.alt = '';
+    img.removeAttribute('loading');
+  });
+  track.appendChild(clone);
+
+  const SPEED = 38; // px/s, kierunek od prawej do lewej
+  const LOCK_THRESHOLD = 6;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let offset = 0;
+  let loopWidth = 1;
+  let lastFrame = performance.now();
+  let pointerId = null;
+  let startX = 0;
+  let startY = 0;
+  let startOffset = 0;
+  let axis = null;
+  let dragging = false;
+
+  function measure() {
+    loopWidth = Math.max(1, group.getBoundingClientRect().width);
+    normalize();
+    render();
+  }
+
+  function normalize() {
+    while (offset <= -loopWidth) offset += loopWidth;
+    while (offset > 0) offset -= loopWidth;
+  }
+
+  function render() {
+    track.style.transform = 'translate3d(' + offset + 'px, 0, 0)';
+  }
+
+  function animate(now) {
+    const delta = Math.min(50, now - lastFrame);
+    lastFrame = now;
+    if (!dragging && !reduceMotion.matches) {
+      offset -= SPEED * delta / 1000;
+      normalize();
+      render();
+    }
+    requestAnimationFrame(animate);
+  }
+
+  marquee.addEventListener('pointerdown', (e) => {
+    if (e.button != null && e.button !== 0) return;
+    pointerId = e.pointerId;
+    startX = e.clientX;
+    startY = e.clientY;
+    startOffset = offset;
+    axis = null;
+  });
+
+  marquee.addEventListener('pointermove', (e) => {
+    if (pointerId === null || e.pointerId !== pointerId) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+
+    if (axis === null) {
+      if (Math.abs(dx) < LOCK_THRESHOLD && Math.abs(dy) < LOCK_THRESHOLD) return;
+      if (Math.abs(dy) > Math.abs(dx)) {
+        pointerId = null;
+        return;
+      }
+      axis = 'x';
+      dragging = true;
+      marquee.classList.add('dragging');
+      marquee.setPointerCapture(e.pointerId);
+    }
+
+    offset = startOffset + dx;
+    normalize();
+    render();
+    if (e.cancelable) e.preventDefault();
+  }, { passive: false });
+
+  function endDrag(e) {
+    if (pointerId === null || e.pointerId !== pointerId) return;
+    pointerId = null;
+    axis = null;
+    dragging = false;
+    marquee.classList.remove('dragging');
+    normalize();
+    render();
+    lastFrame = performance.now();
+  }
+
+  marquee.addEventListener('pointerup', endDrag);
+  marquee.addEventListener('pointercancel', endDrag);
+  marquee.addEventListener('dragstart', (e) => e.preventDefault());
+
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(measure).observe(group);
+  } else {
+    window.addEventListener('resize', measure);
+  }
+
+  measure();
+  requestAnimationFrame(animate);
+})();
+
 // ===== Lead form (placeholder submit) =====
 (function initForm() {
   const form = document.getElementById('quoteForm');

@@ -374,21 +374,33 @@ mark.mark-accent {
 .carousel-dots button.active { background: var(--blue); width: 22px; border-radius: 4px; }
 
 /* ===== Trust logos ===== */
-/* odstęp nad i pod nagłówkiem równy (suma jak wcześniej: 96+40 = 68+68) */
-.trust { padding: 68px 0 96px; }
+.trust { padding: clamp(128px, 11vw, 168px) 0 clamp(150px, 13vw, 200px); overflow: hidden; }
 /* Logotypy wycięte jako wektory z referencji (Desktop.pdf), więc kształty są
    dokładne. W referencji każdy ma własny rozmiar optyczny (wysokości 20–41px
    przy 1440), dlatego szerokości są ustawiane osobno, a nie jedną wysokością. */
-.trust-logos {
-  margin-top: 68px;
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: center;
-  justify-content: center;
-  gap: min(140px, 9.7vw);
-  color: #000;
+.trust-marquee {
+  --trust-gap: clamp(80px, 9.7vw, 140px);
+  margin-top: clamp(96px, 8vw, 128px);
+  width: 100%;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
 }
-.trust-logo { height: auto; flex-shrink: 0; }
+.trust-marquee.dragging { cursor: grabbing; }
+.trust-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+.trust-logo-group {
+  display: flex;
+  align-items: center;
+  gap: var(--trust-gap);
+  flex: none;
+  padding-right: var(--trust-gap);
+}
+.trust-logo { height: auto; flex: none; pointer-events: none; }
 .trust-logo--alab      { width: min(213px, 14.80vw); }
 .trust-logo--bocian    { width: min(165px, 11.44vw); }
 .trust-logo--hippo     { width: min(142px,  9.83vw); }
@@ -472,14 +484,6 @@ mark.mark-accent {
   .hero-media img, .hero-media video { max-height: 62svh; }
   /* tekst nad zdjęciem, jak w referencji mobilnej (nagłówek przed kadrem) */
   .compare-copy { order: -1; }
-  /* logotypy w dwóch kolumnach, jak w referencji mobilnej */
-  .trust-logos {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 56px 24px;
-    justify-items: center;
-    align-items: center;
-  }
   .trust-logo--alab      { width: min(150px, 40.0vw); }
   .trust-logo--bocian    { width: min(116px, 31.0vw); }
   .trust-logo--hippo     { width: min( 99px, 26.4vw); }
@@ -510,12 +514,13 @@ mark.mark-accent {
   }
   .lead-form-band { padding-top: 64px; }
   .lead-grid { padding-bottom: 64px; }
-  .packages, .trust, .values { padding: 64px 0; }
+  .packages, .values { padding: 64px 0; }
   /* Nad "Zaufali nam" sumowały się dwa paddingi (128px), a pod nim był tylko
      margines logotypów (40px) — nagłówek wyglądał na zepchnięty w dół.
      Kropki karuzeli mają własny odstęp, więc .packages nie potrzebuje dolnego. */
   .packages { padding-bottom: 0; }
-  .trust-logos { margin-top: 64px; }
+  .trust { padding: 96px 0 112px; }
+  .trust-marquee { --trust-gap: clamp(48px, 14vw, 72px); margin-top: 72px; }
   /* znaczek wystaje 69% swojej wysokości pod krawędź apli — sekcja poniżej
      musi zrobić na niego miejsce, inaczej nachodzi na nagłówek */
   .compare-grid { padding-block: calc(min(206px, 52.8vw) * 0.7 + 24px) 64px; }
