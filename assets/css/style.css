@@ -252,8 +252,8 @@ mark.mark-accent {
 /* ===== Before/after compare ===== */
 .compare-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 48px;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+  gap: clamp(112px, 10vw, 160px);
   align-items: center;
   /* padding-block, nie padding — ten element jest też .container i skrót
      zerowałby jego marginesy boczne */
@@ -262,8 +262,8 @@ mark.mark-accent {
 .compare-media { position: relative; }
 .compare-slider {
   position: relative;
-  aspect-ratio: 8 / 9;
-  border-radius: var(--radius-lg);
+  aspect-ratio: 4 / 5;
+  border-radius: 0;
   overflow: hidden;
   user-select: none;
   cursor: ew-resize;
@@ -300,9 +300,9 @@ mark.mark-accent {
   justify-content: center;
   box-shadow: 0 4px 14px rgba(0,0,0,0.3);
 }
-.compare-copy h2 { font-size: var(--fs-h); font-weight: 300; line-height: var(--lh-h); letter-spacing: var(--ls-h); }
-.compare-copy p { margin-top: 18px; max-width: 30ch; color: #c9c9d2; font-size: var(--fs-body); line-height: var(--lh-body); letter-spacing: var(--ls-body); }
-.compare-copy .muted { color: #8b8b96; margin-top: 12px; font-size: var(--fs-small); }
+.compare-copy h2 { font-size: var(--fs-h); font-weight: 200; line-height: var(--lh-h); letter-spacing: var(--ls-h); }
+.compare-copy p { margin-top: 24px; max-width: 38ch; color: #f2f2f4; font-size: var(--fs-body); font-weight: 300; line-height: var(--lh-body); letter-spacing: var(--ls-body); }
+.compare-copy .muted { color: #f2f2f4; margin-top: 56px; font-size: var(--fs-small); font-weight: 300; }
 
 /* ===== Packages carousel ===== */
 /* odstęp nad i pod nagłówkiem równy, żeby tekst był wyśrodkowany w białym pasie
