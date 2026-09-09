@@ -137,6 +137,7 @@ mark.mark-accent {
   min-height: calc(100svh - var(--header-h));
   display: flex;
   align-items: center;
+  position: relative;   /* układ odniesienia dla kadru dochodzącego do krawędzi */
 }
 .hero-grid {
   display: grid;
@@ -160,13 +161,19 @@ mark.mark-accent {
   max-width: 30ch;
 }
 .hero-copy .btn { margin-top: 32px; }
-/* Kadr 720x855 jak w referencji, nie natywne 9:16 filmu; nadwyżkę przycinamy */
+/* W referencji kadr zajmuje prawą połowę ekranu i dochodzi do jego krawędzi
+   (x=720..1440). Wcześniej był zamknięty w kontenerze 1200px, więc na dużych
+   ekranach zostawało po prawej dużo pustego miejsca (uwaga Pauliny). */
+.hero-media {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 50%;
+}
 .hero-media img, .hero-media video {
-  border-radius: 4px;
   width: 100%;
-  aspect-ratio: 720 / 855;
-  max-height: calc(100vh - 172px);
-  max-height: calc(100svh - 172px);
+  height: 100%;
   object-fit: cover;
   display: block;
 }
@@ -179,9 +186,13 @@ mark.mark-accent {
   position: relative;
   overflow: hidden;
 }
+/* W referencji niebieski to panel 1280x679 wsunięty w czarne tło (x=80..1360,
+   czyli 5.56% z każdej strony), a nie pas na całą szerokość — uwaga Pauliny
+   o „niebieskiej ramce”. Górny margines 140px, dolny 80px przy kanwie 1440. */
 .lead-form-band {
   background: var(--blue);
-  padding: 96px 0 0;
+  margin: 9.72vw 5.56vw 5.56vw;
+  padding: 5.56vw 0 0;
   position: relative;
 }
 .lead-grid {
@@ -205,10 +216,8 @@ mark.mark-accent {
   height: auto;
 }
 
+/* Pola leżą wprost na niebieskim panelu — w referencji nie ma osobnej karty */
 .lead-form {
-  background: rgba(6,8,30,0.22);
-  border-radius: var(--radius-lg);
-  padding: 32px;
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -240,7 +249,7 @@ mark.mark-accent {
    niebieskiego z czernią przecina go na 31% jego wysokości. */
 .badge-stamp {
   position: absolute;
-  right: 6%;
+  right: 0;            /* w referencji prawa krawędź znaczka = prawa krawędź panelu */
   top: 100%;
   transform: translateY(-31%);
   width: min(419px, 29.1vw);
@@ -485,6 +494,8 @@ mark.mark-accent {
   :root { --header-h: 88px; --header-h-compact: 68px; }
   /* marginesy boczne jak w referencji mobilnej: 30px przy kanwie 390 (7.7%) */
   .container { padding: 0 clamp(20px, 7.7vw, 32px); }
+  /* w kolumnie panel formularza tylko lekko wsunięty */
+  .lead-form-band { margin: 40px clamp(12px, 4vw, 24px); padding-top: 40px; }
   .hero-grid, .lead-grid, .compare-grid { grid-template-columns: 1fr; }
   /* bez tego kolumny nie schodzą poniżej szerokości min-content i rozpychają stronę */
   .hero-grid > *, .lead-grid > *, .compare-grid > * { min-width: 0; }
@@ -492,8 +503,19 @@ mark.mark-accent {
   .lead-arrow { display: none; }
   /* w kolumnie nie wymuszamy pełnego ekranu — inaczej treść byłaby ściśnięta */
   .hero { min-height: 0; display: block; padding: 40px 0 0; }
-  .hero-media { order: -1; }
-  .hero-media img, .hero-media video { max-height: 62svh; }
+  /* w kolumnie kadr wraca do normalnego przepływu i idzie na całą szerokość
+     (w referencji mobilnej x=0..390, czyli od krawędzi do krawędzi) */
+  .hero-media {
+    order: -1;
+    position: static;
+    width: auto;
+    margin-inline: calc(-1 * clamp(20px, 7.7vw, 32px));
+  }
+  .hero-media img, .hero-media video {
+    aspect-ratio: 390 / 415;
+    height: auto;
+    max-height: 62svh;
+  }
   /* tekst nad zdjęciem, jak w referencji mobilnej (nagłówek przed kadrem) */
   .compare-copy { order: -1; }
   .trust-logo--alab      { width: min(150px, 40.0vw); }
