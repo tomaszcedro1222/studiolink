@@ -456,7 +456,6 @@ mark.mark-accent {
   z-index: 1;
 }
 .final-cta-content { position: relative; z-index: 2; }
-.final-cta-mascot { width: 110px; height: auto; margin: 0 auto 16px; }
 .final-cta h2 { font-size: var(--fs-h); font-weight: 300; line-height: var(--lh-h); letter-spacing: var(--ls-h); }
 .final-cta p { margin: 20px auto 32px; max-width: 34ch; color: #e6e6ea; font-size: var(--fs-body); line-height: var(--lh-body); letter-spacing: var(--ls-body); }
 
