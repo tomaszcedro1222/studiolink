@@ -322,14 +322,6 @@
   const group = track && track.querySelector('.trust-logo-group');
   if (!marquee || !track || !group) return;
 
-  const clone = group.cloneNode(true);
-  clone.setAttribute('aria-hidden', 'true');
-  clone.querySelectorAll('img').forEach((img) => {
-    img.alt = '';
-    img.removeAttribute('loading');
-  });
-  track.appendChild(clone);
-
   const SPEED = 38; // px/s, kierunek od prawej do lewej
   const LOCK_THRESHOLD = 6;
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -343,8 +335,27 @@
   let axis = null;
   let dragging = false;
 
+  function makeClone() {
+    const clone = group.cloneNode(true);
+    clone.setAttribute('aria-hidden', 'true');
+    clone.querySelectorAll('img').forEach((img) => {
+      img.alt = '';
+      img.removeAttribute('loading');
+    });
+    return clone;
+  }
+
+  function syncCopies() {
+    // Jedna grupa może być węższa od viewportu. Potrzebujemy tylu kopii,
+    // aby nawet tuż przed zawinięciem taśma nadal zakrywała całą szerokość.
+    const required = Math.max(2, Math.ceil(marquee.clientWidth / loopWidth) + 1);
+    while (track.children.length < required) track.appendChild(makeClone());
+    while (track.children.length > required) track.lastElementChild.remove();
+  }
+
   function measure() {
     loopWidth = Math.max(1, group.getBoundingClientRect().width);
+    syncCopies();
     normalize();
     render();
   }
@@ -417,7 +428,9 @@
   marquee.addEventListener('dragstart', (e) => e.preventDefault());
 
   if (typeof ResizeObserver !== 'undefined') {
-    new ResizeObserver(measure).observe(group);
+    const observer = new ResizeObserver(measure);
+    observer.observe(group);
+    observer.observe(marquee);
   } else {
     window.addEventListener('resize', measure);
   }
