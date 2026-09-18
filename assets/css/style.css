@@ -547,7 +547,7 @@ mark.mark-accent {
   .badge-stamp {
     right: auto;
     left: 50%;
-    width: min(206px, 52.8vw);
+    width: min(234px, 60vw);
     transform: translate(-50%, -31%);
   }
   .lead-form-band { padding-top: 64px; }
@@ -561,7 +561,7 @@ mark.mark-accent {
   .trust-marquee { --trust-gap: clamp(48px, 14vw, 72px); margin-top: 72px; }
   /* znaczek wystaje 69% swojej wysokości pod krawędź apli — sekcja poniżej
      musi zrobić na niego miejsce, inaczej nachodzi na nagłówek */
-  .compare-grid { padding-block: calc(min(206px, 52.8vw) * 0.7 + 24px) 64px; }
+  .compare-grid { padding-block: calc(min(234px, 60vw) * 0.7 + 24px) 64px; }
   .final-cta { padding: 96px 0; }
 }
 
