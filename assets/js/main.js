@@ -456,7 +456,7 @@
       return;
     }
     // TODO: podłącz docelowy endpoint wysyłki formularza (np. Formspree, backend, e-mail).
-    note.textContent = 'Dziękujemy! Odezwiemy się z propozycją w ciągu 24h.';
+    note.textContent = 'Dziękujemy! Wrócimy z dopasowaną ofertą w ciągu 24h.';
     form.reset();
   });
 })();

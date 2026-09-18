@@ -230,7 +230,8 @@ mark.mark-accent {
   text-transform: uppercase;
   color: rgba(255,255,255,0.85);
 }
-.field input {
+.field input,
+.field textarea {
   background: rgba(255,255,255,0.14);
   border: 1px solid rgba(255,255,255,0.28);
   border-radius: 10px;
@@ -240,8 +241,11 @@ mark.mark-accent {
   letter-spacing: -0.034em;
   font-family: inherit;
 }
-.field input::placeholder { color: rgba(255,255,255,0.6); }
-.field input:focus { outline: none; border-color: #ffffff; }
+.field textarea { min-height: 112px; resize: vertical; line-height: 1.4; }
+.field input::placeholder,
+.field textarea::placeholder { color: rgba(255,255,255,0.6); }
+.field input:focus,
+.field textarea:focus { outline: none; border-color: #ffffff; }
 .lead-form .btn-light { margin-top: 8px; background: var(--black); color: #fff; }
 .form-note { min-height: 1em; font-size: 0.85rem; color: #d9ffe6; }
 
@@ -535,7 +539,7 @@ mark.mark-accent {
      Wiersz kadru = auto, wiersz tekstu = 1fr, więc nadwyżkę pochłania tekst. */
   .pack-card { grid-template-columns: 1fr; grid-template-rows: auto 1fr; flex-basis: 69.2vw; }
   .carousel-track { gap: 7.7vw; }
-  .pack-card video, .pack-card img { order: -1; aspect-ratio: 27 / 20; height: auto; }
+  .pack-card video, .pack-card img { order: -1; aspect-ratio: 4 / 5; height: auto; }
   .pack-copy { text-align: center; padding: 12.8vw 7.7vw 13.8vw; }
   .pack-copy p { max-width: none; margin-left: auto; margin-right: auto; font-size: 12px; }
   /* Stopka jak w referencji mobilnej: kontakt na górze, pod nim copyright,
