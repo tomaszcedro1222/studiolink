@@ -351,7 +351,7 @@ mark.mark-accent {
 }
 /* Wszystkie kafle w jednym niebieskim — w referencji nie ma dodatkowych kolorów
    (uwaga Pauliny: „nie wprowadzałabym dodatkowych kolorów"). */
-.pack-copy { padding: 40px; }
+.pack-copy { padding: clamp(52px, 4.45vw, 64px); }
 .pack-copy h3 { font-size: var(--fs-h); font-weight: 300; line-height: var(--lh-h); letter-spacing: var(--ls-h); }
 .pack-copy p { margin-top: 16px; color: #e4e5ff; max-width: 26ch; font-size: var(--fs-body); line-height: var(--lh-body); letter-spacing: var(--ls-body); }
 /* Kadr kwadratowy jak w referencji (560x560 w kaflu 1120x560). Bez tego
