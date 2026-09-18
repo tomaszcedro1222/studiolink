@@ -569,10 +569,22 @@ mark.mark-accent {
   /* CTA z trackingiem +0.1em nie mieści się w jednej linii na wąskim ekranie
      i przez nowrap rozpychało cały formularz poza ekran */
   .btn { padding: 15px 20px; font-size: 13px; white-space: normal; text-align: center; }
-  /* Na telefonie różnica jest subtelniejsza, ale przycisk nadal płynnie maleje. */
+  /* Więcej oddechu między logo i CTA na wąskim ekranie. */
   :root { --header-h: 72px; --header-h-compact: 58px; }
-  .site-header .btn-sm { padding: 12px 18px; font-size: 12px; }
-  .site-header.is-compact .btn-sm { padding: 8px 14px; font-size: 10px; }
+  .site-header .header-inner { padding-inline: 24px; gap: 20px; }
+  .site-header .logo { min-width: 0; }
+  .site-header .logo-mark { height: 24px; max-width: 100%; }
+  .site-header.is-compact .logo-mark { height: 20px; }
+  .site-header .btn-sm { flex: none; padding: 11px 14px; font-size: 11px; }
+  .site-header.is-compact .btn-sm { padding: 8px 11px; font-size: 9.5px; }
   .packages { padding-top: 48px; }
   .carousel-wrap { margin-top: 48px; }
+}
+
+@media (max-width: 360px) {
+  .site-header .header-inner { padding-inline: 16px; gap: 12px; }
+  .site-header .logo-mark { height: 20px; }
+  .site-header .btn-sm { padding: 9px 10px; font-size: 9.5px; }
+  .site-header.is-compact .logo-mark { height: 18px; }
+  .site-header.is-compact .btn-sm { padding: 7px 9px; font-size: 9px; }
 }
