@@ -517,7 +517,8 @@ mark.mark-accent {
     max-height: 62svh;
   }
   /* tekst nad zdjęciem, jak w referencji mobilnej (nagłówek przed kadrem) */
-  .compare-copy { order: -1; }
+  .compare-copy { order: -1; text-align: center; }
+  .compare-copy p { margin-left: auto; margin-right: auto; }
   .trust-logo--alab      { width: min(150px, 40.0vw); }
   .trust-logo--bocian    { width: min(116px, 31.0vw); }
   .trust-logo--hippo     { width: min( 99px, 26.4vw); }
