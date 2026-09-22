@@ -474,12 +474,6 @@ mark.mark-accent {
   object-fit: cover;
   z-index: 0;
 }
-.final-cta-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.75));
-  z-index: 1;
-}
 .final-cta-content { position: relative; z-index: 2; }
 .final-cta h2 { font-size: var(--fs-h); font-weight: 300; line-height: var(--lh-h); letter-spacing: var(--ls-h); }
 .final-cta p { margin: 20px auto 32px; max-width: 34ch; color: #e6e6ea; font-size: var(--fs-body); line-height: var(--lh-body); letter-spacing: var(--ls-body); }
@@ -532,6 +526,13 @@ mark.mark-accent {
     height: auto;
     max-height: 62svh;
   }
+  .hero-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .hero-copy .lead { margin-inline: auto; }
   /* tekst nad zdjęciem, jak w referencji mobilnej (nagłówek przed kadrem) */
   .compare-copy { order: -1; text-align: center; }
   .compare-copy p { margin-left: auto; margin-right: auto; }
